@@ -1,5 +1,6 @@
 import RadioPlayer from "@/components/RadioPlayer";
 import ProgramCard from "@/components/ProgramCard";
+import Header from "@/components/Header";
 
 const Index = () => {
   const programs = [
@@ -25,8 +26,10 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
+      <Header />
+      
       {/* Hero Section */}
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden pt-16">
         <div className="absolute inset-0 bg-[url('/lovable-uploads/adebaece-85e2-451f-b4da-a21242258331.png')] opacity-20 bg-cover bg-center" />
         <div className="relative max-w-7xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
           <div className="text-center animate-fade-in">
