@@ -6,8 +6,24 @@ import PodcastSection from "@/components/PodcastSection";
 import VideoSection from "@/components/VideoSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import { Play, Pause } from "lucide-react";
+import { useState } from "react";
 
 const Index = () => {
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const togglePlay = () => {
+    const audioElement = document.querySelector('audio');
+    if (audioElement) {
+      if (isPlaying) {
+        audioElement.pause();
+      } else {
+        audioElement.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
   const programs = [
     {
       title: "Morning Vibes",
@@ -33,17 +49,31 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
       <Header />
       
-      {/* Hero Section */}
+      {/* Hero Section with Play Button */}
       <div className="relative overflow-hidden pt-16">
         <div className="absolute inset-0 bg-[url('/lovable-uploads/adebaece-85e2-451f-b4da-a21242258331.png')] opacity-20 bg-cover bg-center" />
         <div className="relative max-w-7xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
-          <div className="text-center animate-fade-in">
+          <div className="text-center animate-fade-in space-y-8">
             <h1 className="text-4xl sm:text-6xl font-bold text-white mb-6">
               Goma Webradio
             </h1>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
               Your digital destination for the best music, news, and entertainment
             </p>
+            
+            {/* Large Play Button */}
+            <div className="flex justify-center mt-12">
+              <button
+                onClick={togglePlay}
+                className="group relative bg-primary hover:bg-primary/80 transition-all duration-300 rounded-full p-12 hover:scale-105"
+              >
+                <div className="absolute inset-0 bg-primary/30 rounded-full animate-ping group-hover:animate-none"></div>
+                {isPlaying ? 
+                  <Pause className="w-20 h-20 text-white" /> : 
+                  <Play className="w-20 h-20 text-white ml-2" />
+                }
+              </button>
+            </div>
           </div>
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-secondary to-transparent" />
@@ -75,7 +105,7 @@ const Index = () => {
       <Footer />
 
       {/* Radio Player */}
-      <RadioPlayer />
+      <RadioPlayer isPlaying={isPlaying} setIsPlaying={setIsPlaying} />
     </div>
   );
 };
