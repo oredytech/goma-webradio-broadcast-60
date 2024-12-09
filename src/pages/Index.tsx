@@ -1,6 +1,11 @@
 import RadioPlayer from "@/components/RadioPlayer";
 import ProgramCard from "@/components/ProgramCard";
 import Header from "@/components/Header";
+import NewsSection from "@/components/NewsSection";
+import PodcastSection from "@/components/PodcastSection";
+import VideoSection from "@/components/VideoSection";
+import ContactSection from "@/components/ContactSection";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   const programs = [
@@ -54,26 +59,20 @@ const Index = () => {
         </div>
       </section>
 
-      {/* What's Next Section */}
-      <section className="bg-primary/5 backdrop-blur-sm py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-white mb-8">What's Next</h2>
-          <div className="bg-secondary/50 rounded-lg p-8">
-            <h3 className="text-2xl font-bold text-white mb-4">Coming Up</h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-primary font-medium">10:00 PM - 12:00 AM</p>
-                  <h4 className="text-white text-lg">Late Night Jazz</h4>
-                </div>
-                <button className="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-full transition-colors">
-                  Set Reminder
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* News Section */}
+      <NewsSection />
+
+      {/* Podcast Section */}
+      <PodcastSection />
+
+      {/* Video Section */}
+      <VideoSection />
+
+      {/* Contact Section */}
+      <ContactSection />
+
+      {/* Footer */}
+      <Footer />
 
       {/* Radio Player */}
       <RadioPlayer />
