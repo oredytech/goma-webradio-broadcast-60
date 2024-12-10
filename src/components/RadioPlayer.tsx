@@ -40,7 +40,7 @@ const RadioPlayer = ({ isPlaying, setIsPlaying }: RadioPlayerProps) => {
       </div>
       <audio
         ref={audioRef}
-        src="https://stream-url-here" // Replace with actual stream URL
+        src="https://stream.zeno.fm/4d61wprrp7zuv"
         preload="none"
       />
     </div>
