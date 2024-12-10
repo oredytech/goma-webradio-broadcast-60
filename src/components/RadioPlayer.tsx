@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Volume2 } from 'lucide-react';
 import { Slider } from "@/components/ui/slider";
 
@@ -9,6 +9,8 @@ interface RadioPlayerProps {
 
 const RadioPlayer = ({ isPlaying, setIsPlaying }: RadioPlayerProps) => {
   const [volume, setVolume] = useState(80);
+  const [currentTrack, setCurrentTrack] = useState("Goma Webradio Live");
+  const [currentArtist, setCurrentArtist] = useState("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const handleVolumeChange = (value: number[]) => {
@@ -19,12 +21,29 @@ const RadioPlayer = ({ isPlaying, setIsPlaying }: RadioPlayerProps) => {
     }
   };
 
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.addEventListener('playing', () => {
+        // Some radio streams send metadata through media sessions API
+        navigator.mediaSession.setActionHandler('play', () => setIsPlaying(true));
+        navigator.mediaSession.setActionHandler('pause', () => setIsPlaying(false));
+      });
+    }
+  }, [setIsPlaying]);
+
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-secondary/95 backdrop-blur-sm border-t border-primary/20 py-4 px-6">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="text-white">
-          <h3 className="font-semibold text-lg">Now Playing</h3>
-          <p className="text-sm text-gray-300">Goma Webradio Live</p>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary text-white">
+              En Direct
+            </span>
+          </div>
+          <h3 className="font-semibold text-lg mt-1">{currentTrack}</h3>
+          {currentArtist && (
+            <p className="text-sm text-gray-300">{currentArtist}</p>
+          )}
         </div>
         
         <div className="flex items-center gap-4 w-48">
