@@ -1,32 +1,97 @@
-const PodcastSection = () => {
-  const podcasts = [
-    {
-      title: "Culture et Tradition",
-      duration: "45 min",
-      description: "Exploration de la richesse culturelle de Goma"
-    },
-    {
-      title: "Musique Live",
-      duration: "30 min",
-      description: "Sessions live avec des artistes locaux"
-    }
-  ];
+import { useNavigate } from 'react-router-dom';
+import { usePodcastFeed } from '@/hooks/usePodcastFeed';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { Play, Pause } from 'lucide-react';
+
+interface PodcastSectionProps {
+  isPlaying: boolean;
+  setIsPlaying: (isPlaying: boolean) => void;
+  currentAudio: string | null;
+  setCurrentAudio: (url: string | null) => void;
+  setCurrentTrack: (title: string) => void;
+  setCurrentArtist: (artist: string) => void;
+}
+
+const PodcastSection = ({
+  isPlaying,
+  setIsPlaying,
+  currentAudio,
+  setCurrentAudio,
+  setCurrentTrack,
+  setCurrentArtist
+}: PodcastSectionProps) => {
+  const navigate = useNavigate();
+  const { data: episodes, isLoading } = usePodcastFeed();
+
+  const handlePlayEpisode = (episode: any) => {
+    setCurrentAudio(episode.enclosure.url);
+    setCurrentTrack(episode.title);
+    setCurrentArtist("Podcast");
+    setIsPlaying(true);
+  };
+
+  if (isLoading) {
+    return (
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-white mb-8">Podcasts</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[...Array(6)].map((_, index) => (
+              <div key={index} className="bg-secondary/50 rounded-lg p-6 animate-pulse">
+                <div className="h-48 bg-secondary/70 rounded-lg mb-4"></div>
+                <div className="h-6 bg-secondary/70 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-secondary/70 rounded w-1/2"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-white mb-8">Podcasts</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {podcasts.map((podcast, index) => (
-            <div key={index} className="bg-secondary/50 rounded-lg p-6 hover:bg-secondary/70 transition-all duration-300">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-white">{podcast.title}</h3>
-                <span className="text-primary text-sm">{podcast.duration}</span>
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-3xl font-bold text-white">Podcasts</h2>
+          <Button
+            variant="outline"
+            onClick={() => navigate('/podcasts')}
+            className="text-white hover:text-primary"
+          >
+            Voir plus
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {episodes?.slice(0, 6).map((episode, index) => (
+            <div key={index} className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300">
+              <img
+                src={episode.itunes?.image || '/placeholder.svg'}
+                alt={episode.title}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-6">
+                <h3 className="text-xl font-bold text-white mb-2">{episode.title}</h3>
+                <p className="text-gray-300 line-clamp-2 mb-4">{episode.description}</p>
+                <Button
+                  onClick={() => handlePlayEpisode(episode)}
+                  className="w-full"
+                  variant={currentAudio === episode.enclosure.url ? "secondary" : "default"}
+                >
+                  {currentAudio === episode.enclosure.url && isPlaying ? (
+                    <>
+                      <Pause className="w-4 h-4 mr-2" />
+                      En lecture
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-4 h-4 mr-2" />
+                      Écouter
+                    </>
+                  )}
+                </Button>
               </div>
-              <p className="text-gray-300">{podcast.description}</p>
-              <button className="mt-4 bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-full transition-colors">
-                Écouter
-              </button>
             </div>
           ))}
         </div>

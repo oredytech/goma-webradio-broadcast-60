@@ -11,6 +11,9 @@ import { useState } from "react";
 
 const Index = () => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentAudio, setCurrentAudio] = useState<string | null>(null);
+  const [currentTrack, setCurrentTrack] = useState("Goma Webradio Live");
+  const [currentArtist, setCurrentArtist] = useState("");
 
   const togglePlay = () => {
     const audioElement = document.querySelector('audio');
@@ -93,7 +96,14 @@ const Index = () => {
       <NewsSection />
 
       {/* Podcast Section */}
-      <PodcastSection />
+      <PodcastSection
+        isPlaying={isPlaying}
+        setIsPlaying={setIsPlaying}
+        currentAudio={currentAudio}
+        setCurrentAudio={setCurrentAudio}
+        setCurrentTrack={setCurrentTrack}
+        setCurrentArtist={setCurrentArtist}
+      />
 
       {/* Video Section */}
       <VideoSection />
@@ -105,7 +115,11 @@ const Index = () => {
       <Footer />
 
       {/* Radio Player */}
-      <RadioPlayer isPlaying={isPlaying} setIsPlaying={setIsPlaying} />
+      <RadioPlayer
+        isPlaying={isPlaying}
+        setIsPlaying={setIsPlaying}
+        currentAudio={currentAudio}
+      />
     </div>
   );
 };
