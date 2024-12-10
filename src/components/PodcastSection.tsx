@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { usePodcastFeed } from '@/hooks/usePodcastFeed';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { Play, Pause } from 'lucide-react';
 
 interface PodcastSectionProps {
