@@ -15,16 +15,12 @@ const Index = () => {
   const [currentTrack, setCurrentTrack] = useState("Goma Webradio Live");
   const [currentArtist, setCurrentArtist] = useState("");
 
-  const togglePlay = () => {
-    const audioElement = document.querySelector('audio');
-    if (audioElement) {
-      if (isPlaying) {
-        audioElement.pause();
-      } else {
-        audioElement.play();
-      }
-      setIsPlaying(!isPlaying);
+  const toggleRadioPlay = () => {
+    if (currentAudio) {
+      // If a podcast is playing, stop it first
+      setCurrentAudio(null);
     }
+    setIsPlaying(!isPlaying);
   };
 
   const programs = [
@@ -67,11 +63,11 @@ const Index = () => {
             {/* Large Play Button */}
             <div className="flex justify-center mt-12">
               <button
-                onClick={togglePlay}
+                onClick={toggleRadioPlay}
                 className="group relative bg-primary hover:bg-primary/80 transition-all duration-300 rounded-full p-12 hover:scale-105"
               >
                 <div className="absolute inset-0 bg-primary/30 rounded-full animate-ping group-hover:animate-none"></div>
-                {isPlaying ? 
+                {isPlaying && !currentAudio ? 
                   <Pause className="w-20 h-20 text-white" /> : 
                   <Play className="w-20 h-20 text-white ml-2" />
                 }
