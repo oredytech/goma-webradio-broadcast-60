@@ -79,30 +79,30 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-secondary/95 backdrop-blur-sm border-t border-primary/20 py-4 px-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="fixed bottom-0 left-0 right-0 bg-secondary/95 backdrop-blur-sm border-t border-primary/20 h-[80px]">
+      <div className="max-w-7xl mx-auto h-full">
         {currentAudio && (
           <Progress value={progress} className="mb-2" />
         )}
-        <div className="flex items-center justify-between">
-          <div className="text-white">
+        <div className="flex items-center justify-between h-full px-4 sm:px-6">
+          <div className="text-white flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary text-white">
                 {currentAudio ? "Podcast" : "En Direct"}
               </span>
             </div>
-            <h3 className="font-semibold text-lg mt-1">{currentTrack}</h3>
+            <h3 className="font-semibold text-base sm:text-lg mt-1 truncate">{currentTrack}</h3>
             {currentArtist && (
-              <p className="text-sm text-gray-300">{currentArtist}</p>
+              <p className="text-xs sm:text-sm text-gray-300 truncate">{currentArtist}</p>
             )}
             {currentAudio && duration > 0 && (
-              <p className="text-sm text-gray-400">
+              <p className="text-xs text-gray-400 hidden sm:block">
                 {formatTime(audioRef.current?.currentTime || 0)} / {formatTime(duration)}
               </p>
             )}
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <Button
               onClick={togglePlay}
               variant="ghost"
@@ -110,12 +110,12 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
               className="hover:bg-primary/20"
             >
               {isPlaying ? (
-                <Pause className="h-6 w-6 text-white" />
+                <Pause className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
               ) : (
-                <Play className="h-6 w-6 text-white" />
+                <Play className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
               )}
             </Button>
-            <div className="flex items-center gap-4 w-48">
+            <div className="hidden sm:flex items-center gap-4 w-48">
               <Volume2 className="w-5 h-5 text-white" />
               <Slider
                 value={[volume]}
