@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Volume2, Play, Pause } from 'lucide-react';
 import { Slider } from "@/components/ui/slider";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 
 interface RadioPlayerProps {
   isPlaying: boolean;
@@ -61,10 +62,15 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
     if (audioRef.current) {
       audioRef.current.src = currentAudio || 'https://stream.zeno.fm/4d61wprrp7zuv';
       if (isPlaying) {
-        audioRef.current.play();
+        audioRef.current.play().catch(error => {
+          console.error('Error playing audio:', error);
+          setIsPlaying(false);
+        });
+      } else {
+        audioRef.current.pause();
       }
     }
-  }, [currentAudio]);
+  }, [currentAudio, isPlaying]);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -97,18 +103,18 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
           </div>
           
           <div className="flex items-center gap-4">
-            {currentAudio && (
-              <button
-                onClick={togglePlay}
-                className="p-2 rounded-full bg-primary hover:bg-primary/80 transition-colors"
-              >
-                {isPlaying ? (
-                  <Pause className="w-6 h-6 text-white" />
-                ) : (
-                  <Play className="w-6 h-6 text-white ml-0.5" />
-                )}
-              </button>
-            )}
+            <Button
+              onClick={togglePlay}
+              variant="ghost"
+              size="icon"
+              className="hover:bg-primary/20"
+            >
+              {isPlaying ? (
+                <Pause className="h-6 w-6 text-white" />
+              ) : (
+                <Play className="h-6 w-6 text-white" />
+              )}
+            </Button>
             <div className="flex items-center gap-4 w-48">
               <Volume2 className="w-5 h-5 text-white" />
               <Slider
