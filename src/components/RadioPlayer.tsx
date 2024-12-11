@@ -37,6 +37,14 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
     }
   };
 
+  const handleSeek = (value: number) => {
+    if (audioRef.current && currentAudio) {
+      const newTime = (value / 100) * duration;
+      audioRef.current.currentTime = newTime;
+      setProgress(value);
+    }
+  };
+
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.addEventListener('timeupdate', () => {
@@ -82,7 +90,11 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
     <div className="fixed bottom-0 left-0 right-0 bg-secondary/95 backdrop-blur-sm border-t border-primary/20 h-[80px]">
       <div className="max-w-7xl mx-auto h-full">
         {currentAudio && (
-          <Progress value={progress} className="mb-2" />
+          <Progress 
+            value={progress} 
+            onSeek={handleSeek}
+            className="mb-2" 
+          />
         )}
         <div className="flex items-center justify-between h-full px-4 sm:px-6">
           <div className="text-white flex-1 min-w-0">
@@ -96,7 +108,7 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
               <p className="text-xs sm:text-sm text-gray-300 truncate">{currentArtist}</p>
             )}
             {currentAudio && duration > 0 && (
-              <p className="text-xs text-gray-400 hidden sm:block">
+              <p className="text-xs text-gray-400">
                 {formatTime(audioRef.current?.currentTime || 0)} / {formatTime(duration)}
               </p>
             )}
