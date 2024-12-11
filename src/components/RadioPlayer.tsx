@@ -102,15 +102,15 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary text-white">
                 {currentAudio ? "Podcast" : "En Direct"}
               </span>
+              {currentAudio && duration > 0 && (
+                <span className="text-xs text-gray-400">
+                  {formatTime(audioRef.current?.currentTime || 0)} / {formatTime(duration)}
+                </span>
+              )}
             </div>
             <h3 className="font-semibold text-base sm:text-lg mt-1 truncate">{currentTrack}</h3>
             {currentArtist && (
               <p className="text-xs sm:text-sm text-gray-300 truncate">{currentArtist}</p>
-            )}
-            {currentAudio && duration > 0 && (
-              <p className="text-xs text-gray-400">
-                {formatTime(audioRef.current?.currentTime || 0)} / {formatTime(duration)}
-              </p>
             )}
           </div>
           
