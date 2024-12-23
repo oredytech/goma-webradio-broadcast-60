@@ -78,6 +78,9 @@ const Index = () => {
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-secondary to-transparent" />
       </div>
 
+      {/* Articles Slider */}
+      <ArticlesSlider />
+
       {/* Programs Section */}
       <section className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-white mb-8">Featured Programs</h2>
@@ -87,9 +90,6 @@ const Index = () => {
           ))}
         </div>
       </section>
-
-      {/* Articles Slider */}
-      <ArticlesSlider />
 
       {/* News Section */}
       <NewsSection />
