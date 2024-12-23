@@ -108,7 +108,9 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
                 </span>
               )}
             </div>
-            <h3 className="font-semibold text-base sm:text-lg mt-1 truncate">{currentTrack}</h3>
+            <h3 className="font-semibold text-base sm:text-lg mt-1 truncate">
+              {currentAudio ? currentTrack : "Goma Webradio Live"}
+            </h3>
             {currentArtist && (
               <p className="text-xs sm:text-sm text-gray-300 truncate">{currentArtist}</p>
             )}
