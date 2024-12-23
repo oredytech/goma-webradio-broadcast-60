@@ -7,10 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import type { WordPressArticle } from "@/hooks/useWordpressArticles";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import RadioPlayer from "@/components/RadioPlayer";
 
 const Article = () => {
   const { id } = useParams();
   const [comment, setComment] = useState({ name: "", email: "", content: "" });
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentAudio, setCurrentAudio] = useState<string | null>(null);
 
   const { data: article, isLoading } = useQuery<WordPressArticle>({
     queryKey: ["article", id],
@@ -43,15 +48,16 @@ const Article = () => {
 
   const handleSubmitComment = (e: React.FormEvent) => {
     e.preventDefault();
-    // Ici, vous pouvez implémenter la logique d'envoi des commentaires
     console.log("Commentaire soumis:", comment);
     setComment({ name: "", email: "", content: "" });
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
+      <Header />
+      
       {/* Hero Section */}
-      <div className="relative h-[60vh] overflow-hidden">
+      <div className="relative h-[60vh] overflow-hidden mt-16">
         <div className="absolute inset-0">
           <img
             src={article._embedded?.["wp:featuredmedia"]?.[0]?.source_url}
@@ -164,6 +170,13 @@ const Article = () => {
           </aside>
         </div>
       </div>
+
+      <Footer />
+      <RadioPlayer 
+        isPlaying={isPlaying}
+        setIsPlaying={setIsPlaying}
+        currentAudio={currentAudio}
+      />
     </div>
   );
 };
