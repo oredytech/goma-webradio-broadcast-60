@@ -17,7 +17,6 @@ const Index = () => {
 
   const toggleRadioPlay = () => {
     if (currentAudio) {
-      // If a podcast is playing, stop it first
       setCurrentAudio(null);
     }
     setIsPlaying(!isPlaying);
@@ -50,7 +49,7 @@ const Index = () => {
       
       {/* Hero Section with Play Button */}
       <div className="relative overflow-hidden pt-16">
-        <div className="absolute inset-0 bg-[url('/lovable-uploads/adebaece-85e2-451f-b4da-a21242258331.png')] opacity-20 bg-cover bg-center" />
+        <div className="absolute inset-0 bg-[url('/lovable-uploads/5ae4e570-d67b-4af1-934b-7e4050e720c9.png')] opacity-20 bg-cover bg-center" />
         <div className="relative max-w-7xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
           <div className="text-center animate-fade-in space-y-8">
             <h1 className="text-4xl sm:text-6xl font-bold text-white mb-6">
