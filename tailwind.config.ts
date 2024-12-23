@@ -59,7 +59,21 @@ export default {
         wave: "wave 15s linear infinite",
         "fade-in": "fade-in 0.5s ease-out",
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            color: 'white',
+            h1: { color: 'white' },
+            h2: { color: 'white' },
+            h3: { color: 'white' },
+            h4: { color: 'white' },
+            p: { color: 'white' },
+            strong: { color: 'white' },
+            a: { color: '#3da7f2' },
+          },
+        },
+      },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 } satisfies Config;

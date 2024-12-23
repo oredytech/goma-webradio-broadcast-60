@@ -6,6 +6,7 @@ import PodcastSection from "@/components/PodcastSection";
 import VideoSection from "@/components/VideoSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import ArticlesSlider from "@/components/ArticlesSlider";
 import { Play, Pause } from "lucide-react";
 import { useState } from "react";
 
@@ -86,6 +87,9 @@ const Index = () => {
           ))}
         </div>
       </section>
+
+      {/* Articles Slider */}
+      <ArticlesSlider />
 
       {/* News Section */}
       <NewsSection />
