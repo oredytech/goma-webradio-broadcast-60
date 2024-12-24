@@ -55,6 +55,9 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
   };
 
   const featuredImageUrl = article._embedded?.["wp:featuredmedia"]?.[0]?.source_url || '/placeholder.svg';
+  
+  // Decode HTML entities in the title
+  const decodedTitle = new DOMParser().parseFromString(article.title.rendered, 'text/html').body.textContent || article.title.rendered;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
@@ -71,39 +74,18 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
           <div className="relative container mx-auto px-4 h-full flex items-center">
             <div className="max-w-3xl">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
-                {article.title.rendered}
+                {decodedTitle}
               </h1>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Content Section with Sidebar */}
+      {/* Content Section with Right Sidebar */}
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar */}
-          <aside className="lg:col-span-1 space-y-8">
-            {/* Recent Comments Section */}
-            <div className="bg-secondary/50 rounded-lg p-6 backdrop-blur-sm">
-              <h3 className="text-xl font-bold text-white mb-4">Derniers commentaires</h3>
-              <div className="space-y-4">
-                <div className="border-b border-primary/20 pb-4">
-                  <p className="text-white/80 text-sm">Pas encore de commentaires</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Advertisement Section */}
-            <div className="bg-secondary/50 rounded-lg p-6 backdrop-blur-sm">
-              <h3 className="text-xl font-bold text-white mb-4">Publicité</h3>
-              <div className="aspect-square bg-primary/20 rounded-lg flex items-center justify-center">
-                <span className="text-white/50">Espace publicitaire</span>
-              </div>
-            </div>
-          </aside>
-
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Main Content */}
-          <main className="lg:col-span-3">
+          <main className="lg:col-span-8">
             {/* Article Content */}
             <div 
               className="prose prose-lg prose-invert max-w-none mb-12"
@@ -140,6 +122,27 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
               </form>
             </div>
           </main>
+
+          {/* Right Sidebar */}
+          <aside className="lg:col-span-4 space-y-8">
+            {/* Recent Comments Section */}
+            <div className="bg-secondary/50 rounded-lg p-6 backdrop-blur-sm">
+              <h3 className="text-xl font-bold text-white mb-4">Derniers commentaires</h3>
+              <div className="space-y-4">
+                <div className="border-b border-primary/20 pb-4">
+                  <p className="text-white/80 text-sm">Pas encore de commentaires</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Advertisement Section */}
+            <div className="bg-secondary/50 rounded-lg p-6 backdrop-blur-sm sticky top-24">
+              <h3 className="text-xl font-bold text-white mb-4">Publicité</h3>
+              <div className="aspect-square bg-primary/20 rounded-lg flex items-center justify-center">
+                <span className="text-white/50">Espace publicitaire</span>
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
 
