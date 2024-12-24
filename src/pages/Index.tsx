@@ -8,14 +8,15 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import ArticlesSlider from "@/components/ArticlesSlider";
 import { Play, Pause } from "lucide-react";
-import { useState } from "react";
 
-const Index = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentAudio, setCurrentAudio] = useState<string | null>(null);
-  const [currentTrack, setCurrentTrack] = useState("Goma Webradio Live");
-  const [currentArtist, setCurrentArtist] = useState("");
+interface IndexProps {
+  isPlaying: boolean;
+  setIsPlaying: (isPlaying: boolean) => void;
+  currentAudio: string | null;
+  setCurrentAudio: (audio: string | null) => void;
+}
 
+const Index = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: IndexProps) => {
   const toggleRadioPlay = () => {
     if (currentAudio) {
       setCurrentAudio(null);
@@ -100,8 +101,6 @@ const Index = () => {
         setIsPlaying={setIsPlaying}
         currentAudio={currentAudio}
         setCurrentAudio={setCurrentAudio}
-        setCurrentTrack={setCurrentTrack}
-        setCurrentArtist={setCurrentArtist}
       />
 
       {/* Video Section */}
@@ -112,13 +111,6 @@ const Index = () => {
 
       {/* Footer */}
       <Footer />
-
-      {/* Radio Player */}
-      <RadioPlayer
-        isPlaying={isPlaying}
-        setIsPlaying={setIsPlaying}
-        currentAudio={currentAudio}
-      />
     </div>
   );
 };
