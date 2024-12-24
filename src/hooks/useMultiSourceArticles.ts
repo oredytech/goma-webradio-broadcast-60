@@ -8,6 +8,9 @@ interface WordPressArticle {
   excerpt: {
     rendered: string;
   };
+  content: {
+    rendered: string;
+  };
   link: string;
   _embedded?: {
     "wp:featuredmedia"?: Array<{
