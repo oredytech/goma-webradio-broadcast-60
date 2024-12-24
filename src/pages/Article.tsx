@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
-import type { WordPressArticle } from "@/hooks/useMultiSourceArticles";
-import { sources } from "@/hooks/useMultiSourceArticles";
+import type { WordPressArticle } from "@/hooks/useWordpressArticles";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -17,27 +16,20 @@ interface ArticleProps {
 }
 
 const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: ArticleProps) => {
-  const { id, sourceId } = useParams();
+  const { id } = useParams();
   const [comment, setComment] = useState({ name: "", email: "", content: "" });
 
-  // Trouver la source correspondante
-  const source = sources.find(s => s.id === sourceId);
-  
   const { data: article, isLoading } = useQuery<WordPressArticle>({
-    queryKey: ["article", id, sourceId],
+    queryKey: ["article", id],
     queryFn: async () => {
-      if (!source) {
-        throw new Error("Source non trouvée");
-      }
       const response = await fetch(
-        `${source.url}/${id}?_embed`
+        `https://totalementactus.net/wp-json/wp/v2/posts/${id}?_embed`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       return response.json();
     },
-    enabled: !!source && !!id,
   });
 
   if (isLoading) {
