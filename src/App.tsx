@@ -44,14 +44,8 @@ const App = () => {
                 />
               } 
             />
-            <Route 
-              path="/actualites/*" 
-              element={<News />} 
-            />
-            <Route 
-              path="/actualites/politique" 
-              element={<News category="politique" />} 
-            />
+            <Route path="/actualites/*" element={<News />} />
+            <Route path="/actualites/politique" element={<News filter="politique" />} />
           </Routes>
           <RadioPlayer
             isPlaying={isPlaying}
