@@ -101,6 +101,20 @@ const Index = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Index
         setIsPlaying={setIsPlaying}
         currentAudio={currentAudio}
         setCurrentAudio={setCurrentAudio}
+        setCurrentTrack={(title: string) => {
+          if (typeof window !== 'undefined' && 'mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+              title: title,
+            });
+          }
+        }}
+        setCurrentArtist={(artist: string) => {
+          if (typeof window !== 'undefined' && 'mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+              artist: artist,
+            });
+          }
+        }}
       />
 
       {/* Video Section */}
