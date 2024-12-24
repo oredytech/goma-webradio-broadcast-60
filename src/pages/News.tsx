@@ -1,6 +1,7 @@
 import { useMultiSourceArticles, sources, WordPressArticle } from "@/hooks/useMultiSourceArticles";
 import { Loader2 } from "lucide-react";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import ArticlesSlider from "@/components/ArticlesSlider";
 
 interface NewsProps {
@@ -20,6 +21,7 @@ const News = ({ filter }: NewsProps) => {
         <div className="pt-24 flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
+        <Footer />
       </div>
     );
   }
@@ -31,17 +33,18 @@ const News = ({ filter }: NewsProps) => {
         <div className="pt-24 flex items-center justify-center">
           <p className="text-red-500">Une erreur est survenue lors du chargement des articles.</p>
         </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-secondary">
+    <div className="min-h-screen bg-secondary flex flex-col">
       <Header />
       <div className="pt-16">
         <ArticlesSlider />
       </div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex-grow">
         <h1 className="text-3xl font-bold text-white mb-12">
           {filter ? `Actualités - ${filter}` : "Toutes les actualités"}
         </h1>
@@ -85,6 +88,7 @@ const News = ({ filter }: NewsProps) => {
           ))}
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
