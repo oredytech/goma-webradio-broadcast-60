@@ -1,139 +1,71 @@
-import { useQuery } from "@tanstack/react-query";
-import { WordPressArticle } from "@/hooks/useWordpressArticles";
+import { useMultiSourceArticles, sources, WordPressArticle } from "@/hooks/useMultiSourceArticles";
 
 const News = () => {
-  const { data: aupicArticles, isLoading: isLoadingAupic } = useQuery({
-    queryKey: ["aupic-articles"],
-    queryFn: async () => {
-      const response = await fetch(
-        "https://aupicinfo.com/wp-json/wp/v2/posts?_embed&per_page=5"
-      );
-      return response.json() as Promise<WordPressArticle[]>;
-    },
-  });
+  const results = useMultiSourceArticles();
 
-  const { data: kivuReporterArticles, isLoading: isLoadingKivuReporter } = useQuery({
-    queryKey: ["kivureporter-articles"],
-    queryFn: async () => {
-      const response = await fetch(
-        "https://kivureporter.net/wp-json/wp/v2/posts?_embed&per_page=5"
-      );
-      return response.json() as Promise<WordPressArticle[]>;
-    },
-  });
+  const isLoading = results.some((result) => result.isLoading);
+  const hasError = results.some((result) => result.isError);
 
-  const { data: kivu7Articles, isLoading: isLoadingKivu7 } = useQuery({
-    queryKey: ["kivu7-articles"],
-    queryFn: async () => {
-      const response = await fetch(
-        "https://kivu7.net/wp-json/wp/v2/posts?_embed&per_page=5"
-      );
-      return response.json() as Promise<WordPressArticle[]>;
-    },
-  });
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-white">Chargement des articles...</p>
+      </div>
+    );
+  }
 
-  if (isLoadingAupic || isLoadingKivuReporter || isLoadingKivu7) {
-    return <div className="min-h-screen flex items-center justify-center">Chargement des articles...</div>;
+  if (hasError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-500">Une erreur est survenue lors du chargement des articles.</p>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 Je vais mettre à jour le menu de navigation pour ajouter ces fonctionnalités. Commençons par restructurer le Header avec le menu déroulant pour Actualités et le bouton de connexion.
-
-<lov-code>
-First, let's update the Header component to include the new navigation items and dropdown menu:
-
-<lov-write file_path="src/components/Header.tsx">
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
-import { useIsMobile } from "@/hooks/use-mobile";
-
-const Header = () => {
-  const isMobile = useIsMobile();
-
-  return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-secondary/80 backdrop-blur-sm border-b border-primary/20">
+    <div className="pt-24 pb-16 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <span className="text-xl sm:text-2xl font-bold text-primary">Goma</span>
-            <span className="text-xl sm:text-2xl font-light text-white">Webradio</span>
-          </Link>
-
-          {/* Navigation */}
-          <NavigationMenu>
-            <NavigationMenuList className="hidden sm:flex items-center space-x-2">
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  className={cn(
-                    "group inline-flex h-10 w-max items-center justify-center rounded-md px-3 sm:px-4 py-2 text-sm font-medium transition-colors hover:bg-primary/20 hover:text-primary focus:bg-primary/20 focus:text-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-primary/20 data-[state=open]:bg-primary/20",
-                    "text-white"
-                  )}
-                  href="/"
-                >
-                  Accueil
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="text-white hover:text-primary">
-                  Actualités
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="w-[400px] p-4">
-                    <Link
-                      to="/actualites/politique"
-                      className="block p-2 hover:bg-primary/20 rounded-md text-white"
-                    >
-                      Politique
-                    </Link>
-                    <Link
-                      to="/actualites"
-                      className="block p-2 hover:bg-primary/20 rounded-md text-white"
-                    >
-                      Toutes les actualités
-                    </Link>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  className={cn(
-                    "group inline-flex h-10 w-max items-center justify-center rounded-md px-3 sm:px-4 py-2 text-sm font-medium transition-colors hover:bg-primary/20 hover:text-primary focus:bg-primary/20 focus:text-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-primary/20 data-[state=open]:bg-primary/20",
-                    "text-white"
-                  )}
-                  href="/programmes"
-                >
-                  Programmes
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  className={cn(
-                    "group inline-flex h-10 w-max items-center justify-center rounded-md px-3 sm:px-4 py-2 text-sm font-medium transition-colors hover:bg-primary/20 hover:text-primary focus:bg-primary/20 focus:text-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-primary/20 data-[state=open]:bg-primary/20",
-                    "text-white"
-                  )}
-                  href="/contact"
-                >
-                  Contact
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <Button variant="outline" className="text-white border-white hover:bg-primary/20 hover:text-primary">
-                  Se connecter
-                </Button>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+        <h1 className="text-3xl font-bold text-white mb-12">Actualités</h1>
+        
+        <div className="space-y-16">
+          {sources.map((source, sourceIndex) => (
+            <div key={source.id} className="space-y-8">
+              <h2 className="text-2xl font-semibold text-white">{source.name}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {results[sourceIndex].data?.map((article: WordPressArticle) => (
+                  <a
+                    key={article.id}
+                    href={article.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300"
+                  >
+                    {article._embedded?.["wp:featuredmedia"]?.[0]?.source_url && (
+                      <img
+                        src={article._embedded["wp:featuredmedia"][0].source_url}
+                        alt={article.title.rendered}
+                        className="w-full h-48 object-cover"
+                      />
+                    )}
+                    <div className="p-6">
+                      <h3
+                        className="text-xl font-bold text-white mb-4"
+                        dangerouslySetInnerHTML={{ __html: article.title.rendered }}
+                      />
+                      <div
+                        className="text-gray-300 line-clamp-3"
+                        dangerouslySetInnerHTML={{ __html: article.excerpt.rendered }}
+                      />
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    </header>
+    </div>
   );
 };
 
-export default Header;
+export default News;
