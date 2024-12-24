@@ -3,6 +3,7 @@ import { Loader2 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArticlesSlider from "@/components/ArticlesSlider";
+import { Link } from "react-router-dom";
 
 interface NewsProps {
   filter?: string;
@@ -55,11 +56,9 @@ const News = ({ filter }: NewsProps) => {
               <h2 className="text-2xl font-semibold text-white">{source.name}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {results[sourceIndex].data?.map((article: WordPressArticle) => (
-                  <a
+                  <Link
                     key={article.id}
-                    href={article.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    to={`/article/${article.id}`}
                     className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300 group animate-fade-in"
                   >
                     {article._embedded?.["wp:featuredmedia"]?.[0]?.source_url && (
@@ -81,7 +80,7 @@ const News = ({ filter }: NewsProps) => {
                         dangerouslySetInnerHTML={{ __html: article.excerpt.rendered }}
                       />
                     </div>
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
