@@ -58,43 +58,59 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
     <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
       <Header />
       
-      {/* Hero Section */}
-      <div className="relative h-[60vh] overflow-hidden mt-16">
-        <div className="absolute inset-0 bg-[url('/lovable-uploads/5ae4e570-d67b-4af1-934b-7e4050e720c9.png')] bg-cover bg-center opacity-20" />
-        <div className="relative max-w-7xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
-          <h1 className="text-4xl sm:text-6xl font-bold text-white mb-6">
-            {article.title.rendered}
-          </h1>
-          <div className="text-lg text-gray-300" dangerouslySetInnerHTML={{ __html: article.content.rendered }} />
+      {/* Hero Section with proper spacing and responsive design */}
+      <div className="pt-16">
+        <div className="relative">
+          <div className="absolute inset-0 bg-[url('/lovable-uploads/5ae4e570-d67b-4af1-934b-7e4050e720c9.png')] bg-cover bg-center opacity-20" />
+          <div className="relative container mx-auto px-4 py-16 sm:py-24">
+            <div className="max-w-3xl mx-auto">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                {article.title.rendered}
+              </h1>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Content Section */}
-      <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
-        <h2 className="text-2xl font-bold text-white mb-4">Laissez un commentaire</h2>
-        <form onSubmit={handleSubmitComment} className="space-y-4">
-          <Input
-            type="text"
-            placeholder="Votre nom"
-            value={comment.name}
-            onChange={(e) => setComment({ ...comment, name: e.target.value })}
-            className="bg-white text-black"
+      {/* Content Section with proper width constraints and spacing */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-3xl mx-auto">
+          {/* Article Content */}
+          <div 
+            className="prose prose-lg prose-invert max-w-none mb-12"
+            dangerouslySetInnerHTML={{ __html: article.content.rendered }}
           />
-          <Input
-            type="email"
-            placeholder="Votre email"
-            value={comment.email}
-            onChange={(e) => setComment({ ...comment, email: e.target.value })}
-            className="bg-white text-black"
-          />
-          <Textarea
-            placeholder="Votre commentaire"
-            value={comment.content}
-            onChange={(e) => setComment({ ...comment, content: e.target.value })}
-            className="bg-white text-black"
-          />
-          <Button type="submit" className="bg-primary text-white">Soumettre</Button>
-        </form>
+
+          {/* Comment Form */}
+          <div className="bg-secondary/50 rounded-lg p-6 backdrop-blur-sm">
+            <h2 className="text-2xl font-bold text-white mb-6">Laissez un commentaire</h2>
+            <form onSubmit={handleSubmitComment} className="space-y-4">
+              <Input
+                type="text"
+                placeholder="Votre nom"
+                value={comment.name}
+                onChange={(e) => setComment({ ...comment, name: e.target.value })}
+                className="bg-white/10 border-primary/20 text-white placeholder:text-white/50"
+              />
+              <Input
+                type="email"
+                placeholder="Votre email"
+                value={comment.email}
+                onChange={(e) => setComment({ ...comment, email: e.target.value })}
+                className="bg-white/10 border-primary/20 text-white placeholder:text-white/50"
+              />
+              <Textarea
+                placeholder="Votre commentaire"
+                value={comment.content}
+                onChange={(e) => setComment({ ...comment, content: e.target.value })}
+                className="bg-white/10 border-primary/20 text-white placeholder:text-white/50 min-h-[150px]"
+              />
+              <Button type="submit" className="w-full sm:w-auto">
+                Soumettre
+              </Button>
+            </form>
+          </div>
+        </div>
       </div>
 
       <Footer />
