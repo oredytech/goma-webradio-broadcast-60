@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import Index from "./pages/Index";
 import Article from "./pages/Article";
+import News from "./pages/News";
 import RadioPlayer from "./components/RadioPlayer";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,14 @@ const App = () => {
                   setCurrentAudio={setCurrentAudio}
                 />
               } 
+            />
+            <Route 
+              path="/actualites/*" 
+              element={<News />} 
+            />
+            <Route 
+              path="/actualites/politique" 
+              element={<News category="politique" />} 
             />
           </Routes>
           <RadioPlayer
