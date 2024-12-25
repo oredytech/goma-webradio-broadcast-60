@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 const CHANNEL_ID = "UC6RtsClui6cA5msIiWWxTZQ";
 
@@ -24,10 +25,26 @@ const VideoSection = () => {
 
   useEffect(() => {
     const getApiKey = async () => {
-      const { data: { YOUTUBE_API_KEY } } = await supabase.functions.invoke('get-secret', {
-        body: { key: 'YOUTUBE_API_KEY' }
-      });
-      setApiKey(YOUTUBE_API_KEY);
+      try {
+        const { data, error } = await supabase.functions.invoke('get-secret', {
+          body: { key: 'YOUTUBE_API_KEY' }
+        });
+        
+        if (error) {
+          console.error('Error fetching API key:', error);
+          toast.error('Erreur lors de la récupération de la clé API');
+          return;
+        }
+        
+        if (data?.YOUTUBE_API_KEY) {
+          setApiKey(data.YOUTUBE_API_KEY);
+        } else {
+          toast.error('Clé API YouTube non configurée');
+        }
+      } catch (err) {
+        console.error('Error in getApiKey:', err);
+        toast.error('Erreur lors de la récupération de la clé API');
+      }
     };
     getApiKey();
   }, []);
@@ -68,7 +85,14 @@ const VideoSection = () => {
 
   if (error) {
     console.error('Error fetching videos:', error);
-    return null;
+    return (
+      <section className="py-16 bg-secondary/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-white mb-8">Vidéos</h2>
+          <p className="text-red-500">Erreur lors du chargement des vidéos</p>
+        </div>
+      </section>
+    );
   }
 
   return (
