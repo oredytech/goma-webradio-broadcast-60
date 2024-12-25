@@ -8,6 +8,9 @@ interface WordPressArticle {
   excerpt: {
     rendered: string;
   };
+  content: {
+    rendered: string;
+  };
   link: string;
   _embedded?: {
     "wp:featuredmedia"?: Array<{
@@ -18,19 +21,9 @@ interface WordPressArticle {
 
 const sources = [
   {
-    id: "aupicinfo",
-    url: "https://aupicinfo.com/wp-json/wp/v2/posts",
-    name: "Aupic Info"
-  },
-  {
-    id: "kivureporter",
-    url: "https://kivureporter.net/wp-json/wp/v2/posts",
-    name: "Kivu Reporter"
-  },
-  {
-    id: "kivu7",
-    url: "https://kivu7.net/wp-json/wp/v2/posts",
-    name: "Kivu7"
+    id: "totalementactus",
+    url: "https://totalementactus.net/wp-json/wp/v2/posts",
+    name: "Totalement Actus"
   }
 ];
 
