@@ -40,11 +40,33 @@ const ContactSection = () => {
             </form>
           </div>
           <div className="bg-secondary/50 rounded-lg p-8">
-            <h3 className="text-xl font-bold text-white mb-4">Informations</h3>
+            <h3 className="text-xl font-bold text-white mb-4">Nos coordonnées</h3>
             <div className="space-y-4 text-gray-300">
-              <p>📍 Goma, Nord-Kivu, RDC</p>
-              <p>📞 +243 000 000 000</p>
-              <p>✉️ contact@gomawebradio.com</p>
+              <div className="flex items-start space-x-3">
+                <span className="text-primary">📍</span>
+                <p>RDCongo, Province du Nord-Kivu<br />
+                   Ville de Goma/Commune de KARISIMBI</p>
+              </div>
+              <div className="flex items-center space-x-3">
+                <span className="text-primary">📞</span>
+                <div>
+                  <p className="font-medium">Rédaction :</p>
+                  <p>+243 851 006 476</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <span className="text-primary">📞</span>
+                <div>
+                  <p className="font-medium">Direction :</p>
+                  <p>+243 975 043 313</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <span className="text-primary">✉️</span>
+                <a href="mailto:contact@gomawebradio.com" className="hover:text-primary transition-colors">
+                  contact@gomawebradio.com
+                </a>
+              </div>
             </div>
           </div>
         </div>
