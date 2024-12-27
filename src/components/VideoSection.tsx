@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 const CHANNEL_ID = "UC6RtsClui6cA5msIiWWxTZQ";
-const API_KEY = "AIzaSyDXBQDXzsBpu3M4KuQqPqz5-yfr4J9VWs0"; // Clé API publique YouTube
+const API_KEY = "AIzaSyAm1eWQTfpnRIPKIPw4HTZDOgWuciITktI"; // Clé API YouTube
 
 interface YouTubeVideo {
   id: {
@@ -23,14 +23,20 @@ const VideoSection = () => {
   const { data: videos, isLoading, error } = useQuery({
     queryKey: ['youtube-videos'],
     queryFn: async () => {
-      const response = await fetch(
-        `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&maxResults=3&order=date&type=video&key=${API_KEY}`
-      );
-      if (!response.ok) {
-        throw new Error('Failed to fetch videos');
+      try {
+        const response = await fetch(
+          `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&maxResults=3&order=date&type=video&key=${API_KEY}`
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch videos');
+        }
+        const data = await response.json();
+        return data.items as YouTubeVideo[];
+      } catch (error) {
+        console.error('Error fetching videos:', error);
+        toast.error('Erreur lors du chargement des vidéos');
+        throw error;
       }
-      const data = await response.json();
-      return data.items as YouTubeVideo[];
     },
   });
 
