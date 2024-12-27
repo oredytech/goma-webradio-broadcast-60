@@ -1,5 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { Play } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useState } from "react";
 
 const CHANNEL_ID = "UC6RtsClui6cA5msIiWWxTZQ";
 const API_KEY = "AIzaSyAm1eWQTfpnRIPKIPw4HTZDOgWuciITktI"; // Clé API YouTube
@@ -20,6 +23,20 @@ interface YouTubeVideo {
 }
 
 const VideoSection = () => {
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+
+  const cleanTitle = (title: string) => {
+    return title
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/\[.*?\]/g, '')
+      .replace(/\(.*?\)/g, '')
+      .trim();
+  };
+
   const { data: videos, isLoading, error } = useQuery({
     queryKey: ['youtube-videos'],
     queryFn: async () => {
@@ -76,32 +93,53 @@ const VideoSection = () => {
         <h2 className="text-3xl font-bold text-white mb-8">Vidéos</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {videos?.map((video) => (
-            <a
+            <div
               key={video.id.videoId}
-              href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
-              target="_blank"
-              rel="noopener noreferrer"
               className="group relative overflow-hidden rounded-lg bg-secondary/50 transition-transform hover:scale-105"
             >
-              <div className="aspect-video overflow-hidden">
+              <div className="aspect-video overflow-hidden relative">
                 <img
                   src={video.snippet.thumbnails.high.url}
-                  alt={video.snippet.title}
+                  alt={cleanTitle(video.snippet.title)}
                   className="w-full h-full object-cover"
                 />
+                <button
+                  onClick={() => setSelectedVideo(video.id.videoId)}
+                  className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <Play className="w-16 h-16 text-white" />
+                </button>
                 <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
                   <h3 className="text-lg font-bold text-white line-clamp-2">
-                    {video.snippet.title}
+                    {cleanTitle(video.snippet.title)}
                   </h3>
                   <p className="text-sm text-primary mt-1">
                     {new Date(video.snippet.publishedAt).toLocaleDateString()}
                   </p>
                 </div>
               </div>
-            </a>
+            </div>
           ))}
         </div>
       </div>
+
+      <Dialog open={!!selectedVideo} onOpenChange={() => setSelectedVideo(null)}>
+        <DialogContent className="max-w-4xl p-0 bg-black">
+          {selectedVideo && (
+            <div className="aspect-video">
+              <iframe
+                width="100%"
+                height="100%"
+                src={`https://www.youtube.com/embed/${selectedVideo}?autoplay=1`}
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
