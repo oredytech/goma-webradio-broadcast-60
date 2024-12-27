@@ -1,9 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
 const CHANNEL_ID = "UC6RtsClui6cA5msIiWWxTZQ";
+const API_KEY = "AIzaSyDXBQDXzsBpu3M4KuQqPqz5-yfr4J9VWs0"; // Clé API publique YouTube
 
 interface YouTubeVideo {
   id: {
@@ -21,40 +20,11 @@ interface YouTubeVideo {
 }
 
 const VideoSection = () => {
-  const [apiKey, setApiKey] = useState<string | null>(null);
-
-  useEffect(() => {
-    const getApiKey = async () => {
-      try {
-        const { data, error } = await supabase.functions.invoke('get-secret', {
-          body: { key: 'YOUTUBE_API_KEY' }
-        });
-        
-        if (error) {
-          console.error('Error fetching API key:', error);
-          toast.error('Erreur lors de la récupération de la clé API');
-          return;
-        }
-        
-        if (data?.YOUTUBE_API_KEY) {
-          setApiKey(data.YOUTUBE_API_KEY);
-        } else {
-          toast.error('Clé API YouTube non configurée');
-        }
-      } catch (err) {
-        console.error('Error in getApiKey:', err);
-        toast.error('Erreur lors de la récupération de la clé API');
-      }
-    };
-    getApiKey();
-  }, []);
-
   const { data: videos, isLoading, error } = useQuery({
-    queryKey: ['youtube-videos', apiKey],
+    queryKey: ['youtube-videos'],
     queryFn: async () => {
-      if (!apiKey) throw new Error('API key not available');
       const response = await fetch(
-        `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&maxResults=3&order=date&type=video&key=${apiKey}`
+        `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&maxResults=3&order=date&type=video&key=${API_KEY}`
       );
       if (!response.ok) {
         throw new Error('Failed to fetch videos');
@@ -62,10 +32,9 @@ const VideoSection = () => {
       const data = await response.json();
       return data.items as YouTubeVideo[];
     },
-    enabled: !!apiKey,
   });
 
-  if (isLoading || !apiKey) {
+  if (isLoading) {
     return (
       <section className="py-16 bg-secondary/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
