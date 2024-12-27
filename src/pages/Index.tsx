@@ -7,6 +7,7 @@ import VideoSection from "@/components/VideoSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import ArticlesSlider from "@/components/ArticlesSlider";
+import ExtraArticles from "@/components/ExtraArticles";
 import { Play, Pause } from "lucide-react";
 
 interface IndexProps {
@@ -81,6 +82,9 @@ const Index = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Index
 
       {/* Articles Slider */}
       <ArticlesSlider />
+
+      {/* Extra Articles Section */}
+      <ExtraArticles />
 
       {/* Programs Section */}
       <section className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
