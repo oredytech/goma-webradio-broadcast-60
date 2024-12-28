@@ -17,12 +17,13 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Logo />
-          <MobileMenuButton onClick={toggleMenu} />
-
-          <NavigationMenu>
+          
+          <NavigationMenu className="flex-1">
             <NavigationMenuList className={cn(
-              "sm:flex sm:items-center sm:space-x-2",
-              isMenuOpen ? "absolute top-16 left-0 right-0 flex flex-col bg-secondary/95 backdrop-blur-sm p-4 space-y-3 border-t border-primary/20 animate-in slide-in-from-top-5" : "hidden"
+              "sm:flex sm:items-center sm:justify-end sm:space-x-2",
+              isMenuOpen ? 
+                "absolute top-16 left-0 right-0 flex flex-col bg-secondary/95 backdrop-blur-sm p-4 space-y-3 border-t border-primary/20 animate-in slide-in-from-top-5 max-h-[calc(100vh-4rem)] overflow-y-auto" 
+                : "hidden"
             )}>
               <NavigationMenuItem className="w-full sm:w-auto">
                 <NavigationLink to="/">
@@ -65,6 +66,8 @@ const Header = () => {
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
+
+          <MobileMenuButton onClick={toggleMenu} className="ml-4" />
         </div>
       </div>
     </header>
