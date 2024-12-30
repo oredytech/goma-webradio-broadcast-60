@@ -65,24 +65,24 @@ const Header = () => {
           {/* Mobile Menu */}
           {isMenuOpen && (
             <div className="fixed sm:hidden inset-x-0 top-16 bg-secondary/95 backdrop-blur-sm border-t border-primary/20">
-              <NavigationMenu>
-                <NavigationMenuList className="flex flex-col p-4 space-y-3">
-                  <NavigationMenuItem>
+              <NavigationMenu className="w-full">
+                <NavigationMenuList className="flex flex-col items-center justify-center p-4 space-y-3 w-full">
+                  <NavigationMenuItem className="w-full text-center">
                     <NavigationLink to="/">
                       Accueil
                     </NavigationLink>
                   </NavigationMenuItem>
-                  <NavigationMenuItem>
+                  <NavigationMenuItem className="w-full text-center">
                     <NavigationLink to="/actualites">
                       Actualités
                     </NavigationLink>
                   </NavigationMenuItem>
-                  <NavigationMenuItem>
+                  <NavigationMenuItem className="w-full text-center">
                     <NavigationLink to="/contact">
                       Contact
                     </NavigationLink>
                   </NavigationMenuItem>
-                  <NavigationMenuItem>
+                  <NavigationMenuItem className="w-full text-center">
                     <NavigationLink 
                       to="/login"
                       className="bg-primary text-white hover:bg-primary/80"
