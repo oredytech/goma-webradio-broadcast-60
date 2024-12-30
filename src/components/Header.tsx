@@ -18,20 +18,15 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           <Logo />
           
-          <NavigationMenu className="flex-1 justify-center">
-            <NavigationMenuList className={cn(
-              "sm:flex sm:items-center sm:justify-center sm:space-x-2 w-full",
-              isMenuOpen ? 
-                "absolute top-[64px] left-0 right-0 flex flex-col bg-secondary/95 backdrop-blur-sm p-4 space-y-3 border-t border-primary/20 animate-in slide-in-from-top-5 max-h-[calc(100vh-4rem)] overflow-y-auto" 
-                : "hidden"
-            )}>
-              <NavigationMenuItem className="w-full sm:w-auto">
+          <NavigationMenu className="hidden sm:flex flex-1 justify-center">
+            <NavigationMenuList className="flex items-center justify-center space-x-2">
+              <NavigationMenuItem>
                 <NavigationLink to="/">
                   Accueil
                 </NavigationLink>
               </NavigationMenuItem>
 
-              <NavigationMenuItem className="w-full sm:w-auto">
+              <NavigationMenuItem>
                 <NavigationMenuTrigger
                   className={cn(
                     "group inline-flex h-10 w-full items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-primary/20 hover:text-primary focus:bg-primary/20 focus:text-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50",
@@ -50,13 +45,13 @@ const Header = () => {
                 </NavigationMenuContent>
               </NavigationMenuItem>
 
-              <NavigationMenuItem className="w-full sm:w-auto">
+              <NavigationMenuItem>
                 <NavigationLink to="/contact">
                   Contact
                 </NavigationLink>
               </NavigationMenuItem>
 
-              <NavigationMenuItem className="w-full sm:w-auto">
+              <NavigationMenuItem>
                 <NavigationLink 
                   to="/login"
                   className="bg-primary text-white hover:bg-primary/80"
@@ -67,7 +62,30 @@ const Header = () => {
             </NavigationMenuList>
           </NavigationMenu>
 
-          <MobileMenuButton onClick={toggleMenu} className="ml-4" />
+          {/* Mobile Menu */}
+          {isMenuOpen && (
+            <div className="fixed sm:hidden inset-x-0 top-16 bg-secondary/95 backdrop-blur-sm border-t border-primary/20">
+              <nav className="flex flex-col p-4 space-y-3">
+                <NavigationLink to="/">
+                  Accueil
+                </NavigationLink>
+                <NavigationLink to="/actualites">
+                  Actualités
+                </NavigationLink>
+                <NavigationLink to="/contact">
+                  Contact
+                </NavigationLink>
+                <NavigationLink 
+                  to="/login"
+                  className="bg-primary text-white hover:bg-primary/80"
+                >
+                  Se connecter
+                </NavigationLink>
+              </nav>
+            </div>
+          )}
+
+          <MobileMenuButton onClick={toggleMenu} className="sm:hidden ml-4" />
         </div>
       </div>
     </header>
