@@ -65,23 +65,33 @@ const Header = () => {
           {/* Mobile Menu */}
           {isMenuOpen && (
             <div className="fixed sm:hidden inset-x-0 top-16 bg-secondary/95 backdrop-blur-sm border-t border-primary/20">
-              <nav className="flex flex-col p-4 space-y-3">
-                <NavigationLink to="/">
-                  Accueil
-                </NavigationLink>
-                <NavigationLink to="/actualites">
-                  Actualités
-                </NavigationLink>
-                <NavigationLink to="/contact">
-                  Contact
-                </NavigationLink>
-                <NavigationLink 
-                  to="/login"
-                  className="bg-primary text-white hover:bg-primary/80"
-                >
-                  Se connecter
-                </NavigationLink>
-              </nav>
+              <NavigationMenu>
+                <NavigationMenuList className="flex flex-col p-4 space-y-3">
+                  <NavigationMenuItem>
+                    <NavigationLink to="/">
+                      Accueil
+                    </NavigationLink>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <NavigationLink to="/actualites">
+                      Actualités
+                    </NavigationLink>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <NavigationLink to="/contact">
+                      Contact
+                    </NavigationLink>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <NavigationLink 
+                      to="/login"
+                      className="bg-primary text-white hover:bg-primary/80"
+                    >
+                      Se connecter
+                    </NavigationLink>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
             </div>
           )}
 
