@@ -79,7 +79,7 @@ const Header = () => {
                   </NavigationMenuItem>
                   <NavigationMenuItem className="w-full text-center">
                     <NavigationLink to="/contact">
-                      Contact
+                      A propos
                     </NavigationLink>
                   </NavigationMenuItem>
                   <NavigationMenuItem className="w-full text-center">
