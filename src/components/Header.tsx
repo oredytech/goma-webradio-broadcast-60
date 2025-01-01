@@ -47,7 +47,7 @@ const Header = () => {
 
               <NavigationMenuItem>
                 <NavigationLink to="/contact">
-                  Contact
+                  A propos
                 </NavigationLink>
               </NavigationMenuItem>
 
