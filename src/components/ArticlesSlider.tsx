@@ -2,11 +2,21 @@ import { useWordpressArticles, WordPressArticle } from "@/hooks/useWordpressArti
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const ArticlesSlider = () => {
   const { data: articles, isLoading, error } = useWordpressArticles();
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (!articles?.length) return;
+    
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % articles.length);
+    }, 6000); // 6 seconds
+
+    return () => clearInterval(interval);
+  }, [articles]);
 
   if (isLoading) return <div className="text-center py-8">Chargement des articles...</div>;
   if (error) return <div className="text-center py-8 text-red-500">Erreur de chargement des articles</div>;
