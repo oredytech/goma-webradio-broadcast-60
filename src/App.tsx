@@ -7,6 +7,7 @@ import { useState } from "react";
 import Index from "./pages/Index";
 import Article from "./pages/Article";
 import News from "./pages/News";
+import About from "./pages/About";
 import RadioPlayer from "./components/RadioPlayer";
 
 const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ const App = () => {
             />
             <Route path="/actualites/*" element={<News />} />
             <Route path="/actualites/politique" element={<News filter="politique" />} />
+            <Route path="/a-propos" element={<About />} />
           </Routes>
           <RadioPlayer
             isPlaying={isPlaying}

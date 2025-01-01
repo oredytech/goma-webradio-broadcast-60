@@ -46,8 +46,8 @@ const Header = () => {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <NavigationLink to="/contact">
-                  A propos
+                <NavigationLink to="/a-propos">
+                  À propos
                 </NavigationLink>
               </NavigationMenuItem>
 
@@ -64,7 +64,7 @@ const Header = () => {
 
           {/* Mobile Menu */}
           {isMenuOpen && (
-            <div className="fixed sm:hidden inset-x-0 top-16 bg-secondary/95 backdrop-blur-sm border-t border-primary/20 flex items-center justify-center">
+            <div className="fixed sm:hidden inset-x-0 top-16 bg-secondary/95 backdrop-blur-sm border-t border-primary/20">
               <NavigationMenu className="w-full">
                 <NavigationMenuList className="flex flex-col items-center justify-center p-4 space-y-3 w-full">
                   <NavigationMenuItem className="w-full text-center">
@@ -78,8 +78,8 @@ const Header = () => {
                     </NavigationLink>
                   </NavigationMenuItem>
                   <NavigationMenuItem className="w-full text-center">
-                    <NavigationLink to="/contact">
-                      A propos
+                    <NavigationLink to="/a-propos">
+                      À propos
                     </NavigationLink>
                   </NavigationMenuItem>
                   <NavigationMenuItem className="w-full text-center">
