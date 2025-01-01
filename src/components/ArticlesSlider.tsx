@@ -42,7 +42,7 @@ const ArticlesSlider = () => {
               variant="secondary"
               size="icon"
               onClick={prevSlide}
-              className="rounded-full"
+              className="rounded-full opacity-70 hover:opacity-100 transition-opacity"
             >
               <ChevronLeft className="h-6 w-6" />
             </Button>
@@ -50,30 +50,34 @@ const ArticlesSlider = () => {
               variant="secondary"
               size="icon"
               onClick={nextSlide}
-              className="rounded-full"
+              className="rounded-full opacity-70 hover:opacity-100 transition-opacity"
             >
               <ChevronRight className="h-6 w-6" />
             </Button>
           </div>
           <div className="relative bg-secondary/50 rounded-lg overflow-hidden">
-            <img
-              src={currentArticle._embedded?.["wp:featuredmedia"]?.[0]?.source_url}
-              alt={currentArticle.title.rendered}
-              className="w-full h-[400px] object-cover"
-            />
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
-              <Link
-                to={`/article/${currentArticle.id}`}
-                className="text-2xl font-bold text-white hover:text-primary transition-colors"
-                dangerouslySetInnerHTML={{ __html: currentArticle.title.rendered }}
+            <div className="relative w-full h-[400px] transition-transform duration-700 ease-out">
+              <img
+                src={currentArticle._embedded?.["wp:featuredmedia"]?.[0]?.source_url}
+                alt={currentArticle.title.rendered}
+                className="w-full h-[400px] object-cover transform transition-all duration-700 ease-out scale-105 hover:scale-100"
               />
-              <div
-                className="text-gray-300 mt-2 line-clamp-2"
-                dangerouslySetInnerHTML={{ __html: currentArticle.excerpt.rendered }}
-              />
-              <Link to={`/article/${currentArticle.id}`}>
-                <Button className="mt-4">Lire Plus</Button>
-              </Link>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent transition-opacity duration-700">
+                <div className="absolute bottom-0 left-0 right-0 p-6 transform transition-all duration-500 ease-out">
+                  <Link
+                    to={`/article/${currentArticle.id}`}
+                    className="text-2xl font-bold text-white hover:text-primary transition-colors inline-block"
+                    dangerouslySetInnerHTML={{ __html: currentArticle.title.rendered }}
+                  />
+                  <div
+                    className="text-gray-300 mt-2 line-clamp-2 transform transition-all duration-500"
+                    dangerouslySetInnerHTML={{ __html: currentArticle.excerpt.rendered }}
+                  />
+                  <Link to={`/article/${currentArticle.id}`}>
+                    <Button className="mt-4 transform hover:scale-105 transition-transform">Lire Plus</Button>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>
