@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Volume2, Play, Pause } from 'lucide-react';
+import { Volume2, Play, Pause, Loader2 } from 'lucide-react';
 import { Slider } from "@/components/ui/slider";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
   const [currentArtist, setCurrentArtist] = useState("");
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const handleVolumeChange = (value: number[]) => {
@@ -28,10 +29,14 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
 
   const togglePlay = () => {
     if (audioRef.current) {
+      setIsLoading(true);
       if (isPlaying) {
         audioRef.current.pause();
+        setIsLoading(false);
       } else {
-        audioRef.current.play();
+        audioRef.current.play().finally(() => {
+          setIsLoading(false);
+        });
       }
       setIsPlaying(!isPlaying);
     }
@@ -60,22 +65,31 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
       });
 
       audioRef.current.addEventListener('playing', () => {
+        setIsLoading(false);
         navigator.mediaSession.setActionHandler('play', () => setIsPlaying(true));
         navigator.mediaSession.setActionHandler('pause', () => setIsPlaying(false));
+      });
+
+      audioRef.current.addEventListener('waiting', () => {
+        setIsLoading(true);
       });
     }
   }, [setIsPlaying]);
 
   useEffect(() => {
     if (audioRef.current) {
+      setIsLoading(true);
       audioRef.current.src = currentAudio || 'https://stream.zeno.fm/4d61wprrp7zuv';
       if (isPlaying) {
         audioRef.current.play().catch(error => {
           console.error('Error playing audio:', error);
           setIsPlaying(false);
+        }).finally(() => {
+          setIsLoading(false);
         });
       } else {
         audioRef.current.pause();
+        setIsLoading(false);
       }
     }
   }, [currentAudio, isPlaying]);
@@ -117,18 +131,27 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
           </div>
           
           <div className="flex items-center gap-2 sm:gap-4">
-            <Button
-              onClick={togglePlay}
-              variant="ghost"
-              size="icon"
-              className="hover:bg-primary/20"
-            >
-              {isPlaying ? (
-                <Pause className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-              ) : (
-                <Play className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+            <div className="relative">
+              {isLoading && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-primary/30 rounded-full animate-ping"></div>
+                  <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 text-primary animate-spin absolute" />
+                </div>
               )}
-            </Button>
+              <Button
+                onClick={togglePlay}
+                variant="ghost"
+                size="icon"
+                className="hover:bg-primary/20 relative z-10"
+                disabled={isLoading}
+              >
+                {isPlaying ? (
+                  <Pause className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                ) : (
+                  <Play className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                )}
+              </Button>
+            </div>
             <div className="hidden sm:flex items-center gap-4 w-48">
               <Volume2 className="w-5 h-5 text-white" />
               <Slider
