@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { usePodcastFeed } from '@/hooks/usePodcastFeed';
 import { Button } from '@/components/ui/button';
-import { Play, Pause } from 'lucide-react';
+import { Play, Pause, Loader2 } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -18,10 +19,23 @@ const Podcasts = ({
   setCurrentAudio,
 }: PodcastsProps) => {
   const { data: episodes, isLoading } = usePodcastFeed();
+  const [loadingEpisode, setLoadingEpisode] = useState<string | null>(null);
 
   const handlePlayEpisode = (episode: any) => {
+    if (currentAudio === episode.enclosure.url) {
+      setIsPlaying(!isPlaying);
+      return;
+    }
+    
+    setLoadingEpisode(episode.enclosure.url);
     setCurrentAudio(episode.enclosure.url);
     setIsPlaying(true);
+
+    // Simuler la fin du chargement lorsque l'audio commence à jouer
+    const audio = new Audio(episode.enclosure.url);
+    audio.addEventListener('canplay', () => {
+      setLoadingEpisode(null);
+    });
   };
 
   if (isLoading) {
@@ -64,23 +78,32 @@ const Podcasts = ({
               <div className="p-6">
                 <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">{episode.title}</h3>
                 <p className="text-gray-300 line-clamp-3 mb-4">{episode.description}</p>
-                <Button
-                  onClick={() => handlePlayEpisode(episode)}
-                  className="w-full group"
-                  variant={currentAudio === episode.enclosure.url ? "secondary" : "default"}
-                >
-                  {currentAudio === episode.enclosure.url && isPlaying ? (
-                    <>
-                      <Pause className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-                      En lecture
-                    </>
-                  ) : (
-                    <>
-                      <Play className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-                      Écouter
-                    </>
+                <div className="relative">
+                  {loadingEpisode === episode.enclosure.url && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="absolute inset-0 bg-primary/30 rounded-md animate-ping"></div>
+                      <Loader2 className="w-6 h-6 text-primary animate-spin absolute" />
+                    </div>
                   )}
-                </Button>
+                  <Button
+                    onClick={() => handlePlayEpisode(episode)}
+                    className="w-full group relative z-10"
+                    variant={currentAudio === episode.enclosure.url ? "secondary" : "default"}
+                    disabled={loadingEpisode === episode.enclosure.url}
+                  >
+                    {currentAudio === episode.enclosure.url && isPlaying ? (
+                      <>
+                        <Pause className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                        En lecture
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                        Écouter
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
           ))}
