@@ -135,7 +135,8 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
               {isLoading && (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="absolute inset-0 bg-primary/30 rounded-full animate-ping"></div>
-                  <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 text-primary animate-spin absolute" />
+                  <div className="absolute inset-0 bg-secondary/80 rounded-full"></div>
+                  <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 text-primary animate-spin z-10" />
                 </div>
               )}
               <Button
