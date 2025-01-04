@@ -1,4 +1,55 @@
+import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
+
 const ContactSection = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: ""
+  });
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      const response = await fetch("https://formsubmit.co/contact@gomawebradio.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Message envoyé",
+          description: "Nous vous répondrons dans les plus brefs délais.",
+        });
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Une erreur est survenue lors de l'envoi du message.",
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Une erreur est survenue lors de l'envoi du message.",
+      });
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
+  };
+
   return (
     <section className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -6,12 +57,15 @@ const ContactSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="bg-secondary/50 rounded-lg p-8">
             <h3 className="text-xl font-bold text-white mb-4">Nous contacter</h3>
-            <form className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-300">Nom</label>
                 <input
                   type="text"
                   id="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
                   className="mt-1 block w-full rounded-md bg-secondary/30 border border-primary/20 text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
@@ -20,6 +74,9 @@ const ContactSection = () => {
                 <input
                   type="email"
                   id="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
                   className="mt-1 block w-full rounded-md bg-secondary/30 border border-primary/20 text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </div>
@@ -28,6 +85,9 @@ const ContactSection = () => {
                 <textarea
                   id="message"
                   rows={4}
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
                   className="mt-1 block w-full rounded-md bg-secondary/30 border border-primary/20 text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
                 ></textarea>
               </div>
