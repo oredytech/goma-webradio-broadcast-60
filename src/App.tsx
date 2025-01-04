@@ -9,6 +9,7 @@ import Article from "./pages/Article";
 import News from "./pages/News";
 import About from "./pages/About";
 import Podcasts from "./pages/Podcasts";
+import Login from "./pages/Login";
 import RadioPlayer from "./components/RadioPlayer";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,7 @@ const App = () => {
             <Route path="/actualites/*" element={<News />} />
             <Route path="/actualites/politique" element={<News filter="politique" />} />
             <Route path="/a-propos" element={<About />} />
+            <Route path="/login" element={<Login />} />
             <Route 
               path="/podcasts" 
               element={
