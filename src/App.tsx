@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Index from "./pages/Index";
 import Article from "./pages/Article";
 import News from "./pages/News";
@@ -16,6 +16,12 @@ const queryClient = new QueryClient();
 const App = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentAudio, setCurrentAudio] = useState<string | null>(null);
+
+  // Initialize theme
+  useEffect(() => {
+    const theme = localStorage.getItem("theme") || "dark";
+    document.documentElement.classList.add(theme);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
