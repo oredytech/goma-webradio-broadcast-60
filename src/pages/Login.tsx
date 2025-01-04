@@ -11,10 +11,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
+import { useState } from "react";
 
-const formSchema = z.object({
+const loginSchema = z.object({
   email: z.string().email({
     message: "Veuillez entrer une adresse email valide.",
   }),
@@ -23,20 +24,40 @@ const formSchema = z.object({
   }),
 });
 
+const registerSchema = loginSchema.extend({
+  confirmPassword: z.string(),
+  name: z.string().min(2, {
+    message: "Le nom doit contenir au moins 2 caractères.",
+  }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Les mots de passe ne correspondent pas",
+  path: ["confirmPassword"],
+});
+
 const Login = () => {
   const { toast } = useToast();
+  const [isLogin, setIsLogin] = useState(true);
   
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const loginForm = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const registerForm = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+      name: "",
+    },
+  });
+
+  const onSubmitLogin = async (values: z.infer<typeof loginSchema>) => {
     try {
-      // TODO: Implement actual login logic here
       console.log(values);
       toast({
         title: "Connexion réussie",
@@ -51,64 +72,176 @@ const Login = () => {
     }
   };
 
+  const onSubmitRegister = async (values: z.infer<typeof registerSchema>) => {
+    try {
+      console.log(values);
+      toast({
+        title: "Compte créé avec succès",
+        description: "Vous pouvez maintenant vous connecter.",
+      });
+      setIsLogin(true);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erreur lors de la création du compte",
+        description: "Une erreur est survenue. Veuillez réessayer.",
+      });
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#E5DEFF]">
       <Header />
       <div className="container flex items-center justify-center min-h-[calc(100vh-4rem)] py-8">
-        <div className="w-full max-w-md space-y-6 bg-secondary/50 p-8 rounded-lg border border-primary/20">
+        <div className="w-full max-w-md space-y-6 bg-secondary/50 p-8 rounded-lg border border-primary/20 backdrop-blur-sm">
           <div className="space-y-2 text-center">
-            <h1 className="text-2xl font-bold">Connexion</h1>
+            <h1 className="text-2xl font-bold">{isLogin ? "Connexion" : "Créer un compte"}</h1>
             <p className="text-gray-400">
-              Entrez vos identifiants pour accéder à votre compte
+              {isLogin 
+                ? "Entrez vos identifiants pour accéder à votre compte" 
+                : "Remplissez le formulaire pour créer votre compte"}
             </p>
           </div>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="exemple@email.com"
-                        {...field}
-                        className="bg-secondary/30 border-primary/20 text-white"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Mot de passe</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="••••••••"
-                        {...field}
-                        className="bg-secondary/30 border-primary/20 text-white"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" className="w-full">
-                Se connecter
-              </Button>
-            </form>
-          </Form>
-          <div className="text-center text-sm">
-            <a href="#" className="text-primary hover:underline">
-              Mot de passe oublié ?
-            </a>
+
+          {isLogin ? (
+            <Form {...loginForm}>
+              <form onSubmit={loginForm.handleSubmit(onSubmitLogin)} className="space-y-6">
+                <FormField
+                  control={loginForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          placeholder="exemple@email.com"
+                          {...field}
+                          className="bg-secondary/30 border-primary/20 text-white"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={loginForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mot de passe</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          {...field}
+                          className="bg-secondary/30 border-primary/20 text-white"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full">
+                  Se connecter
+                </Button>
+              </form>
+            </Form>
+          ) : (
+            <Form {...registerForm}>
+              <form onSubmit={registerForm.handleSubmit(onSubmitRegister)} className="space-y-6">
+                <FormField
+                  control={registerForm.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nom complet</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="John Doe"
+                          {...field}
+                          className="bg-secondary/30 border-primary/20 text-white"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={registerForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          placeholder="exemple@email.com"
+                          {...field}
+                          className="bg-secondary/30 border-primary/20 text-white"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={registerForm.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mot de passe</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          {...field}
+                          className="bg-secondary/30 border-primary/20 text-white"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={registerForm.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirmer le mot de passe</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          {...field}
+                          className="bg-secondary/30 border-primary/20 text-white"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full">
+                  Créer un compte
+                </Button>
+              </form>
+            </Form>
+          )}
+
+          <div className="text-center space-y-4">
+            <button 
+              onClick={() => setIsLogin(!isLogin)} 
+              className="text-primary hover:underline text-sm"
+            >
+              {isLogin ? "Créer un compte" : "Déjà un compte ? Se connecter"}
+            </button>
+            {isLogin && (
+              <div>
+                <a href="#" className="text-primary hover:underline text-sm block">
+                  Mot de passe oublié ?
+                </a>
+              </div>
+            )}
           </div>
         </div>
       </div>
