@@ -53,7 +53,31 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-foreground antialiased min-h-screen;
+  }
+
+  /* Styles spécifiques pour les sections */
+  section {
+    @apply bg-background text-foreground transition-colors duration-300;
+  }
+
+  /* Styles pour les cartes et conteneurs */
+  .card, 
+  .container,
+  .content-box {
+    @apply bg-card text-card-foreground border-border transition-colors duration-300;
+  }
+
+  /* Styles pour les éléments de formulaire */
+  input, 
+  select, 
+  textarea {
+    @apply bg-background border-input text-foreground;
+  }
+
+  /* Styles pour les boutons */
+  button {
+    @apply transition-colors duration-300;
   }
 
   /* Custom scrollbar */
@@ -62,15 +86,14 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: transparent;
+    @apply bg-transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: theme('colors.primary.DEFAULT');
-    border-radius: 4px;
+    @apply bg-primary rounded;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: theme('colors.primary.DEFAULT/80');
+    @apply bg-primary/80;
   }
 }
