@@ -4,7 +4,6 @@ import { useState } from "react";
 import Logo from "./header/Logo";
 import MobileMenuButton from "./header/MobileMenuButton";
 import NavigationLink from "./header/NavigationLink";
-import { ThemeToggle } from "./header/ThemeToggle";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -63,11 +62,6 @@ const Header = () => {
             </NavigationMenuList>
           </NavigationMenu>
 
-          <div className="flex items-center space-x-2">
-            <ThemeToggle />
-            <MobileMenuButton onClick={toggleMenu} className="sm:hidden" />
-          </div>
-
           {/* Mobile Menu */}
           {isMenuOpen && (
             <div className="fixed sm:hidden inset-x-0 top-16 bg-secondary/95 backdrop-blur-sm border-t border-primary/20">
@@ -100,6 +94,8 @@ const Header = () => {
               </NavigationMenu>
             </div>
           )}
+
+          <MobileMenuButton onClick={toggleMenu} className="sm:hidden ml-4" />
         </div>
       </div>
     </header>

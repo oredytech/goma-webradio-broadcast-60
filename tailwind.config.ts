@@ -44,14 +44,6 @@ export default {
           DEFAULT: "#7E69AB",
           foreground: "#ffffff",
         },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
       },
       keyframes: {
         wave: {
@@ -70,13 +62,13 @@ export default {
       typography: {
         DEFAULT: {
           css: {
-            color: 'hsl(var(--foreground))',
-            h1: { color: 'hsl(var(--foreground))' },
-            h2: { color: 'hsl(var(--foreground))' },
-            h3: { color: 'hsl(var(--foreground))' },
-            h4: { color: 'hsl(var(--foreground))' },
-            p: { color: 'hsl(var(--foreground))' },
-            strong: { color: 'hsl(var(--foreground))' },
+            color: 'white',
+            h1: { color: 'white' },
+            h2: { color: 'white' },
+            h3: { color: 'white' },
+            h4: { color: 'white' },
+            p: { color: 'white' },
+            strong: { color: 'white' },
             a: { color: '#3da7f2' },
           },
         },
