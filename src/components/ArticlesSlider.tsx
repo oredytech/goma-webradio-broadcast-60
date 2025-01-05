@@ -13,7 +13,7 @@ const ArticlesSlider = () => {
     
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % articles.length);
-    }, 6000); // 6 seconds
+    }, 6000);
 
     return () => clearInterval(interval);
   }, [articles]);
@@ -33,8 +33,21 @@ const ArticlesSlider = () => {
   const currentArticle = articles[currentIndex];
 
   return (
-    <div className="relative overflow-hidden bg-secondary/5 py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="relative overflow-hidden py-16">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 w-full h-full"
+        style={{
+          backgroundImage: `url(${currentArticle._embedded?.["wp:featuredmedia"]?.[0]?.source_url})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          filter: 'blur(8px) brightness(0.3)',
+          transform: 'scale(1.1)',
+          transition: 'all 0.7s ease-in-out'
+        }}
+      />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <h2 className="text-3xl font-bold text-white mb-8">Derniers Articles</h2>
         <div className="relative">
           <div className="flex items-center justify-between absolute top-1/2 transform -translate-y-1/2 w-full z-10 px-4">
@@ -55,7 +68,7 @@ const ArticlesSlider = () => {
               <ChevronRight className="h-6 w-6" />
             </Button>
           </div>
-          <div className="relative bg-secondary/50 rounded-lg overflow-hidden">
+          <div className="relative bg-secondary/50 rounded-lg overflow-hidden backdrop-blur-sm">
             <div className="relative w-full h-[400px] transition-transform duration-700 ease-out">
               <img
                 src={currentArticle._embedded?.["wp:featuredmedia"]?.[0]?.source_url}
