@@ -3,7 +3,7 @@ import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY || "public-api-key",
+  apiKey: "AIzaSyBJ_P0w3penkfApveSvsaj9jfGvmLBMozY",
   authDomain: "goma-webradio.firebaseapp.com",
   projectId: "goma-webradio",
   storageBucket: "goma-webradio.firebasestorage.app",
