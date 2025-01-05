@@ -28,7 +28,7 @@ const sources = [
 ];
 
 const fetchArticles = async (source: string) => {
-  const response = await fetch(`${source}?_embed&per_page=5`);
+  const response = await fetch(`${source}?_embed&per_page=30`);
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
