@@ -45,21 +45,21 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-1.5">
               <FormLabel>Nom complet</FormLabel>
               <FormControl>
                 <Input
                   placeholder="John Doe"
                   {...field}
-                  className="bg-secondary/30 border-primary/20 text-white"
+                  className="bg-secondary/30 border-primary/20 text-white h-9"
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-xs" />
             </FormItem>
           )}
         />
@@ -67,17 +67,17 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-1.5">
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input
                   type="email"
                   placeholder="exemple@email.com"
                   {...field}
-                  className="bg-secondary/30 border-primary/20 text-white"
+                  className="bg-secondary/30 border-primary/20 text-white h-9"
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-xs" />
             </FormItem>
           )}
         />
@@ -85,17 +85,17 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-1.5">
               <FormLabel>Mot de passe</FormLabel>
               <FormControl>
                 <Input
                   type="password"
                   placeholder="••••••••"
                   {...field}
-                  className="bg-secondary/30 border-primary/20 text-white"
+                  className="bg-secondary/30 border-primary/20 text-white h-9"
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-xs" />
             </FormItem>
           )}
         />
@@ -103,21 +103,21 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
           control={form.control}
           name="confirmPassword"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-1.5">
               <FormLabel>Confirmer le mot de passe</FormLabel>
               <FormControl>
                 <Input
                   type="password"
                   placeholder="••••••••"
                   {...field}
-                  className="bg-secondary/30 border-primary/20 text-white"
+                  className="bg-secondary/30 border-primary/20 text-white h-9"
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-xs" />
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full h-9 mt-2">
           Créer un compte
         </Button>
       </form>
