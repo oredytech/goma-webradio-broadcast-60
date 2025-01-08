@@ -70,7 +70,7 @@ const PodcastSection = ({
           <Button
             variant="outline"
             onClick={() => navigate('/podcasts')}
-            className="text-white hover:text-primary"
+            className="bg-primary text-white hover:bg-primary/80 hover:text-white transition-colors"
           >
             Voir plus
           </Button>
