@@ -44,8 +44,8 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-[#E5DEFF]">
       <Header />
-      <div className="container px-4 sm:px-6 lg:px-8 flex items-center justify-center min-h-[calc(100vh-4rem)] py-8">
-        <div className="w-full max-w-md space-y-6 bg-secondary/50 p-6 sm:p-8 rounded-lg border border-primary/20 backdrop-blur-sm animate-fade-in">
+      <div className="container px-4 sm:px-6 lg:px-8 flex items-center justify-center min-h-[calc(100vh-4rem)] py-4 sm:py-8">
+        <div className="w-full max-w-md space-y-4 bg-secondary/50 p-4 sm:p-6 rounded-lg border border-primary/20 backdrop-blur-sm animate-fade-in my-4">
           <div className="space-y-2 text-center">
             <h1 className="text-2xl font-bold text-white">
               {isLogin ? "Connexion" : "Créer un compte"}
@@ -63,7 +63,7 @@ const Login = () => {
             <RegisterForm onSubmit={onSubmitRegister} />
           )}
 
-          <div className="text-center space-y-4">
+          <div className="text-center space-y-2">
             <button
               onClick={() => setIsLogin(!isLogin)}
               className="text-primary hover:underline text-sm"
