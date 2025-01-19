@@ -36,7 +36,7 @@ const Index = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Index
               Goma Webradio
             </h1>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Your digital destination for the best music, news, and entertainment
+             Fasi ya Ndule na ma informations za kwetu
             </p>
             
             {/* Large Play Button */}
