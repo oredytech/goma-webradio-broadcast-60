@@ -36,7 +36,7 @@ const Index = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Index
               Goma Webradio
             </h1>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-             Fasi ya Ndule na ma informations za kwetu
+             Fasi ya Ndule na ma infos za palet
             </p>
             
             {/* Large Play Button */}
