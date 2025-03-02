@@ -100,7 +100,7 @@ const DashboardSidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
       )}
     >
       <div className="flex items-center justify-between p-4 border-b border-primary/20">
-        {!collapsed && <Logo className="h-8" />}
+        {!collapsed && <Logo />}
         <button 
           onClick={() => setCollapsed(!collapsed)}
           className="p-1 rounded-md text-gray-300 hover:text-white hover:bg-primary/20"
@@ -171,3 +171,4 @@ const DashboardSidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
 };
 
 export default DashboardSidebar;
+
