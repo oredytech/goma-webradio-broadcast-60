@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import AnalyticsCard from "@/components/dashboard/AnalyticsCard";
 import VisitorsChart from "@/components/dashboard/VisitorsChart";
@@ -17,10 +18,15 @@ import ContentStatsChart from "@/components/dashboard/ContentStatsChart";
 import DemographicsChart from "@/components/dashboard/DemographicsChart";
 import SubscriberCard from "@/components/dashboard/SubscriberCard";
 import type { WordPressArticle } from "@/hooks/useWordpressArticles";
+import { useGoogleAnalytics } from "@/utils/googleAnalytics";
 
 const Dashboard = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const { toast } = useToast();
+  
+  // Get Google Analytics data
+  const { analyticsData, isLoading: isLoadingAnalytics, error: analyticsError } = useGoogleAnalytics();
   
   // Fetch articles
   const { data: articles, isLoading } = useQuery<WordPressArticle[]>({
@@ -35,6 +41,15 @@ const Dashboard = () => {
       return response.json();
     },
   });
+
+  // Show error toast if analytics data fails to load
+  if (analyticsError && !toast.isActive) {
+    toast({
+      title: "Erreur de chargement",
+      description: analyticsError,
+      variant: "destructive",
+    });
+  }
 
   // Filter articles based on search term
   const filteredArticles = articles?.filter(article => {
@@ -83,7 +98,7 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
               <AnalyticsCard
                 title="Vues de page"
-                value="290+"
+                value={`${analyticsData.pageViews}+`}
                 description="Total des vues ce mois-ci"
                 change="+5.2% depuis le mois dernier"
                 changeType="positive"
@@ -91,7 +106,7 @@ const Dashboard = () => {
               />
               <AnalyticsCard
                 title="Utilisateurs"
-                value="145"
+                value={analyticsData.visitors.toString()}
                 description="Utilisateurs actifs par jour"
                 change="+2.9% depuis la semaine dernière"
                 changeType="positive"
@@ -118,7 +133,7 @@ const Dashboard = () => {
             {/* Charts Row */}
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
               <div className="xl:col-span-2">
-                <VisitorsChart />
+                <VisitorsChart data={analyticsData.visitorsByDay} isLoading={isLoadingAnalytics} />
               </div>
               <div>
                 <ContentStatsChart />
@@ -128,7 +143,7 @@ const Dashboard = () => {
             {/* Second Charts Row */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-2">
-                <DemographicsChart />
+                <DemographicsChart data={analyticsData.visitorsByCountry} isLoading={isLoadingAnalytics} />
               </div>
               <div>
                 <SubscriberCard count="8,62k" growth="12%" />
