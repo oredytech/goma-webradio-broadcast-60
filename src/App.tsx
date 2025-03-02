@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,6 +11,7 @@ import News from "./pages/News";
 import About from "./pages/About";
 import Podcasts from "./pages/Podcasts";
 import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 import RadioPlayer from "./components/RadioPlayer";
 
 const queryClient = new QueryClient();
@@ -51,6 +53,7 @@ const App = () => {
             <Route path="/actualites/politique" element={<News filter="politique" />} />
             <Route path="/a-propos" element={<About />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route 
               path="/podcasts" 
               element={
