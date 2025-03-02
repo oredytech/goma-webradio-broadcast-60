@@ -56,7 +56,6 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
 
   const featuredImageUrl = article._embedded?.["wp:featuredmedia"]?.[0]?.source_url || '/placeholder.svg';
   
-  // Decode HTML entities in the title
   const decodedTitle = new DOMParser().parseFromString(article.title.rendered, 'text/html').body.textContent || article.title.rendered;
 
   return (
@@ -138,8 +137,19 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
             {/* Advertisement Section */}
             <div className="bg-secondary/50 rounded-lg p-6 backdrop-blur-sm sticky top-24">
               <h3 className="text-xl font-bold text-white mb-4">Publicité</h3>
-              <div className="aspect-square bg-primary/20 rounded-lg flex items-center justify-center">
-                <span className="text-white/50">Espace publicitaire</span>
+              <div className="rounded-lg flex items-center justify-center">
+                <a 
+                  href="https://affiliation.lws-hosting.com/statistics/click/248/872316963" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <img 
+                    src="https://affiliation.lws-hosting.com/banners/viewbanner/248/872316963" 
+                    alt="LWS Hosting" 
+                    className="w-full h-auto" 
+                    style={{ maxWidth: "100%" }}
+                  />
+                </a>
               </div>
             </div>
           </aside>
