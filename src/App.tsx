@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,19 +13,15 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import RadioPlayer from "./components/RadioPlayer";
 
-// Google Analytics
-const addGoogleAnalytics = () => {
-  const script = document.createElement('script');
-  script.async = true;
-  script.src = "https://www.googletagmanager.com/gtag/js?id=G-ZJFRKKGTTS";
-  document.head.appendChild(script);
-
-  window.dataLayer = window.dataLayer || [];
-  function gtag(...args: any[]) {
-    window.dataLayer.push(args);
+// Google Analytics tracking
+const trackPageView = () => {
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'page_view', {
+      page_title: document.title,
+      page_location: window.location.href,
+      page_path: window.location.pathname
+    });
   }
-  gtag('js', new Date());
-  gtag('config', 'G-ZJFRKKGTTS');
 };
 
 const queryClient = new QueryClient();
@@ -37,13 +32,16 @@ const App = () => {
   const [showPlayer, setShowPlayer] = useState(true);
 
   useEffect(() => {
-    // Initialize Google Analytics
-    addGoogleAnalytics();
+    // Track initial page view
+    trackPageView();
     
     // Hide player on dashboard route
     const checkRoute = () => {
       const pathname = window.location.pathname;
       setShowPlayer(!pathname.includes('/dashboard'));
+      
+      // Track page views on route change
+      trackPageView();
     };
     
     checkRoute();
