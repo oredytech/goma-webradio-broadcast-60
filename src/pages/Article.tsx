@@ -87,6 +87,7 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
   const featuredImageUrl = fullArticle._embedded?.["wp:featuredmedia"]?.[0]?.source_url || '/placeholder.svg';
   const decodedTitle = decodeHtmlTitle(fullArticle.title.rendered);
   const metaDescription = extractMetaDescription(fullArticle.excerpt.rendered);
+  const currentUrl = window.location.href;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
@@ -94,6 +95,7 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
         title={decodedTitle}
         description={metaDescription}
         imageUrl={featuredImageUrl}
+        url={currentUrl}
       />
       
       <Header />
