@@ -10,6 +10,7 @@ import Article from "./pages/Article";
 import News from "./pages/News";
 import About from "./pages/About";
 import Podcasts from "./pages/Podcasts";
+import PodcastEpisode from "./pages/PodcastEpisode";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import RadioPlayer from "./components/RadioPlayer";
@@ -91,6 +92,17 @@ const App = () => {
               path="/podcasts" 
               element={
                 <Podcasts 
+                  isPlaying={isPlaying}
+                  setIsPlaying={setIsPlaying}
+                  currentAudio={currentAudio}
+                  setCurrentAudio={setCurrentAudio}
+                />
+              } 
+            />
+            <Route 
+              path="/podcast/:slug" 
+              element={
+                <PodcastEpisode 
                   isPlaying={isPlaying}
                   setIsPlaying={setIsPlaying}
                   currentAudio={currentAudio}

@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { Volume2, Play, Pause, Loader2 } from 'lucide-react';
 import { Slider } from "@/components/ui/slider";
@@ -77,9 +78,22 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
   }, [setIsPlaying]);
 
   useEffect(() => {
+    let currentSrc = "";
+    
     if (audioRef.current) {
-      setIsLoading(true);
-      audioRef.current.src = currentAudio || 'https://stream.zeno.fm/4d61wprrp7zuv';
+      currentSrc = audioRef.current.src;
+      
+      // Si la source audio a changé, on charge la nouvelle source
+      if (currentAudio && currentSrc !== currentAudio) {
+        setIsLoading(true);
+        audioRef.current.src = currentAudio;
+      } else if (!currentAudio && currentSrc !== "https://stream.zeno.fm/4d61wprrp7zuv") {
+        // Si pas d'audio spécifique, on revient à la radio en direct
+        setIsLoading(true);
+        audioRef.current.src = "https://stream.zeno.fm/4d61wprrp7zuv";
+      }
+      
+      // On joue ou on met en pause selon l'état
       if (isPlaying) {
         audioRef.current.play().catch(error => {
           console.error('Error playing audio:', error);
