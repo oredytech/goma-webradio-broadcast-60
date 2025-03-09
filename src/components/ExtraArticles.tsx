@@ -2,7 +2,7 @@
 import { useWordpressArticles } from "@/hooks/useWordpressArticles";
 import { Link } from "react-router-dom";
 import ArticleSocialActions from "./ArticleSocialActions";
-import { createSlug } from "@/pages/Article";
+import { createSlug, decodeHtmlTitle } from "@/utils/articleUtils";
 
 const ExtraArticles = () => {
   const { data: articles, isLoading, error } = useWordpressArticles();
@@ -21,7 +21,7 @@ const ExtraArticles = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {randomArticles.map((article) => {
-            const decodedTitle = new DOMParser().parseFromString(article.title.rendered, 'text/html').body.textContent || article.title.rendered;
+            const decodedTitle = decodeHtmlTitle(article.title.rendered);
             const articleSlug = createSlug(decodedTitle);
             
             return (

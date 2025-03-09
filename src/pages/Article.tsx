@@ -1,15 +1,16 @@
 
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
 import type { WordPressArticle } from "@/hooks/useWordpressArticles";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Helmet } from "react-helmet";
 import ExtraArticles from "@/components/ExtraArticles";
+import ArticleMetaTags from "@/components/ArticleMetaTags";
+import ArticleHero from "@/components/ArticleHero";
+import ArticleContent from "@/components/ArticleContent";
+import ArticleSidebar from "@/components/ArticleSidebar";
+import { createSlug, extractMetaDescription, decodeHtmlTitle } from "@/utils/articleUtils";
 
 interface ArticleProps {
   isPlaying: boolean;
@@ -18,19 +19,9 @@ interface ArticleProps {
   setCurrentAudio: (audio: string | null) => void;
 }
 
-// Fonction pour créer un slug à partir d'un titre
-export const createSlug = (title: string): string => {
-  return title
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-};
-
 const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: ArticleProps) => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const [comment, setComment] = useState({ name: "", email: "", content: "" });
 
   // Récupérer tous les articles pour trouver celui qui correspond au slug
   const { data: articles, isLoading: articlesLoading } = useQuery<WordPressArticle[]>({
@@ -48,7 +39,7 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
 
   // Trouver l'article qui correspond au slug
   const article = articles?.find(article => {
-    const title = new DOMParser().parseFromString(article.title.rendered, 'text/html').body.textContent || article.title.rendered;
+    const title = decodeHtmlTitle(article.title.rendered);
     return createSlug(title) === slug;
   });
 
@@ -93,155 +84,30 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
     );
   }
 
-  const handleSubmitComment = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Commentaire soumis:", comment);
-    setComment({ name: "", email: "", content: "" });
-  };
-
   const featuredImageUrl = fullArticle._embedded?.["wp:featuredmedia"]?.[0]?.source_url || '/placeholder.svg';
-  
-  const decodedTitle = new DOMParser().parseFromString(fullArticle.title.rendered, 'text/html').body.textContent || fullArticle.title.rendered;
-  
-  // Extraire une description pour les meta tags Open Graph
-  const getMetaDescription = () => {
-    const div = document.createElement('div');
-    div.innerHTML = fullArticle.excerpt.rendered;
-    return div.textContent?.trim() || "Lisez cet article sur notre site";
-  };
-
-  const metaDescription = getMetaDescription();
-  
-  // URL absolue pour le partage
-  const absoluteUrl = window.location.origin + window.location.pathname;
-  
-  // URL absolue pour l'image
-  const absoluteImageUrl = featuredImageUrl.startsWith('http') 
-    ? featuredImageUrl 
-    : window.location.origin + featuredImageUrl;
+  const decodedTitle = decodeHtmlTitle(fullArticle.title.rendered);
+  const metaDescription = extractMetaDescription(fullArticle.excerpt.rendered);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
-      {/* Open Graph Meta Tags avec URLs absolues */}
-      <Helmet>
-        <title>{decodedTitle} | GOMA WEBRADIO</title>
-        <meta name="description" content={metaDescription} />
-        
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={absoluteUrl} />
-        <meta property="og:title" content={decodedTitle} />
-        <meta property="og:description" content={metaDescription} />
-        <meta property="og:image" content={absoluteImageUrl} />
-        <meta property="og:site_name" content="GOMA WEBRADIO" />
-        
-        {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={absoluteUrl} />
-        <meta property="twitter:title" content={decodedTitle} />
-        <meta property="twitter:description" content={metaDescription} />
-        <meta property="twitter:image" content={absoluteImageUrl} />
-      </Helmet>
+      <ArticleMetaTags 
+        title={decodedTitle}
+        description={metaDescription}
+        imageUrl={featuredImageUrl}
+      />
       
       <Header />
-      
-      {/* Hero Section with Featured Image */}
-      <div className="pt-16">
-        <div className="relative h-[40vh] md:h-[50vh] lg:h-[60vh]">
-          <div 
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${featuredImageUrl})` }}
-          />
-          <div className="absolute inset-0 bg-black/50" />
-          <div className="relative container mx-auto px-4 h-full flex items-center justify-center">
-            <div className="max-w-3xl text-center mt-8">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
-                {decodedTitle}
-              </h1>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ArticleHero title={decodedTitle} imageUrl={featuredImageUrl} />
 
       {/* Content Section with Right Sidebar */}
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Main Content */}
-          <main className="lg:col-span-8">
-            {/* Article Content */}
-            <div 
-              className="prose prose-lg prose-invert max-w-none mb-12"
-              dangerouslySetInnerHTML={{ __html: fullArticle.content.rendered }}
-            />
-
-            {/* Comment Form */}
-            <div className="bg-secondary/50 rounded-lg p-6 backdrop-blur-sm">
-              <h2 className="text-2xl font-bold text-white mb-6">Laissez un commentaire</h2>
-              <form onSubmit={handleSubmitComment} className="space-y-4">
-                <Input
-                  type="text"
-                  placeholder="Votre nom"
-                  value={comment.name}
-                  onChange={(e) => setComment({ ...comment, name: e.target.value })}
-                  className="bg-white/10 border-primary/20 text-white placeholder:text-white/50"
-                />
-                <Input
-                  type="email"
-                  placeholder="Votre email"
-                  value={comment.email}
-                  onChange={(e) => setComment({ ...comment, email: e.target.value })}
-                  className="bg-white/10 border-primary/20 text-white placeholder:text-white/50"
-                />
-                <Textarea
-                  placeholder="Votre commentaire"
-                  value={comment.content}
-                  onChange={(e) => setComment({ ...comment, content: e.target.value })}
-                  className="bg-white/10 border-primary/20 text-white placeholder:text-white/50 min-h-[150px]"
-                />
-                <Button type="submit" className="w-full sm:w-auto">
-                  Soumettre
-                </Button>
-              </form>
-            </div>
-          </main>
-
-          {/* Right Sidebar */}
-          <aside className="lg:col-span-4 space-y-8">
-            {/* Recent Comments Section */}
-            <div className="bg-secondary/50 rounded-lg p-6 backdrop-blur-sm">
-              <h3 className="text-xl font-bold text-white mb-4">Derniers commentaires</h3>
-              <div className="space-y-4">
-                <div className="border-b border-primary/20 pb-4">
-                  <p className="text-white/80 text-sm">Pas encore de commentaires</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Advertisement Section */}
-            <div className="bg-secondary/50 rounded-lg p-6 backdrop-blur-sm sticky top-24">
-              <h3 className="text-xl font-bold text-white mb-4">Publicité</h3>
-              <div className="rounded-lg flex items-center justify-center">
-                <a 
-                  href="https://affiliation.lws-hosting.com/statistics/click/248/872316963" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
-                  <img 
-                    src="https://affiliation.lws-hosting.com/banners/viewbanner/248/872316963" 
-                    alt="LWS Hosting" 
-                    className="w-full h-auto" 
-                    style={{ maxWidth: "100%" }}
-                  />
-                </a>
-              </div>
-            </div>
-          </aside>
+          <ArticleContent content={fullArticle.content.rendered} />
+          <ArticleSidebar />
         </div>
       </div>
 
-      {/* Articles supplémentaires */}
       <ExtraArticles />
-
       <Footer />
     </div>
   );
