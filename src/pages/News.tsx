@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArticlesSlider from "@/components/ArticlesSlider";
 import { Link } from "react-router-dom";
-import { createSlug } from "./Article";
+import { createSlug, decodeHtmlTitle } from "@/utils/articleUtils";
 
 interface NewsProps {
   filter?: string;
@@ -58,7 +58,7 @@ const News = ({ filter }: NewsProps) => {
               <h2 className="text-2xl font-semibold text-white">{source.name}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {results[sourceIndex].data?.map((article: WordPressArticle) => {
-                  const decodedTitle = new DOMParser().parseFromString(article.title.rendered, 'text/html').body.textContent || article.title.rendered;
+                  const decodedTitle = decodeHtmlTitle(article.title.rendered);
                   const articleSlug = createSlug(decodedTitle);
                   
                   return (

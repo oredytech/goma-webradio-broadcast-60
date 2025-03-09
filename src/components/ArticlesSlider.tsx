@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
-import { createSlug } from "@/pages/Article";
+import { createSlug, decodeHtmlTitle } from "@/utils/articleUtils";
 
 const ArticlesSlider = () => {
   const { data: articles, isLoading, error } = useWordpressArticles();
@@ -33,7 +33,7 @@ const ArticlesSlider = () => {
   };
 
   const currentArticle = articles[currentIndex];
-  const decodedTitle = new DOMParser().parseFromString(currentArticle.title.rendered, 'text/html').body.textContent || currentArticle.title.rendered;
+  const decodedTitle = decodeHtmlTitle(currentArticle.title.rendered);
   const articleSlug = createSlug(decodedTitle);
 
   return (
