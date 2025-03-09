@@ -13,11 +13,12 @@ import { Navigate } from "react-router-dom";
 import { User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { toast } from "@/components/ui/use-toast";
-import { LogOut } from "lucide-react";
+import { LogOut, Users, MousePointerClick, ArrowDown } from "lucide-react";
 
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
@@ -55,7 +56,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <DashboardSidebar />
+      <DashboardSidebar collapsed={sidebarCollapsed} setCollapsed={setSidebarCollapsed} />
       <div className="flex-1 overflow-y-auto bg-background">
         <div className="p-6">
           <header className="flex justify-between items-center mb-6">
@@ -82,23 +83,26 @@ const Dashboard = () => {
                 <AnalyticsCard 
                   title="Pages vues" 
                   value="12,452" 
-                  change={"+12.3%"} 
-                  trend="up"
-                  description="Derniers 30 jours" 
+                  changeType="positive"
+                  change="+12.3%" 
+                  description="Derniers 30 jours"
+                  icon={<MousePointerClick className="h-4 w-4" />}
                 />
                 <AnalyticsCard 
                   title="Utilisateurs uniques" 
                   value="3,742" 
-                  change={"+8.7%"} 
-                  trend="up"
-                  description="Derniers 30 jours" 
+                  changeType="positive"
+                  change="+8.7%" 
+                  description="Derniers 30 jours"
+                  icon={<Users className="h-4 w-4" />}
                 />
                 <AnalyticsCard 
                   title="Taux de rebond" 
                   value="32.1%" 
-                  change={"-4.2%"} 
-                  trend="down"
-                  description="Derniers 30 jours" 
+                  changeType="negative"
+                  change="-4.2%" 
+                  description="Derniers 30 jours"
+                  icon={<ArrowDown className="h-4 w-4" />}
                 />
               </div>
 
@@ -109,28 +113,20 @@ const Dashboard = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <SubscriberCard 
-                  title="Abonnés Newsletter" 
-                  value="1,245" 
-                  change={"+23"} 
-                  description="Cette semaine" 
+                  count="1,245" 
+                  growth="+23" 
                 />
                 <SubscriberCard 
-                  title="Membres" 
-                  value="782" 
-                  change={"+15"} 
-                  description="Cette semaine" 
+                  count="782" 
+                  growth="+15" 
                 />
                 <SubscriberCard 
-                  title="Commentaires" 
-                  value="324" 
-                  change={"+47"} 
-                  description="Cette semaine" 
+                  count="324" 
+                  growth="+47" 
                 />
                 <SubscriberCard 
-                  title="Partages sociaux" 
-                  value="1,842" 
-                  change={"+98"} 
-                  description="Cette semaine" 
+                  count="1,842" 
+                  growth="+98" 
                 />
               </div>
             </TabsContent>

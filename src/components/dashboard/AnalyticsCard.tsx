@@ -1,6 +1,6 @@
 
 import { cn } from "@/lib/utils";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 interface AnalyticsCardProps {
   title: string;
@@ -40,10 +40,9 @@ const AnalyticsCard = ({
           changeType === "negative" && "text-red-500 bg-red-500/10",
           changeType === "neutral" && "text-blue-500 bg-blue-500/10",
         )}>
-          <ArrowUpRight className={cn(
-            "h-3 w-3 mr-1",
-            changeType === "negative" && "transform rotate-90"
-          )} />
+          {changeType === "positive" && <ArrowUpRight className="h-3 w-3 mr-1" />}
+          {changeType === "negative" && <ArrowDownRight className="h-3 w-3 mr-1" />}
+          {changeType === "neutral" && <ArrowUpRight className="h-3 w-3 mr-1" />}
           <span>{change}</span>
         </div>
       </div>
