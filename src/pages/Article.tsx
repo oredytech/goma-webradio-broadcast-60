@@ -111,27 +111,36 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
   };
 
   const metaDescription = getMetaDescription();
+  
+  // URL absolue pour le partage
+  const absoluteUrl = window.location.origin + window.location.pathname;
+  
+  // URL absolue pour l'image
+  const absoluteImageUrl = featuredImageUrl.startsWith('http') 
+    ? featuredImageUrl 
+    : window.location.origin + featuredImageUrl;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
-      {/* Open Graph Meta Tags */}
+      {/* Open Graph Meta Tags avec URLs absolues */}
       <Helmet>
         <title>{decodedTitle} | GOMA WEBRADIO</title>
         <meta name="description" content={metaDescription} />
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="article" />
-        <meta property="og:url" content={window.location.href} />
+        <meta property="og:url" content={absoluteUrl} />
         <meta property="og:title" content={decodedTitle} />
         <meta property="og:description" content={metaDescription} />
-        <meta property="og:image" content={featuredImageUrl} />
+        <meta property="og:image" content={absoluteImageUrl} />
+        <meta property="og:site_name" content="GOMA WEBRADIO" />
         
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={window.location.href} />
+        <meta property="twitter:url" content={absoluteUrl} />
         <meta property="twitter:title" content={decodedTitle} />
         <meta property="twitter:description" content={metaDescription} />
-        <meta property="twitter:image" content={featuredImageUrl} />
+        <meta property="twitter:image" content={absoluteImageUrl} />
       </Helmet>
       
       <Header />
