@@ -1,8 +1,10 @@
+
 import { useWordpressArticles, WordPressArticle } from "@/hooks/useWordpressArticles";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
+import { createSlug } from "@/pages/Article";
 
 const ArticlesSlider = () => {
   const { data: articles, isLoading, error } = useWordpressArticles();
@@ -31,6 +33,8 @@ const ArticlesSlider = () => {
   };
 
   const currentArticle = articles[currentIndex];
+  const decodedTitle = new DOMParser().parseFromString(currentArticle.title.rendered, 'text/html').body.textContent || currentArticle.title.rendered;
+  const articleSlug = createSlug(decodedTitle);
 
   return (
     <div className="relative overflow-hidden py-16">
@@ -72,13 +76,13 @@ const ArticlesSlider = () => {
             <div className="relative w-full h-[400px] transition-transform duration-700 ease-out">
               <img
                 src={currentArticle._embedded?.["wp:featuredmedia"]?.[0]?.source_url}
-                alt={currentArticle.title.rendered}
+                alt={decodedTitle}
                 className="w-full h-[400px] object-cover transform transition-all duration-700 ease-out scale-105 hover:scale-100"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent transition-opacity duration-700">
                 <div className="absolute bottom-0 left-0 right-0 p-6 transform transition-all duration-500 ease-out">
                   <Link
-                    to={`/article/${currentArticle.id}`}
+                    to={`/article/${articleSlug}`}
                     className="text-2xl font-bold text-white hover:text-primary transition-colors inline-block"
                     dangerouslySetInnerHTML={{ __html: currentArticle.title.rendered }}
                   />
@@ -86,7 +90,7 @@ const ArticlesSlider = () => {
                     className="text-gray-300 mt-2 line-clamp-2 transform transition-all duration-500"
                     dangerouslySetInnerHTML={{ __html: currentArticle.excerpt.rendered }}
                   />
-                  <Link to={`/article/${currentArticle.id}`}>
+                  <Link to={`/article/${articleSlug}`}>
                     <Button className="mt-4 transform hover:scale-105 transition-transform">Lire Plus</Button>
                   </Link>
                 </div>

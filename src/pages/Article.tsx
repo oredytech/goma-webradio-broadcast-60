@@ -1,12 +1,15 @@
-import { useParams } from "react-router-dom";
+
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { WordPressArticle } from "@/hooks/useWordpressArticles";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Helmet } from "react-helmet";
+import ExtraArticles from "@/components/ExtraArticles";
 
 interface ArticleProps {
   isPlaying: boolean;
@@ -15,15 +18,26 @@ interface ArticleProps {
   setCurrentAudio: (audio: string | null) => void;
 }
 
+// Fonction pour créer un slug à partir d'un titre
+export const createSlug = (title: string): string => {
+  return title
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+};
+
 const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: ArticleProps) => {
-  const { id } = useParams();
+  const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const [comment, setComment] = useState({ name: "", email: "", content: "" });
 
-  const { data: article, isLoading } = useQuery<WordPressArticle>({
-    queryKey: ["article", id],
+  // Récupérer tous les articles pour trouver celui qui correspond au slug
+  const { data: articles, isLoading: articlesLoading } = useQuery<WordPressArticle[]>({
+    queryKey: ["wordpress-articles"],
     queryFn: async () => {
       const response = await fetch(
-        `https://totalementactus.net/wp-json/wp/v2/posts/${id}?_embed`
+        "https://totalementactus.net/wp-json/wp/v2/posts?_embed&per_page=30"
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -31,6 +45,37 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
       return response.json();
     },
   });
+
+  // Trouver l'article qui correspond au slug
+  const article = articles?.find(article => {
+    const title = new DOMParser().parseFromString(article.title.rendered, 'text/html').body.textContent || article.title.rendered;
+    return createSlug(title) === slug;
+  });
+
+  // Récupérer l'article par ID si on a trouvé une correspondance
+  const { data: fullArticle, isLoading: articleLoading } = useQuery<WordPressArticle>({
+    queryKey: ["article", article?.id],
+    queryFn: async () => {
+      if (!article?.id) throw new Error("Article not found");
+      const response = await fetch(
+        `https://totalementactus.net/wp-json/wp/v2/posts/${article.id}?_embed`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    },
+    enabled: !!article?.id,
+  });
+
+  // Redirection vers la page 404 si l'article n'est pas trouvé après le chargement
+  useEffect(() => {
+    if (!articlesLoading && !articleLoading && !fullArticle) {
+      navigate("/404", { replace: true });
+    }
+  }, [articlesLoading, articleLoading, fullArticle, navigate]);
+
+  const isLoading = articlesLoading || articleLoading;
 
   if (isLoading) {
     return (
@@ -40,7 +85,7 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
     );
   }
 
-  if (!article) {
+  if (!fullArticle) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-secondary to-black flex items-center justify-center">
         <div className="text-white">Article non trouvé</div>
@@ -54,12 +99,41 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
     setComment({ name: "", email: "", content: "" });
   };
 
-  const featuredImageUrl = article._embedded?.["wp:featuredmedia"]?.[0]?.source_url || '/placeholder.svg';
+  const featuredImageUrl = fullArticle._embedded?.["wp:featuredmedia"]?.[0]?.source_url || '/placeholder.svg';
   
-  const decodedTitle = new DOMParser().parseFromString(article.title.rendered, 'text/html').body.textContent || article.title.rendered;
+  const decodedTitle = new DOMParser().parseFromString(fullArticle.title.rendered, 'text/html').body.textContent || fullArticle.title.rendered;
+  
+  // Extraire une description pour les meta tags Open Graph
+  const getMetaDescription = () => {
+    const div = document.createElement('div');
+    div.innerHTML = fullArticle.excerpt.rendered;
+    return div.textContent?.trim() || "Lisez cet article sur notre site";
+  };
+
+  const metaDescription = getMetaDescription();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
+      {/* Open Graph Meta Tags */}
+      <Helmet>
+        <title>{decodedTitle} | GOMA WEBRADIO</title>
+        <meta name="description" content={metaDescription} />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:title" content={decodedTitle} />
+        <meta property="og:description" content={metaDescription} />
+        <meta property="og:image" content={featuredImageUrl} />
+        
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content={window.location.href} />
+        <meta property="twitter:title" content={decodedTitle} />
+        <meta property="twitter:description" content={metaDescription} />
+        <meta property="twitter:image" content={featuredImageUrl} />
+      </Helmet>
+      
       <Header />
       
       {/* Hero Section with Featured Image */}
@@ -88,7 +162,7 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
             {/* Article Content */}
             <div 
               className="prose prose-lg prose-invert max-w-none mb-12"
-              dangerouslySetInnerHTML={{ __html: article.content.rendered }}
+              dangerouslySetInnerHTML={{ __html: fullArticle.content.rendered }}
             />
 
             {/* Comment Form */}
@@ -155,6 +229,9 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
           </aside>
         </div>
       </div>
+
+      {/* Articles supplémentaires */}
+      <ExtraArticles />
 
       <Footer />
     </div>

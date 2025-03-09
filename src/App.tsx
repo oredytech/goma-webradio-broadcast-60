@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -71,7 +72,7 @@ const App = () => {
               } 
             />
             <Route 
-              path="/article/:id" 
+              path="/article/:slug" 
               element={
                 <Article 
                   isPlaying={isPlaying}
@@ -90,6 +91,18 @@ const App = () => {
               path="/podcasts" 
               element={
                 <Podcasts 
+                  isPlaying={isPlaying}
+                  setIsPlaying={setIsPlaying}
+                  currentAudio={currentAudio}
+                  setCurrentAudio={setCurrentAudio}
+                />
+              } 
+            />
+            {/* Route de secours pour la compatibilité avec les anciens liens */}
+            <Route 
+              path="/article/id/:id" 
+              element={
+                <Article 
                   isPlaying={isPlaying}
                   setIsPlaying={setIsPlaying}
                   currentAudio={currentAudio}
