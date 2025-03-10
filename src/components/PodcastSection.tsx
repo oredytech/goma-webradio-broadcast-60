@@ -10,6 +10,8 @@ interface PodcastSectionProps {
   setIsPlaying: (isPlaying: boolean) => void;
   currentAudio: string | null;
   setCurrentAudio: (url: string | null) => void;
+  setCurrentTrack?: (title: string) => void;
+  setCurrentArtist?: (artist: string) => void;
 }
 
 const PodcastSection = ({
@@ -17,6 +19,8 @@ const PodcastSection = ({
   setIsPlaying,
   currentAudio,
   setCurrentAudio,
+  setCurrentTrack,
+  setCurrentArtist,
 }: PodcastSectionProps) => {
   const [episodes, setEpisodes] = useState([
     {
@@ -62,6 +66,15 @@ const PodcastSection = ({
     setLoadingEpisode(episode.enclosure.url);
     setCurrentAudio(episode.enclosure.url);
     setIsPlaying(true);
+
+    // Set track and artist information for media session if provided
+    if (setCurrentTrack) {
+      setCurrentTrack(episode.title);
+    }
+    
+    if (setCurrentArtist) {
+      setCurrentArtist("Goma Webradio");
+    }
 
     // Simuler la fin du chargement lorsque l'audio commence à jouer
     const audio = new Audio(episode.enclosure.url);
