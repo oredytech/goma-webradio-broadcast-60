@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { ThumbsUp, ThumbsDown, MessageSquare } from 'lucide-react';
 import { db, auth } from '@/lib/firebase';
@@ -18,30 +19,39 @@ const ArticleSocialActions = ({ articleId }: ArticleSocialActionsProps) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const articleRef = doc(db, 'articles', articleId.toString());
-    
-    const unsubscribe = onSnapshot(articleRef, (doc) => {
-      if (doc.exists()) {
-        const data = doc.data();
-        setLikes(data.likes || 0);
-        setDislikes(data.dislikes || 0);
-        setComments(data.comments || 0);
-      }
-    });
-
-    // Vérifier si l'utilisateur a déjà liké/disliké
-    if (auth.currentUser) {
-      const userInteractionRef = doc(db, 'userInteractions', `${auth.currentUser.uid}_${articleId}`);
-      getDoc(userInteractionRef).then((doc) => {
+    try {
+      const articleRef = doc(db, 'articles', articleId.toString());
+      
+      const unsubscribe = onSnapshot(articleRef, (doc) => {
         if (doc.exists()) {
           const data = doc.data();
-          setUserLiked(data.liked || false);
-          setUserDisliked(data.disliked || false);
+          setLikes(data.likes || 0);
+          setDislikes(data.dislikes || 0);
+          setComments(data.comments || 0);
         }
+      }, (error) => {
+        console.error("Snapshot listener error:", error);
       });
-    }
 
-    return () => unsubscribe();
+      // Vérifier si l'utilisateur a déjà liké/disliké
+      if (auth.currentUser) {
+        const userInteractionRef = doc(db, 'userInteractions', `${auth.currentUser.uid}_${articleId}`);
+        getDoc(userInteractionRef).then((doc) => {
+          if (doc.exists()) {
+            const data = doc.data();
+            setUserLiked(data.liked || false);
+            setUserDisliked(data.disliked || false);
+          }
+        }).catch(error => {
+          console.error("Failed to get user interaction:", error);
+        });
+      }
+
+      return () => unsubscribe();
+    } catch (error) {
+      console.error("Error in useEffect:", error);
+      return () => {};
+    }
   }, [articleId]);
 
   const handleLike = async () => {
@@ -54,32 +64,51 @@ const ArticleSocialActions = ({ articleId }: ArticleSocialActionsProps) => {
       return;
     }
 
-    const articleRef = doc(db, 'articles', articleId.toString());
-    const userInteractionRef = doc(db, 'userInteractions', `${auth.currentUser.uid}_${articleId}`);
-
     try {
+      const articleRef = doc(db, 'articles', articleId.toString());
+      const userInteractionRef = doc(db, 'userInteractions', `${auth.currentUser.uid}_${articleId}`);
+
       if (!userLiked) {
-        await setDoc(articleRef, { likes: increment(1) }, { merge: true });
-        if (userDisliked) {
-          await setDoc(articleRef, { dislikes: increment(-1) }, { merge: true });
-        }
-        await setDoc(userInteractionRef, { 
-          liked: true,
-          disliked: false,
-          userId: auth.currentUser.uid,
-          articleId
-        });
+        // Update UI optimistically
         setUserLiked(true);
         setUserDisliked(false);
+        
+        try {
+          await setDoc(articleRef, { likes: increment(1) }, { merge: true });
+          if (userDisliked) {
+            await setDoc(articleRef, { dislikes: increment(-1) }, { merge: true });
+          }
+          await setDoc(userInteractionRef, { 
+            liked: true,
+            disliked: false,
+            userId: auth.currentUser.uid,
+            articleId
+          });
+        } catch (error) {
+          // Rollback UI on error
+          console.error("Error updating likes:", error);
+          setUserLiked(false);
+          setUserDisliked(userDisliked);
+          throw error;
+        }
       } else {
-        await setDoc(articleRef, { likes: increment(-1) }, { merge: true });
-        await setDoc(userInteractionRef, { liked: false }, { merge: true });
+        // Update UI optimistically
         setUserLiked(false);
+        
+        try {
+          await setDoc(articleRef, { likes: increment(-1) }, { merge: true });
+          await setDoc(userInteractionRef, { liked: false }, { merge: true });
+        } catch (error) {
+          // Rollback UI on error
+          console.error("Error updating likes:", error);
+          setUserLiked(true);
+          throw error;
+        }
       }
     } catch (error) {
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue",
+        description: "Une erreur est survenue lors de l'interaction",
         variant: "destructive"
       });
     }
@@ -95,32 +124,51 @@ const ArticleSocialActions = ({ articleId }: ArticleSocialActionsProps) => {
       return;
     }
 
-    const articleRef = doc(db, 'articles', articleId.toString());
-    const userInteractionRef = doc(db, 'userInteractions', `${auth.currentUser.uid}_${articleId}`);
-
     try {
+      const articleRef = doc(db, 'articles', articleId.toString());
+      const userInteractionRef = doc(db, 'userInteractions', `${auth.currentUser.uid}_${articleId}`);
+
       if (!userDisliked) {
-        await setDoc(articleRef, { dislikes: increment(1) }, { merge: true });
-        if (userLiked) {
-          await setDoc(articleRef, { likes: increment(-1) }, { merge: true });
-        }
-        await setDoc(userInteractionRef, {
-          liked: false,
-          disliked: true,
-          userId: auth.currentUser.uid,
-          articleId
-        });
+        // Update UI optimistically
         setUserDisliked(true);
         setUserLiked(false);
+        
+        try {
+          await setDoc(articleRef, { dislikes: increment(1) }, { merge: true });
+          if (userLiked) {
+            await setDoc(articleRef, { likes: increment(-1) }, { merge: true });
+          }
+          await setDoc(userInteractionRef, {
+            liked: false,
+            disliked: true,
+            userId: auth.currentUser.uid,
+            articleId
+          });
+        } catch (error) {
+          // Rollback UI on error
+          console.error("Error updating dislikes:", error);
+          setUserDisliked(false);
+          setUserLiked(userLiked);
+          throw error;
+        }
       } else {
-        await setDoc(articleRef, { dislikes: increment(-1) }, { merge: true });
-        await setDoc(userInteractionRef, { disliked: false }, { merge: true });
+        // Update UI optimistically
         setUserDisliked(false);
+        
+        try {
+          await setDoc(articleRef, { dislikes: increment(-1) }, { merge: true });
+          await setDoc(userInteractionRef, { disliked: false }, { merge: true });
+        } catch (error) {
+          // Rollback UI on error
+          console.error("Error updating dislikes:", error);
+          setUserDisliked(true);
+          throw error;
+        }
       }
     } catch (error) {
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue",
+        description: "Une erreur est survenue lors de l'interaction",
         variant: "destructive"
       });
     }

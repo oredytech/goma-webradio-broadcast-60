@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from 'react-router-dom';
 import { usePodcastFeed } from '@/hooks/usePodcastFeed';
 import { useState, useEffect } from 'react';
@@ -9,6 +10,7 @@ import { createSlug } from '@/utils/articleUtils';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import ArticleSocialActions from '@/components/ArticleSocialActions';
+import { useToast } from '@/components/ui/use-toast';
 
 interface PodcastEpisodeProps {
   isPlaying: boolean;
@@ -27,6 +29,7 @@ const PodcastEpisode = ({
   const navigate = useNavigate();
   const { data: episodes, isLoading } = usePodcastFeed();
   const [loadingEpisode, setLoadingEpisode] = useState<string | null>(null);
+  const { toast } = useToast();
   
   const episode = episodes?.find(ep => createSlug(ep.title) === slug);
   
@@ -63,6 +66,14 @@ const PodcastEpisode = ({
     }
   };
 
+  const handleSocialError = () => {
+    toast({
+      title: "Fonctionnalité limitée",
+      description: "Les interactions sociales sont temporairement indisponibles",
+      variant: "destructive",
+    });
+  };
+
   if (isLoading || !episode) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
@@ -78,6 +89,7 @@ const PodcastEpisode = ({
   }
 
   const episodeImage = episode.itunes?.image || '/placeholder.svg';
+  const episodeId = parseInt(episode.pubDate, 10) || Date.now();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
@@ -101,7 +113,27 @@ const PodcastEpisode = ({
                 className="w-full aspect-square object-cover"
               />
               <div className="p-4 bg-secondary/70">
-                <ArticleSocialActions articleId={parseInt(episode.pubDate, 10) || Date.now()} />
+                <div className="flex items-center gap-4">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={handleSocialError}
+                    className="gap-2"
+                  >
+                    <MessageSquare className="text-gray-300" />
+                    <span>Commenter</span>
+                  </Button>
+                  
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={handleSocialError}
+                    className="gap-2"
+                  >
+                    <Share2 className="text-gray-300" />
+                    <span>Partager</span>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
