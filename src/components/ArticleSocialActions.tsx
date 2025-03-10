@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { ThumbsUp, ThumbsDown, MessageSquare } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, MessageSquare, Share2 } from 'lucide-react';
 import { db, auth } from '@/lib/firebase';
 import { doc, setDoc, getDoc, increment, onSnapshot } from 'firebase/firestore';
 import { Button } from './ui/button';
@@ -19,39 +19,53 @@ const ArticleSocialActions = ({ articleId }: ArticleSocialActionsProps) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    try {
-      const articleRef = doc(db, 'articles', articleId.toString());
-      
-      const unsubscribe = onSnapshot(articleRef, (doc) => {
-        if (doc.exists()) {
-          const data = doc.data();
-          setLikes(data.likes || 0);
-          setDislikes(data.dislikes || 0);
-          setComments(data.comments || 0);
+    let unsubscribe = () => {};
+    
+    const setupListeners = async () => {
+      try {
+        // Create article document if it doesn't exist yet
+        const articleRef = doc(db, 'articles', articleId.toString());
+        const articleDoc = await getDoc(articleRef);
+        
+        if (!articleDoc.exists()) {
+          await setDoc(articleRef, { 
+            likes: 0, 
+            dislikes: 0, 
+            comments: 0 
+          });
         }
-      }, (error) => {
-        console.error("Snapshot listener error:", error);
-      });
-
-      // Vérifier si l'utilisateur a déjà liké/disliké
-      if (auth.currentUser) {
-        const userInteractionRef = doc(db, 'userInteractions', `${auth.currentUser.uid}_${articleId}`);
-        getDoc(userInteractionRef).then((doc) => {
+        
+        // Setup listener for article changes
+        unsubscribe = onSnapshot(articleRef, (doc) => {
           if (doc.exists()) {
             const data = doc.data();
+            setLikes(data.likes || 0);
+            setDislikes(data.dislikes || 0);
+            setComments(data.comments || 0);
+          }
+        }, (error) => {
+          console.error("Snapshot listener error:", error);
+        });
+
+        // Check if user has already liked/disliked
+        if (auth.currentUser) {
+          const userInteractionRef = doc(db, 'userInteractions', `${auth.currentUser.uid}_${articleId}`);
+          const userDoc = await getDoc(userInteractionRef);
+          
+          if (userDoc.exists()) {
+            const data = userDoc.data();
             setUserLiked(data.liked || false);
             setUserDisliked(data.disliked || false);
           }
-        }).catch(error => {
-          console.error("Failed to get user interaction:", error);
-        });
+        }
+      } catch (error) {
+        console.error("Error in useEffect:", error);
       }
-
-      return () => unsubscribe();
-    } catch (error) {
-      console.error("Error in useEffect:", error);
-      return () => {};
-    }
+    };
+    
+    setupListeners();
+    
+    return () => unsubscribe();
   }, [articleId]);
 
   const handleLike = async () => {
@@ -68,12 +82,17 @@ const ArticleSocialActions = ({ articleId }: ArticleSocialActionsProps) => {
       const articleRef = doc(db, 'articles', articleId.toString());
       const userInteractionRef = doc(db, 'userInteractions', `${auth.currentUser.uid}_${articleId}`);
 
+      // Get the current values
+      const previousLiked = userLiked;
+      const previousDisliked = userDisliked;
+
       if (!userLiked) {
         // Update UI optimistically
         setUserLiked(true);
-        setUserDisliked(false);
+        if (userDisliked) setUserDisliked(false);
         
         try {
+          // Update Firestore
           await setDoc(articleRef, { likes: increment(1) }, { merge: true });
           if (userDisliked) {
             await setDoc(articleRef, { dislikes: increment(-1) }, { merge: true });
@@ -83,29 +102,41 @@ const ArticleSocialActions = ({ articleId }: ArticleSocialActionsProps) => {
             disliked: false,
             userId: auth.currentUser.uid,
             articleId
-          });
+          }, { merge: true });
         } catch (error) {
           // Rollback UI on error
           console.error("Error updating likes:", error);
-          setUserLiked(false);
-          setUserDisliked(userDisliked);
-          throw error;
+          setUserLiked(previousLiked);
+          setUserDisliked(previousDisliked);
+          
+          toast({
+            title: "Erreur",
+            description: "Une erreur est survenue lors de l'interaction",
+            variant: "destructive"
+          });
         }
       } else {
         // Update UI optimistically
         setUserLiked(false);
         
         try {
+          // Update Firestore
           await setDoc(articleRef, { likes: increment(-1) }, { merge: true });
           await setDoc(userInteractionRef, { liked: false }, { merge: true });
         } catch (error) {
           // Rollback UI on error
           console.error("Error updating likes:", error);
-          setUserLiked(true);
-          throw error;
+          setUserLiked(previousLiked);
+          
+          toast({
+            title: "Erreur",
+            description: "Une erreur est survenue lors de l'interaction",
+            variant: "destructive"
+          });
         }
       }
     } catch (error) {
+      console.error("Error in handleLike:", error);
       toast({
         title: "Erreur",
         description: "Une erreur est survenue lors de l'interaction",
@@ -128,12 +159,17 @@ const ArticleSocialActions = ({ articleId }: ArticleSocialActionsProps) => {
       const articleRef = doc(db, 'articles', articleId.toString());
       const userInteractionRef = doc(db, 'userInteractions', `${auth.currentUser.uid}_${articleId}`);
 
+      // Get the current values
+      const previousLiked = userLiked;
+      const previousDisliked = userDisliked;
+
       if (!userDisliked) {
         // Update UI optimistically
         setUserDisliked(true);
-        setUserLiked(false);
+        if (userLiked) setUserLiked(false);
         
         try {
+          // Update Firestore
           await setDoc(articleRef, { dislikes: increment(1) }, { merge: true });
           if (userLiked) {
             await setDoc(articleRef, { likes: increment(-1) }, { merge: true });
@@ -143,32 +179,68 @@ const ArticleSocialActions = ({ articleId }: ArticleSocialActionsProps) => {
             disliked: true,
             userId: auth.currentUser.uid,
             articleId
-          });
+          }, { merge: true });
         } catch (error) {
           // Rollback UI on error
           console.error("Error updating dislikes:", error);
-          setUserDisliked(false);
-          setUserLiked(userLiked);
-          throw error;
+          setUserDisliked(previousDisliked);
+          setUserLiked(previousLiked);
+          
+          toast({
+            title: "Erreur",
+            description: "Une erreur est survenue lors de l'interaction",
+            variant: "destructive"
+          });
         }
       } else {
         // Update UI optimistically
         setUserDisliked(false);
         
         try {
+          // Update Firestore
           await setDoc(articleRef, { dislikes: increment(-1) }, { merge: true });
           await setDoc(userInteractionRef, { disliked: false }, { merge: true });
         } catch (error) {
           // Rollback UI on error
           console.error("Error updating dislikes:", error);
-          setUserDisliked(true);
-          throw error;
+          setUserDisliked(previousDisliked);
+          
+          toast({
+            title: "Erreur",
+            description: "Une erreur est survenue lors de l'interaction",
+            variant: "destructive"
+          });
         }
       }
     } catch (error) {
+      console.error("Error in handleDislike:", error);
       toast({
         title: "Erreur",
         description: "Une erreur est survenue lors de l'interaction",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleShare = () => {
+    try {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Partager cet article',
+          url: window.location.href,
+        });
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        toast({
+          title: "Lien copié",
+          description: "Le lien a été copié dans le presse-papier",
+        });
+      }
+    } catch (error) {
+      console.error("Error sharing:", error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors du partage",
         variant: "destructive"
       });
     }
@@ -199,6 +271,16 @@ const ArticleSocialActions = ({ articleId }: ArticleSocialActionsProps) => {
       <Button variant="secondary" size="sm" className="gap-2">
         <MessageSquare className="text-gray-500" />
         <span>{comments}</span>
+      </Button>
+      
+      <Button 
+        variant="secondary" 
+        size="sm" 
+        className="gap-2"
+        onClick={handleShare}
+      >
+        <Share2 className="text-gray-500" />
+        <span>Partager</span>
       </Button>
     </div>
   );
