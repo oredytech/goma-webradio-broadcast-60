@@ -115,12 +115,13 @@ const Podcasts = ({
                       </Button>
                     </div>
                     <Button
-                      as={Link}
-                      to={`/podcast/${episodeSlug}`}
                       variant="outline"
                       className="bg-transparent text-white hover:bg-white/10"
+                      asChild
                     >
-                      <ExternalLink className="w-4 h-4" />
+                      <Link to={`/podcast/${episodeSlug}`}>
+                        <ExternalLink className="w-4 h-4" />
+                      </Link>
                     </Button>
                   </div>
                 </div>
