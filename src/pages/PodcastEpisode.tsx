@@ -1,14 +1,14 @@
-
 import { useParams, useNavigate } from 'react-router-dom';
 import { usePodcastFeed } from '@/hooks/usePodcastFeed';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, Calendar, Clock, ArrowLeft, Loader2 } from 'lucide-react';
+import { Play, Pause, Calendar, Clock, ArrowLeft, Loader2, Share2, MessageSquare } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { createSlug } from '@/utils/articleUtils';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import ArticleSocialActions from '@/components/ArticleSocialActions';
 
 interface PodcastEpisodeProps {
   isPlaying: boolean;
@@ -28,11 +28,9 @@ const PodcastEpisode = ({
   const { data: episodes, isLoading } = usePodcastFeed();
   const [loadingEpisode, setLoadingEpisode] = useState<string | null>(null);
   
-  // Trouver l'épisode correspondant au slug
   const episode = episodes?.find(ep => createSlug(ep.title) === slug);
   
   useEffect(() => {
-    // Rediriger vers la page des podcasts si l'épisode n'existe pas
     if (!isLoading && !episode && episodes?.length > 0) {
       navigate('/podcasts');
     }
@@ -102,6 +100,9 @@ const PodcastEpisode = ({
                 alt={episode.title} 
                 className="w-full aspect-square object-cover"
               />
+              <div className="p-4 bg-secondary/70">
+                <ArticleSocialActions articleId={parseInt(episode.pubDate, 10) || Date.now()} />
+              </div>
             </div>
           </div>
           
