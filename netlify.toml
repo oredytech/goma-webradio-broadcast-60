@@ -1,6 +1,6 @@
 
 [build]
-  command = "npm run build"
+  command = "npm install --legacy-peer-deps && npm run build"
   publish = "dist"
 
 # Règles de redirection pour les applications SPA (Single Page Application)
@@ -42,3 +42,13 @@
   for = "*.svg"
   [headers.values]
     Cache-Control = "public, max-age=31536000"
+
+# Configuration des variables d'environnement
+[build.environment]
+  NODE_VERSION = "18.20.7"
+  NPM_VERSION = "10.8.2"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+# Paramètres pour éviter les problèmes liés à ESM et CommonJS
+[functions]
+  node_bundler = "esbuild"
