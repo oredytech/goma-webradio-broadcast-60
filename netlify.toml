@@ -47,7 +47,7 @@
 [build.environment]
   NODE_VERSION = "18.20.7"
   NPM_VERSION = "10.8.2"
-  NPM_FLAGS = "--legacy-peer-deps"
+  NPM_FLAGS = "--legacy-peer-deps --no-optional"
 
 # Paramètres pour éviter les problèmes liés à ESM et CommonJS
 [functions]
