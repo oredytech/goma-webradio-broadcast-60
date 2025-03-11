@@ -1,7 +1,6 @@
 
 import { doc, setDoc, increment } from 'firebase/firestore';
 import { db, auth } from '@/lib/firebase';
-import { useToast } from '@/components/ui/use-toast';
 
 export async function handleArticleLike(
   articleId: number, 

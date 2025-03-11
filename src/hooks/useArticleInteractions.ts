@@ -17,14 +17,13 @@ export function useArticleInteractions(articleId: number) {
     const setupListeners = async () => {
       try {
         setIsLoading(true);
-        // Create article document if it doesn't exist yet
         const articleRef = doc(db, 'articles', articleId.toString());
         const articleDoc = await getDoc(articleRef);
         
         if (!articleDoc.exists()) {
           try {
             // Create a new document only if it doesn't exist
-            // We'll handle this in the interaction handlers instead to avoid permission issues
+            // We'll handle this in the interaction handlers instead
           } catch (error) {
             console.error("Error creating article document:", error);
           }
