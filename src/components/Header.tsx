@@ -1,15 +1,29 @@
+
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import Logo from "./header/Logo";
 import MobileMenuButton from "./header/MobileMenuButton";
 import NavigationLink from "./header/NavigationLink";
+import { useAuth } from "@/hooks/useAuth";
+import { LogIn, LogOut } from "lucide-react";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleAuthClick = async () => {
+    if (user) {
+      try {
+        await signOut();
+      } catch (error) {
+        console.error("Error signing out:", error);
+      }
+    }
   };
 
   return (
@@ -52,12 +66,24 @@ const Header = () => {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <NavigationLink 
-                  to="/login"
-                  className="bg-primary text-white hover:bg-primary/80"
-                >
-                  Se connecter
-                </NavigationLink>
+                {user ? (
+                  <NavigationLink 
+                    to="#"
+                    onClick={handleAuthClick}
+                    className="bg-primary text-white hover:bg-primary/80"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Se déconnecter
+                  </NavigationLink>
+                ) : (
+                  <NavigationLink 
+                    to="/login"
+                    className="bg-primary text-white hover:bg-primary/80"
+                  >
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Se connecter
+                  </NavigationLink>
+                )}
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
@@ -83,12 +109,24 @@ const Header = () => {
                     </NavigationLink>
                   </NavigationMenuItem>
                   <NavigationMenuItem className="w-full text-center">
-                    <NavigationLink 
-                      to="/login"
-                      className="bg-primary text-white hover:bg-primary/80"
-                    >
-                      Se connecter
-                    </NavigationLink>
+                    {user ? (
+                      <NavigationLink 
+                        to="#"
+                        onClick={handleAuthClick}
+                        className="bg-primary text-white hover:bg-primary/80"
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Se déconnecter
+                      </NavigationLink>
+                    ) : (
+                      <NavigationLink 
+                        to="/login"
+                        className="bg-primary text-white hover:bg-primary/80"
+                      >
+                        <LogIn className="mr-2 h-4 w-4" />
+                        Se connecter
+                      </NavigationLink>
+                    )}
                   </NavigationMenuItem>
                 </NavigationMenuList>
               </NavigationMenu>

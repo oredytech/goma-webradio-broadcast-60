@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { auth } from '@/lib/firebase';
+import { useAuth } from '@/hooks/useAuth';
 import { useToast } from './ui/use-toast';
 import { useArticleInteractions } from '@/hooks/useArticleInteractions';
 import { handleArticleLike, handleArticleDislike, handleArticleShare } from '@/utils/articleInteractions';
@@ -8,6 +8,7 @@ import LikeButton from './articles/LikeButton';
 import DislikeButton from './articles/DislikeButton';
 import CommentButton from './articles/CommentButton';
 import ShareButton from './articles/ShareButton';
+import { useNavigate } from 'react-router-dom';
 
 interface ArticleSocialActionsProps {
   articleId: number;
@@ -17,14 +18,21 @@ const ArticleSocialActions = ({ articleId }: ArticleSocialActionsProps) => {
   const { likes, dislikes, comments, userLiked, userDisliked, isLoading } = useArticleInteractions(articleId);
   const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const redirectToLogin = () => {
+    toast({
+      title: "Connexion requise",
+      description: "Vous devez être connecté pour interagir avec les articles",
+      variant: "destructive"
+    });
+    navigate('/login');
+  };
 
   const handleLike = async () => {
-    if (!auth.currentUser) {
-      toast({
-        title: "Connexion requise",
-        description: "Vous devez être connecté pour aimer un article",
-        variant: "destructive"
-      });
+    if (!user) {
+      redirectToLogin();
       return;
     }
 
@@ -62,12 +70,8 @@ const ArticleSocialActions = ({ articleId }: ArticleSocialActionsProps) => {
   };
 
   const handleDislike = async () => {
-    if (!auth.currentUser) {
-      toast({
-        title: "Connexion requise",
-        description: "Vous devez être connecté pour ne pas aimer un article",
-        variant: "destructive"
-      });
+    if (!user) {
+      redirectToLogin();
       return;
     }
 

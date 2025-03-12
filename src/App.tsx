@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Article from "./pages/Article";
 import News from "./pages/News";
@@ -56,82 +57,84 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route 
-              path="/" 
-              element={
-                <Index 
-                  isPlaying={isPlaying}
-                  setIsPlaying={setIsPlaying}
-                  currentAudio={currentAudio}
-                  setCurrentAudio={setCurrentAudio}
-                />
-              } 
-            />
-            <Route 
-              path="/article/:slug" 
-              element={
-                <Article 
-                  isPlaying={isPlaying}
-                  setIsPlaying={setIsPlaying}
-                  currentAudio={currentAudio}
-                  setCurrentAudio={setCurrentAudio}
-                />
-              } 
-            />
-            <Route path="/actualites/*" element={<News />} />
-            <Route path="/actualites/politique" element={<News filter="politique" />} />
-            <Route path="/a-propos" element={<About />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route 
-              path="/podcasts" 
-              element={
-                <Podcasts 
-                  isPlaying={isPlaying}
-                  setIsPlaying={setIsPlaying}
-                  currentAudio={currentAudio}
-                  setCurrentAudio={setCurrentAudio}
-                />
-              } 
-            />
-            <Route 
-              path="/podcast/:slug" 
-              element={
-                <PodcastEpisode 
-                  isPlaying={isPlaying}
-                  setIsPlaying={setIsPlaying}
-                  currentAudio={currentAudio}
-                  setCurrentAudio={setCurrentAudio}
-                />
-              } 
-            />
-            {/* Route de secours pour la compatibilité avec les anciens liens */}
-            <Route 
-              path="/article/id/:id" 
-              element={
-                <Article 
-                  isPlaying={isPlaying}
-                  setIsPlaying={setIsPlaying}
-                  currentAudio={currentAudio}
-                  setCurrentAudio={setCurrentAudio}
-                />
-              } 
-            />
-          </Routes>
-          {showPlayer && (
-            <RadioPlayer
-              isPlaying={isPlaying}
-              setIsPlaying={setIsPlaying}
-              currentAudio={currentAudio}
-            />
-          )}
-        </BrowserRouter>
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route 
+                path="/" 
+                element={
+                  <Index 
+                    isPlaying={isPlaying}
+                    setIsPlaying={setIsPlaying}
+                    currentAudio={currentAudio}
+                    setCurrentAudio={setCurrentAudio}
+                  />
+                } 
+              />
+              <Route 
+                path="/article/:slug" 
+                element={
+                  <Article 
+                    isPlaying={isPlaying}
+                    setIsPlaying={setIsPlaying}
+                    currentAudio={currentAudio}
+                    setCurrentAudio={setCurrentAudio}
+                  />
+                } 
+              />
+              <Route path="/actualites/*" element={<News />} />
+              <Route path="/actualites/politique" element={<News filter="politique" />} />
+              <Route path="/a-propos" element={<About />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route 
+                path="/podcasts" 
+                element={
+                  <Podcasts 
+                    isPlaying={isPlaying}
+                    setIsPlaying={setIsPlaying}
+                    currentAudio={currentAudio}
+                    setCurrentAudio={setCurrentAudio}
+                  />
+                } 
+              />
+              <Route 
+                path="/podcast/:slug" 
+                element={
+                  <PodcastEpisode 
+                    isPlaying={isPlaying}
+                    setIsPlaying={setIsPlaying}
+                    currentAudio={currentAudio}
+                    setCurrentAudio={setCurrentAudio}
+                  />
+                } 
+              />
+              {/* Route de secours pour la compatibilité avec les anciens liens */}
+              <Route 
+                path="/article/id/:id" 
+                element={
+                  <Article 
+                    isPlaying={isPlaying}
+                    setIsPlaying={setIsPlaying}
+                    currentAudio={currentAudio}
+                    setCurrentAudio={setCurrentAudio}
+                  />
+                } 
+              />
+            </Routes>
+            {showPlayer && (
+              <RadioPlayer
+                isPlaying={isPlaying}
+                setIsPlaying={setIsPlaying}
+                currentAudio={currentAudio}
+              />
+            )}
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };
