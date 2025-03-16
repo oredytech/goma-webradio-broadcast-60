@@ -1,3 +1,4 @@
+
 import { useWordpressArticles } from "@/hooks/useWordpressArticles";
 import { Link } from "react-router-dom";
 import ArticleSocialActions from "./ArticleSocialActions";
@@ -14,6 +15,15 @@ const ExtraArticles = () => {
     .sort(() => Math.random() - 0.5)
     .slice(0, 6);
 
+  // Generate slug from title
+  const getArticleSlug = (article: typeof articles[0]) => {
+    const decodedTitle = new DOMParser().parseFromString(article.title.rendered, 'text/html').body.textContent || article.title.rendered;
+    return decodedTitle
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-');
+  };
+
   return (
     <section className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,7 +34,7 @@ const ExtraArticles = () => {
               className="group relative overflow-hidden rounded-lg bg-secondary/50 hover:bg-secondary/70 transition-all duration-300"
             >
               <Link
-                to={`/article/${article.id}`}
+                to={`/article/${article.id}/${getArticleSlug(article)}`}
                 className="block"
               >
                 <div className="aspect-video overflow-hidden">
