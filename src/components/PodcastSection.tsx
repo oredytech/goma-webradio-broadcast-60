@@ -1,10 +1,9 @@
-
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePodcastFeed } from '@/hooks/usePodcastFeed';
 import { Button } from '@/components/ui/button';
 import { Share2 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { getPodcastSlug } from '@/utils/podcastUtils';
 
 interface PodcastSectionProps {
   isPlaying: boolean;
@@ -29,10 +28,7 @@ const PodcastSection = ({
 
   const handleOpenPodcast = (episode: any) => {
     // Create a slug from the episode title
-    const slug = episode.title
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-');
+    const slug = getPodcastSlug(episode.title);
     
     // Navigate to the podcast player page with slug only
     navigate(`/podcast/${slug}`);
@@ -42,11 +38,7 @@ const PodcastSection = ({
     event.stopPropagation();
     
     // Create a slug from the episode title
-    const slug = episode.title
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-');
-      
+    const slug = getPodcastSlug(episode.title);
     const shareUrl = `${window.location.origin}/podcast/${slug}`;
     
     if (navigator.share) {
