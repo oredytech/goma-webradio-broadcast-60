@@ -9,6 +9,8 @@ export interface MetaData {
   image?: string;
   type?: string;
   url?: string;
+  siteName?: string;
+  locale?: string;
 }
 
 export const updateMetaTags = (metadata: MetaData): void => {
@@ -22,13 +24,27 @@ export const updateMetaTags = (metadata: MetaData): void => {
   updateOrCreateMetaTag('og:title', metadata.title);
   updateOrCreateMetaTag('og:description', metadata.description);
   updateOrCreateMetaTag('og:type', metadata.type || 'website');
+  updateOrCreateMetaTag('og:site_name', metadata.siteName || 'GOMA WEBRADIO');
+  updateOrCreateMetaTag('og:locale', metadata.locale || 'fr_FR');
   
   if (metadata.image) {
-    updateOrCreateMetaTag('og:image', metadata.image);
+    // S'assurer que l'URL de l'image est absolue
+    const imageUrl = metadata.image.startsWith('http') 
+      ? metadata.image 
+      : `${window.location.origin}${metadata.image.startsWith('/') ? '' : '/'}${metadata.image}`;
+    
+    updateOrCreateMetaTag('og:image', imageUrl);
+    updateOrCreateMetaTag('og:image:secure_url', imageUrl.replace('http:', 'https:'));
+    updateOrCreateMetaTag('og:image:width', '1200');
+    updateOrCreateMetaTag('og:image:height', '630');
+    updateOrCreateMetaTag('og:image:alt', metadata.title);
   }
   
   if (metadata.url) {
     updateOrCreateMetaTag('og:url', metadata.url);
+  } else {
+    // Utiliser l'URL actuelle si aucune n'est spécifiée
+    updateOrCreateMetaTag('og:url', window.location.href);
   }
   
   // Mettre à jour les balises Twitter Card
@@ -37,7 +53,11 @@ export const updateMetaTags = (metadata: MetaData): void => {
   updateOrCreateMetaTag('twitter:description', metadata.description);
   
   if (metadata.image) {
-    updateOrCreateMetaTag('twitter:image', metadata.image);
+    const imageUrl = metadata.image.startsWith('http') 
+      ? metadata.image 
+      : `${window.location.origin}${metadata.image.startsWith('/') ? '' : '/'}${metadata.image}`;
+    
+    updateOrCreateMetaTag('twitter:image', imageUrl);
   }
 };
 
@@ -59,4 +79,17 @@ const updateOrCreateMetaTag = (name: string, content: string): void => {
   
   // Mettre à jour le contenu
   tag.setAttribute('content', content);
+};
+
+/**
+ * Réinitialise les métadonnées aux valeurs par défaut du site
+ */
+export const resetMetaTags = (): void => {
+  updateMetaTags({
+    title: "GOMA WEBRADIO",
+    description: "La voix de Goma - Actualités, Podcasts et Émissions en direct",
+    image: "/GOWERA__3_-removebg-preview.png",
+    type: "website",
+    url: window.location.origin
+  });
 };
