@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 export interface ArticleCommentFormProps {
   articleId: number;
+  onCommentAdded?: () => void;
 }
 
 const ArticleCommentForm = ({ articleId, onCommentAdded }: ArticleCommentFormProps) => {

@@ -3,9 +3,10 @@ import ArticleCommentForm from "./ArticleCommentForm";
 
 interface ArticleContentProps {
   content: string;
+  articleId: number;
 }
 
-const ArticleContent = ({ content }: ArticleContentProps) => {
+const ArticleContent = ({ content, articleId }: ArticleContentProps) => {
   return (
     <main className="lg:col-span-8">
       {/* Article Content */}
@@ -15,7 +16,7 @@ const ArticleContent = ({ content }: ArticleContentProps) => {
       />
 
       {/* Comment Form */}
-      <ArticleCommentForm />
+      <ArticleCommentForm articleId={articleId} />
     </main>
   );
 };

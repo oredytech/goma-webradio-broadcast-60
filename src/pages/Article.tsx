@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
@@ -113,7 +112,7 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8">
-            <ArticleContent content={fullArticle.content.rendered} />
+            <ArticleContent content={fullArticle.content.rendered} articleId={fullArticle.id} />
             
             {/* Article Social Actions */}
             <div className="my-8">
