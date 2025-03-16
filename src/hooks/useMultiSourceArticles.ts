@@ -1,3 +1,4 @@
+
 import { useQueries } from "@tanstack/react-query";
 
 interface WordPressArticle {
@@ -17,6 +18,8 @@ interface WordPressArticle {
       source_url: string;
     }>;
   };
+  // Optional featured_media for compatibility with useWordpressArticles type
+  featured_media?: number;
 }
 
 const sources = [
