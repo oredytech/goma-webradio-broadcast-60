@@ -25,7 +25,8 @@ export interface WordPressArticle {
 const fetchArticles = async () => {
   try {
     console.log("Fetching WordPress articles...");
-    const proxyUrl = "https://api.allorigins.win/raw?url=";
+    // Utilisation d'un proxy CORS plus fiable
+    const proxyUrl = "https://corsproxy.io/?";
     const apiUrl = encodeURIComponent("https://totalementactus.net/wp-json/wp/v2/posts?_embed&per_page=30");
     
     const response = await fetch(`${proxyUrl}${apiUrl}`, {

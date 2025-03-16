@@ -16,7 +16,9 @@ export interface PodcastEpisode {
   };
 }
 
-const CORS_PROXY = "https://api.allorigins.win/raw?url=";
+// Utilisation d'un proxy CORS plus fiable
+const CORS_PROXY = "https://corsproxy.io/?";
+// URL RSS d'origine reste la même
 const RSS_URL = "https://podcast.zenomedia.com/api/public/podcasts/e422f99f-db57-40c3-a92e-778a15e5c2bb/rss";
 
 const fetchPodcastFeed = async (): Promise<PodcastEpisode[]> => {
@@ -24,17 +26,26 @@ const fetchPodcastFeed = async (): Promise<PodcastEpisode[]> => {
     console.log("Fetching podcast feed...");
     const encodedUrl = encodeURIComponent(RSS_URL);
     const response = await fetch(`${CORS_PROXY}${encodedUrl}`, {
-      cache: 'no-cache', // Don't use browser cache - always fetch fresh content
+      cache: 'no-cache',
       headers: {
         'Accept': 'text/xml, application/xml, application/rss+xml'
       }
     });
     
     if (!response.ok) {
+      console.error(`Failed to fetch podcast feed: ${response.status}`);
       throw new Error(`Failed to fetch podcast feed: ${response.status}`);
     }
     
     const xmlText = await response.text();
+    
+    // Vérification si la réponse est vide
+    if (!xmlText || xmlText.trim() === '') {
+      console.error("Empty XML response");
+      throw new Error("Empty XML response");
+    }
+    
+    console.log("Received XML response length:", xmlText.length);
     
     // Parse XML to DOM
     const parser = new DOMParser();
@@ -43,6 +54,7 @@ const fetchPodcastFeed = async (): Promise<PodcastEpisode[]> => {
     // Check for parser errors
     const parserError = xmlDoc.querySelector("parsererror");
     if (parserError) {
+      console.error("Failed to parse podcast XML feed:", parserError.textContent);
       throw new Error("Failed to parse podcast XML feed");
     }
     
