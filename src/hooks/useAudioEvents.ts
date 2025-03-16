@@ -59,7 +59,7 @@ export const useAudioEvents = ({
     const handlePlaying = () => {
       setIsLoading(false);
       setError(null);
-      setRetryCount(() => 0); // Fixed: pass callback function instead of direct number
+      setRetryCount(() => 0);
       if ('mediaSession' in navigator) {
         navigator.mediaSession.setActionHandler('play', () => setIsPlaying(true));
         navigator.mediaSession.setActionHandler('pause', () => setIsPlaying(false));
@@ -103,7 +103,7 @@ export const useAudioEvents = ({
         setError("Erreur de lecture audio. Veuillez réessayer.");
         toast.toast({
           title: "Erreur de lecture",
-          description: "Impossible de lire l'audio. Connexion perdue ou source non disponible.",
+          description: "Impossible de lire l'audio. Essayez avec un autre proxy CORS ou vérifiez votre connexion.",
           variant: "destructive",
         });
         setIsPlaying(false);
@@ -162,6 +162,12 @@ export const useAudioEvents = ({
         // Utiliser la propriété crossOrigin pour éviter des problèmes CORS
         audioRef.current.crossOrigin = "anonymous";
         audioRef.current.preload = "auto"; // Ensure preloading
+        
+        // Fix pour certains navigateurs: ajouter un timestamp pour éviter le cache
+        if (currentAudio.indexOf('?') === -1) {
+          audioRef.current.src = currentAudio + '?t=' + new Date().getTime();
+        }
+        
         audioRef.current.load(); // Forcer le rechargement de l'audio
       } else if (!currentAudio && currentSrc !== "https://stream.zeno.fm/4d61wprrp7zuv") {
         // Si pas d'audio spécifique, on revient à la radio en direct
@@ -183,7 +189,7 @@ export const useAudioEvents = ({
               setError("Erreur de lecture audio. Veuillez réessayer.");
               toast.toast({
                 title: "Erreur de lecture",
-                description: "Impossible de lire l'audio. Connexion perdue ou source non disponible.",
+                description: "Impossible de lire l'audio. Problème de CORS ou source non disponible.",
                 variant: "destructive",
               });
             }

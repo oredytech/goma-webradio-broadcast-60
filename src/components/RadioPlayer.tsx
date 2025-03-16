@@ -32,8 +32,8 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
   // Mettre à jour le titre et l'artiste en fonction de l'URL de l'audio
   useEffect(() => {
     if (currentAudio) {
-      // Extraire le nom du fichier de l'URL pour afficher un titre plus descriptif
-      const filename = currentAudio.split('/').pop() || '';
+      // Tenter d'extraire le nom du fichier pour un titre plus descriptif
+      const filename = currentAudio.split('/').pop()?.split('?')[0] || '';
       if (filename) {
         setCurrentTrack("Podcast en cours");
       }

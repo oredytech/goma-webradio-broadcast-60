@@ -83,10 +83,13 @@ export const usePodcastPlayback = ({
           variant: "destructive",
         });
       }
-    }, 20000); // 20 secondes timeout (augmenté de 15 à 20 secondes)
+    }, 30000); // 30 secondes timeout (augmenté pour les connexions lentes)
 
-    // Utiliser directement l'URL pour éviter les problèmes CORS
+    // Ajouter un timestamp à l'URL pour éviter le cache
     let audioUrl = episode.enclosure.url;
+    if (audioUrl.indexOf('?') === -1) {
+      audioUrl = audioUrl + '?t=' + new Date().getTime();
+    }
     
     // Mise à jour directe pour éviter l'état de chargement persistant
     setCurrentAudio(audioUrl);
@@ -95,7 +98,7 @@ export const usePodcastPlayback = ({
     // Annuler l'état de chargement après un court délai pour garantir que le lecteur a eu le temps de changer d'état
     setTimeout(() => {
       setLoadingEpisode(null);
-    }, 1500);
+    }, 3000);
     
     // Nettoyer le timeout si le composant est démonté
     return () => {

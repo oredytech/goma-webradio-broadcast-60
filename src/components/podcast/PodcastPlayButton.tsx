@@ -21,8 +21,22 @@ const PodcastPlayButton = ({
 }: PodcastPlayButtonProps) => {
   // Check if the audio URL is valid
   const hasValidUrl = Boolean(episode.enclosure?.url && episode.enclosure.url.startsWith('http'));
-  const isCurrentlyPlaying = currentAudio === episode.enclosure?.url && isPlaying;
+  
+  // Verification si l'épisode actuel est en lecture
+  const isCurrentlyPlaying = currentAudio && isPlaying && 
+    (currentAudio === episode.enclosure?.url || 
+    currentAudio.startsWith(episode.enclosure?.url || ''));
+  
   const isCurrentlyLoading = loadingEpisode === episode.enclosure?.url;
+  
+  // Gérer le clic sur le bouton avec une vérification supplémentaire
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!hasValidUrl) return;
+    
+    onPlay(episode);
+  };
   
   return (
     <div className="relative flex-1">
@@ -33,7 +47,7 @@ const PodcastPlayButton = ({
         </div>
       )}
       <Button
-        onClick={() => onPlay(episode)}
+        onClick={handleClick}
         className="w-full group relative z-10"
         variant={isCurrentlyPlaying ? "secondary" : "default"}
         disabled={isCurrentlyLoading || !hasValidUrl}
