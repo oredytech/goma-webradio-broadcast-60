@@ -32,6 +32,9 @@ const PodcastContent = ({
     }
   };
 
+  // Vérification de la validité de l'URL
+  const hasValidUrl = Boolean(episode.enclosure?.url && episode.enclosure.url.startsWith('http'));
+
   return (
     <div className="md:col-span-8">
       <Button 
@@ -74,8 +77,8 @@ const PodcastContent = ({
             onClick={onPlayEpisode}
             className="w-full sm:w-auto group relative z-10"
             size="lg"
-            variant={currentAudio === episode.enclosure.url ? "secondary" : "default"}
-            disabled={loadingEpisode === episode.enclosure.url}
+            variant={currentAudio === episode.enclosure.url && isPlaying ? "secondary" : "default"}
+            disabled={loadingEpisode === episode.enclosure.url || !hasValidUrl}
           >
             {currentAudio === episode.enclosure.url && isPlaying ? (
               <>

@@ -4,6 +4,7 @@ import { usePodcastFeed } from '@/hooks/usePodcastFeed';
 import { useState, useEffect } from 'react';
 import { createSlug } from '@/utils/articleUtils';
 import { useToast } from '@/hooks/use-toast';
+import { usePodcastPlayback } from '@/hooks/usePodcastPlayback';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import PodcastLoading from '@/components/podcast/PodcastLoading';
@@ -26,35 +27,23 @@ const PodcastEpisode = ({
 }: PodcastEpisodeProps) => {
   const { slug } = useParams<{ slug: string }>();
   const { data: episodes, isLoading } = usePodcastFeed();
-  const [loadingEpisode, setLoadingEpisode] = useState<string | null>(null);
   const [episodeNotFound, setEpisodeNotFound] = useState(false);
   const { toast } = useToast();
   
   const episode = episodes && slug ? episodes.find(ep => createSlug(ep.title) === slug) : undefined;
+  
+  const { loadingEpisode, handlePlayEpisode } = usePodcastPlayback({
+    isPlaying,
+    setIsPlaying,
+    currentAudio,
+    setCurrentAudio
+  });
   
   useEffect(() => {
     if (!isLoading && !episode && episodes && episodes.length > 0 && slug) {
       setEpisodeNotFound(true);
     }
   }, [episode, isLoading, episodes, slug]);
-
-  const handlePlayEpisode = () => {
-    if (!episode) return;
-    
-    if (currentAudio === episode.enclosure.url) {
-      setIsPlaying(!isPlaying);
-      return;
-    }
-    
-    setLoadingEpisode(episode.enclosure.url);
-    setCurrentAudio(episode.enclosure.url);
-    setIsPlaying(true);
-
-    const audio = new Audio(episode.enclosure.url);
-    audio.addEventListener('canplay', () => {
-      setLoadingEpisode(null);
-    });
-  };
 
   const handleSocialError = () => {
     toast({
@@ -87,7 +76,7 @@ const PodcastEpisode = ({
             isPlaying={isPlaying}
             currentAudio={currentAudio}
             loadingEpisode={loadingEpisode}
-            onPlayEpisode={handlePlayEpisode}
+            onPlayEpisode={() => handlePlayEpisode(episode)}
           />
         </div>
       </main>
