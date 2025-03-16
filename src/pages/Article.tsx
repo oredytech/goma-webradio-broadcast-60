@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
@@ -13,6 +14,7 @@ import ArticleSocialActions from "@/components/ArticleSocialActions";
 import ArticleCommentForm from "@/components/ArticleCommentForm";
 import ArticleCommentsList from "@/components/ArticleCommentsList";
 import { createSlug, extractMetaDescription, decodeHtmlTitle } from "@/utils/articleUtils";
+import { Loader2 } from "lucide-react";
 
 interface ArticleProps {
   isPlaying: boolean;
@@ -25,19 +27,32 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [commentsUpdated, setCommentsUpdated] = useState(false);
+  const [articleNotFound, setArticleNotFound] = useState(false);
 
   // Récupérer tous les articles pour trouver celui qui correspond au slug
-  const { data: articles, isLoading: articlesLoading } = useQuery<WordPressArticle[]>({
+  const { data: articles, isLoading: articlesLoading, error: articlesError } = useQuery<WordPressArticle[]>({
     queryKey: ["wordpress-articles"],
     queryFn: async () => {
-      const response = await fetch(
-        "https://totalementactus.net/wp-json/wp/v2/posts?_embed&per_page=30"
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+      try {
+        const proxyUrl = "https://api.allorigins.win/raw?url=";
+        const apiUrl = encodeURIComponent("https://totalementactus.net/wp-json/wp/v2/posts?_embed&per_page=30");
+        
+        const response = await fetch(`${proxyUrl}${apiUrl}`);
+        
+        if (!response.ok) {
+          throw new Error(`Network response was not ok: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log("Articles récupérés avec succès:", data.length);
+        return data;
+      } catch (error) {
+        console.error("Erreur lors de la récupération des articles:", error);
+        throw error;
       }
-      return response.json();
     },
+    retry: 3,
+    refetchOnWindowFocus: false,
   });
 
   // Trouver l'article qui correspond au slug
@@ -51,23 +66,45 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
     queryKey: ["article", article?.id],
     queryFn: async () => {
       if (!article?.id) throw new Error("Article not found");
-      const response = await fetch(
-        `https://totalementactus.net/wp-json/wp/v2/posts/${article.id}?_embed`
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+      
+      try {
+        const proxyUrl = "https://api.allorigins.win/raw?url=";
+        const apiUrl = encodeURIComponent(`https://totalementactus.net/wp-json/wp/v2/posts/${article.id}?_embed`);
+        
+        const response = await fetch(`${proxyUrl}${apiUrl}`);
+        
+        if (!response.ok) {
+          throw new Error(`Network response was not ok: ${response.status}`);
+        }
+        
+        return response.json();
+      } catch (error) {
+        console.error("Erreur lors de la récupération de l'article complet:", error);
+        throw error;
       }
-      return response.json();
     },
     enabled: !!article?.id,
+    retry: 3,
+    refetchOnWindowFocus: false,
   });
 
-  // Redirection vers la page 404 si l'article n'est pas trouvé après le chargement
+  // Utiliser useEffect pour vérifier si l'article est trouvé après le chargement
   useEffect(() => {
-    if (!articlesLoading && !articleLoading && !fullArticle) {
-      navigate("/404", { replace: true });
+    if (!articlesLoading && !articles?.length) {
+      console.log("Aucun article n'a été trouvé");
+      setArticleNotFound(true);
+    } else if (!articlesLoading && articles?.length && slug) {
+      const matchingArticle = articles.find(article => {
+        const title = decodeHtmlTitle(article.title.rendered);
+        return createSlug(title) === slug;
+      });
+      
+      if (!matchingArticle) {
+        console.log(`Aucun article ne correspond au slug: ${slug}`);
+        setArticleNotFound(true);
+      }
     }
-  }, [articlesLoading, articleLoading, fullArticle, navigate]);
+  }, [articlesLoading, articles, slug]);
 
   const isLoading = articlesLoading || articleLoading;
 
@@ -75,18 +112,70 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
     setCommentsUpdated(prev => !prev);
   };
 
+  // Si nous avons une erreur lors du chargement des articles
+  if (articlesError) {
+    console.error("Erreur lors du chargement des articles:", articlesError);
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
+        <Header />
+        <div className="container mx-auto px-4 py-32 text-center">
+          <h1 className="text-3xl font-bold text-white mb-4">Erreur de chargement</h1>
+          <p className="text-lg text-gray-300">Impossible de charger les articles. Veuillez réessayer ultérieurement.</p>
+          <Button 
+            onClick={() => window.location.reload()}
+            className="mt-8"
+          >
+            Réessayer
+          </Button>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Si l'article n'est pas trouvé après le chargement
+  if (articleNotFound) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
+        <Header />
+        <div className="container mx-auto px-4 py-32 text-center">
+          <h1 className="text-3xl font-bold text-white mb-4">Article non trouvé</h1>
+          <p className="text-lg text-gray-300">L'article que vous recherchez n'existe pas ou a été déplacé.</p>
+          <Button 
+            onClick={() => navigate("/actualites")}
+            className="mt-8"
+          >
+            Voir tous les articles
+          </Button>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Afficher un état de chargement amélioré
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-secondary to-black flex items-center justify-center">
-        <div className="text-white">Chargement...</div>
+      <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
+        <Header />
+        <div className="container mx-auto px-4 py-32 flex flex-col items-center justify-center">
+          <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
+          <div className="text-xl text-white">Chargement de l'article...</div>
+        </div>
+        <Footer />
       </div>
     );
   }
 
   if (!fullArticle) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-secondary to-black flex items-center justify-center">
-        <div className="text-white">Article non trouvé</div>
+      <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
+        <Header />
+        <div className="container mx-auto px-4 py-32 text-center">
+          <h1 className="text-3xl font-bold text-white mb-4">Article en cours de chargement</h1>
+          <p className="text-lg text-gray-300">Veuillez patienter pendant que nous récupérons le contenu...</p>
+        </div>
+        <Footer />
       </div>
     );
   }
