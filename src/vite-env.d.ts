@@ -4,6 +4,7 @@
 interface MetaServiceInterface {
   updateMetaTags: (metadata: import("./utils/metaService").MetaData) => void;
   resetMetaTags: () => void;
+  ensureMetaTags: () => void;
 }
 
 interface Window {
