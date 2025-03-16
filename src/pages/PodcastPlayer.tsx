@@ -11,6 +11,7 @@ import PodcastHeader from '@/components/podcast/PodcastHeader';
 import PodcastDetails from '@/components/podcast/PodcastDetails';
 import PodcastLoading from '@/components/podcast/PodcastLoading';
 import PodcastNotFound from '@/components/podcast/PodcastNotFound';
+import SimilarPodcasts from '@/components/podcast/SimilarPodcasts';
 import { findEpisodeBySlug, findEpisodeById, getPodcastSlug } from '@/utils/podcastUtils';
 
 interface PodcastPlayerProps {
@@ -143,6 +144,20 @@ const PodcastPlayer = ({
             setCurrentAudio={setCurrentAudio}
           />
         </div>
+
+        {/* Similar Podcasts Section */}
+        {episodes && episodes.length > 1 && (
+          <div className="mt-12">
+            <SimilarPodcasts 
+              currentEpisode={foundEpisode} 
+              episodes={episodes}
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+              currentAudio={currentAudio}
+              setCurrentAudio={setCurrentAudio}
+            />
+          </div>
+        )}
       </main>
       <Footer />
     </div>
