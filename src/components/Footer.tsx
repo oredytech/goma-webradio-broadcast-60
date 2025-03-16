@@ -1,3 +1,8 @@
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Mail } from "lucide-react";
+import { cn } from "@/lib/utils";
+
 const Footer = () => {
   return (
     <footer className="bg-secondary/80 backdrop-blur-sm border-t border-primary/20 py-8 pb-24">
@@ -13,8 +18,49 @@ const Footer = () => {
             <h3 className="text-xl font-bold text-white mb-4">Liens rapides</h3>
             <ul className="space-y-2">
               <li><a href="/" className="text-gray-300 hover:text-primary transition-colors">Accueil</a></li>
-              <li><a href="/programmes" className="text-gray-300 hover:text-primary transition-colors">Programmes</a></li>
-              <li><a href="/contact" className="text-gray-300 hover:text-primary transition-colors">Contact</a></li>
+              <li><a href="/actualites" className="text-gray-300 hover:text-primary transition-colors">Actualités</a></li>
+              <li><a href="/a-propos" className="text-gray-300 hover:text-primary transition-colors">À propos</a></li>
+              <li>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <button className="text-gray-300 hover:text-primary transition-colors">
+                      Contacts
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="bg-secondary/95 backdrop-blur-sm text-white border border-primary/20">
+                    <DialogHeader>
+                      <DialogTitle className="text-xl font-bold text-white">Nos coordonnées</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 text-gray-300 mt-4">
+                      <div className="flex items-start space-x-3">
+                        <span className="text-primary">📍</span>
+                        <p>RDCongo, Province du Nord-Kivu<br />
+                          Ville de Goma/Commune de KARISIMBI</p>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <span className="text-primary">📞</span>
+                        <div>
+                          <p className="font-medium">Rédaction :</p>
+                          <p>+243 851 006 476</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <span className="text-primary">📞</span>
+                        <div>
+                          <p className="font-medium">Direction :</p>
+                          <p>+243 996886079</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <span className="text-primary">✉️</span>
+                        <a href="mailto:contact@gomawebradio.com" className="hover:text-primary transition-colors">
+                          contact@gomawebradio.com
+                        </a>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </li>
             </ul>
           </div>
           <div>
