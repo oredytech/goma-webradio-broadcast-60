@@ -24,17 +24,13 @@ const PodcastActions = ({
   const { toast } = useToast();
   const [loadingAudio, setLoadingAudio] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const playbackPositionRef = useRef<number>(0);
 
   useEffect(() => {
-    // Clean up on unmount
-    return () => {
-      if (audioRef.current) {
-        // Don't pause here as it would stop global playback
-        audioRef.current = null;
-      }
-    };
-  }, []);
+    // Reset loading state when audio source changes or play state changes
+    if (currentAudio === episode.enclosure.url) {
+      setLoadingAudio(false);
+    }
+  }, [currentAudio, isPlaying, episode.enclosure.url]);
 
   const handlePlay = () => {
     if (currentAudio === episode.enclosure.url) {
@@ -71,9 +67,9 @@ const PodcastActions = ({
   return (
     <div className="flex gap-4 mb-6">
       <div className="relative">
-        {loadingAudio && (
+        {loadingAudio && currentAudio === episode.enclosure.url && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="absolute inset-0 bg-primary/30 rounded-md animate-ping"></div>
+            <div className="absolute inset-0 bg-primary/30 rounded-md"></div>
             <Loader2 className="w-6 h-6 text-primary animate-spin absolute" />
           </div>
         )}
@@ -82,7 +78,7 @@ const PodcastActions = ({
           className="group relative z-10"
           variant="default"
           size="lg"
-          disabled={loadingAudio}
+          disabled={loadingAudio && currentAudio === episode.enclosure.url}
         >
           {currentAudio === episode.enclosure.url && isPlaying ? (
             <>

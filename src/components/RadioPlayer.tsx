@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { Volume2, Play, Pause, Loader2 } from 'lucide-react';
 import { Slider } from "@/components/ui/slider";
@@ -19,6 +20,7 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
   const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioElementCreated = useRef<boolean>(false);
+  const loadingTimeoutRef = useRef<number | null>(null);
 
   const handleVolumeChange = (value: number[]) => {
     const newVolume = value[0];
@@ -31,12 +33,38 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
   const togglePlay = () => {
     if (audioRef.current) {
       setIsLoading(true);
+      
+      // Clear any existing timeout
+      if (loadingTimeoutRef.current !== null) {
+        window.clearTimeout(loadingTimeoutRef.current);
+      }
+      
+      // Set a maximum loading time
+      loadingTimeoutRef.current = window.setTimeout(() => {
+        setIsLoading(false);
+      }, 3000);
+      
       if (isPlaying) {
         audioRef.current.pause();
         setIsLoading(false);
+        if (loadingTimeoutRef.current !== null) {
+          window.clearTimeout(loadingTimeoutRef.current);
+          loadingTimeoutRef.current = null;
+        }
       } else {
-        audioRef.current.play().finally(() => {
+        audioRef.current.play().then(() => {
           setIsLoading(false);
+          if (loadingTimeoutRef.current !== null) {
+            window.clearTimeout(loadingTimeoutRef.current);
+            loadingTimeoutRef.current = null;
+          }
+        }).catch(error => {
+          console.error('Error playing audio:', error);
+          setIsLoading(false);
+          if (loadingTimeoutRef.current !== null) {
+            window.clearTimeout(loadingTimeoutRef.current);
+            loadingTimeoutRef.current = null;
+          }
         });
       }
       setIsPlaying(!isPlaying);
@@ -63,6 +91,7 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
 
       audio.addEventListener('loadedmetadata', () => {
         setDuration(audio.duration);
+        setIsLoading(false);
       });
 
       audio.addEventListener('playing', () => {
@@ -76,27 +105,52 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
       audio.addEventListener('waiting', () => {
         setIsLoading(true);
       });
+      
+      audio.addEventListener('canplay', () => {
+        setIsLoading(false);
+      });
+      
+      audio.addEventListener('error', () => {
+        setIsLoading(false);
+        console.error('Audio playback error');
+      });
 
       audio.volume = volume / 100;
     }
 
     return () => {
-      // We don't destroy the audio element on unmount to keep playback going
+      // Clean up timeout on unmount
+      if (loadingTimeoutRef.current !== null) {
+        window.clearTimeout(loadingTimeoutRef.current);
+      }
     };
   }, []);
 
   useEffect(() => {
     if (audioRef.current) {
-      if (audioRef.current.src !== (currentAudio || 'https://stream.zeno.fm/4d61wprrp7zuv')) {
+      const currentSource = audioRef.current.src;
+      const newSource = currentAudio || 'https://stream.zeno.fm/4d61wprrp7zuv';
+      
+      if (currentSource !== newSource) {
         setIsLoading(true);
-        audioRef.current.src = currentAudio || 'https://stream.zeno.fm/4d61wprrp7zuv';
+        
+        // Clear any existing timeout
+        if (loadingTimeoutRef.current !== null) {
+          window.clearTimeout(loadingTimeoutRef.current);
+        }
+        
+        // Set a maximum loading time
+        loadingTimeoutRef.current = window.setTimeout(() => {
+          setIsLoading(false);
+        }, 5000);
+        
+        audioRef.current.src = newSource;
       }
       
       if (isPlaying && audioRef.current.paused) {
         audioRef.current.play().catch(error => {
           console.error('Error playing audio:', error);
           setIsPlaying(false);
-        }).finally(() => {
           setIsLoading(false);
         });
       } else if (!isPlaying && !audioRef.current.paused) {
@@ -105,6 +159,17 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
       }
     }
   }, [currentAudio, isPlaying]);
+
+  // Clear loading state after a maximum time to prevent UI getting stuck
+  useEffect(() => {
+    if (isLoading) {
+      const timeout = setTimeout(() => {
+        setIsLoading(false);
+      }, 5000);
+      
+      return () => clearTimeout(timeout);
+    }
+  }, [isLoading]);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -146,7 +211,7 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
             <div className="relative">
               {isLoading && (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="absolute inset-0 bg-primary/30 rounded-full animate-ping"></div>
+                  <div className="absolute inset-0 bg-primary/30 rounded-full"></div>
                   <div className="absolute inset-0 bg-secondary/80 rounded-full"></div>
                   <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 text-primary animate-spin z-10" />
                 </div>
