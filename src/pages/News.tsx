@@ -1,9 +1,11 @@
+
 import { useMultiSourceArticles, sources, WordPressArticle } from "@/hooks/useMultiSourceArticles";
 import { Loader2 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArticlesSlider from "@/components/ArticlesSlider";
 import { Link } from "react-router-dom";
+import { getArticleSlug } from "@/utils/articleUtils";
 
 interface NewsProps {
   filter?: string;
@@ -58,7 +60,7 @@ const News = ({ filter }: NewsProps) => {
                 {results[sourceIndex].data?.map((article: WordPressArticle) => (
                   <Link
                     key={article.id}
-                    to={`/article/${article.id}`}
+                    to={`/article/${getArticleSlug(article)}`}
                     className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300 group animate-fade-in"
                   >
                     {article._embedded?.["wp:featuredmedia"]?.[0]?.source_url && (
