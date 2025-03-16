@@ -25,7 +25,7 @@ const NavigationLink = ({
   return (
     <Link
       to={to}
-      className={`text-white hover:text-primary transition-colors duration-200 ${className}`}
+      className={`text-white hover:text-primary transition-colors duration-200 font-medium px-3 py-2 rounded-md ${className}`}
       onClick={handleClick}
       {...props}
     >

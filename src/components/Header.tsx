@@ -7,6 +7,7 @@ import MobileMenuButton from "./header/MobileMenuButton";
 import NavigationLink from "./header/NavigationLink";
 import { useAuth } from "@/hooks/useAuth";
 import { LogIn, LogOut } from "lucide-react";
+import { Button } from "./ui/button";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,7 +34,7 @@ const Header = () => {
           <Logo />
           
           <NavigationMenu className="hidden sm:flex flex-1 justify-center">
-            <NavigationMenuList className="flex items-center justify-center space-x-2">
+            <NavigationMenuList className="flex items-center justify-center space-x-6">
               <NavigationMenuItem>
                 <NavigationLink to="/">
                   Accueil
@@ -54,22 +55,25 @@ const Header = () => {
 
               <NavigationMenuItem>
                 {user ? (
-                  <NavigationLink 
-                    to="#"
+                  <Button 
                     onClick={handleAuthClick}
-                    className="bg-primary text-white hover:bg-primary/80"
+                    variant="outline"
+                    className="bg-secondary hover:bg-secondary/80 text-white border border-primary/30 hover:border-primary/60 transition-all"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
                     Se déconnecter
-                  </NavigationLink>
+                  </Button>
                 ) : (
-                  <NavigationLink 
-                    to="/login"
-                    className="bg-primary text-white hover:bg-primary/80"
+                  <Button 
+                    asChild
+                    variant="default"
+                    className="bg-accent hover:bg-accent/80 text-white shadow-sm hover:shadow-md transition-all"
                   >
-                    <LogIn className="mr-2 h-4 w-4" />
-                    Se connecter
-                  </NavigationLink>
+                    <NavigationLink to="/login" className="text-white hover:text-white">
+                      <LogIn className="mr-2 h-4 w-4" />
+                      Se connecter
+                    </NavigationLink>
+                  </Button>
                 )}
               </NavigationMenuItem>
             </NavigationMenuList>
@@ -79,7 +83,7 @@ const Header = () => {
           {isMenuOpen && (
             <div className="fixed sm:hidden inset-x-0 top-16 bg-secondary/95 backdrop-blur-sm border-t border-primary/20">
               <NavigationMenu className="w-full">
-                <NavigationMenuList className="flex flex-col items-center justify-center p-4 space-y-3 w-full">
+                <NavigationMenuList className="flex flex-col items-center justify-center p-4 space-y-4 w-full">
                   <NavigationMenuItem className="w-full text-center">
                     <NavigationLink to="/">
                       Accueil
@@ -97,22 +101,25 @@ const Header = () => {
                   </NavigationMenuItem>
                   <NavigationMenuItem className="w-full text-center">
                     {user ? (
-                      <NavigationLink 
-                        to="#"
+                      <Button 
                         onClick={handleAuthClick}
-                        className="bg-primary text-white hover:bg-primary/80"
+                        variant="outline"
+                        className="w-full bg-secondary hover:bg-secondary/80 text-white border border-primary/30 hover:border-primary/60 transition-all"
                       >
                         <LogOut className="mr-2 h-4 w-4" />
                         Se déconnecter
-                      </NavigationLink>
+                      </Button>
                     ) : (
-                      <NavigationLink 
-                        to="/login"
-                        className="bg-primary text-white hover:bg-primary/80"
+                      <Button 
+                        asChild
+                        variant="default"
+                        className="w-full bg-accent hover:bg-accent/80 text-white shadow-sm hover:shadow-md transition-all"
                       >
-                        <LogIn className="mr-2 h-4 w-4" />
-                        Se connecter
-                      </NavigationLink>
+                        <NavigationLink to="/login" className="text-white hover:text-white">
+                          <LogIn className="mr-2 h-4 w-4" />
+                          Se connecter
+                        </NavigationLink>
+                      </Button>
                     )}
                   </NavigationMenuItem>
                 </NavigationMenuList>
