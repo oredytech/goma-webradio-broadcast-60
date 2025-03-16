@@ -21,35 +21,119 @@ const PodcastPlayer = ({
   currentAudio,
   setCurrentAudio,
 }: PodcastPlayerProps) => {
-  const { episodeId, slug } = useParams<{ episodeId: string; slug?: string }>();
+  const { episodeId, slug } = useParams<{ episodeId?: string; slug?: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { data: episodes, isLoading } = usePodcastFeed();
   const [loadingAudio, setLoadingAudio] = useState(false);
+  const [foundEpisodeIndex, setFoundEpisodeIndex] = useState<number | null>(null);
   
   // Find the selected episode
-  const episode = episodes?.find((ep, index) => index.toString() === episodeId);
+  useEffect(() => {
+    if (!episodes || isLoading) return;
+    
+    if (episodeId && slug) {
+      // Old format URL with ID and slug
+      const index = parseInt(episodeId);
+      if (!isNaN(index) && index >= 0 && index < episodes.length) {
+        setFoundEpisodeIndex(index);
+        
+        // Redirect to new URL format (without ID)
+        const generatedSlug = episodes[index].title
+          .toLowerCase()
+          .replace(/[^\w\s-]/g, '')
+          .replace(/\s+/g, '-');
+          
+        navigate(`/podcast/${generatedSlug}`, { replace: true });
+      }
+    } 
+    else if (episodeId && !slug) {
+      // Handle the case where episodeId might be numeric or might be the slug
+      if (/^\d+$/.test(episodeId)) {
+        // It's a numeric ID
+        const index = parseInt(episodeId);
+        if (!isNaN(index) && index >= 0 && index < episodes.length) {
+          setFoundEpisodeIndex(index);
+          
+          // Redirect to new URL format
+          const generatedSlug = episodes[index].title
+            .toLowerCase()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/\s+/g, '-');
+            
+          navigate(`/podcast/${generatedSlug}`, { replace: true });
+        }
+      } else {
+        // episodeId is actually a slug
+        const index = episodes.findIndex(ep => {
+          const episodeSlug = ep.title
+            .toLowerCase()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/\s+/g, '-');
+          
+          return episodeId === episodeSlug || 
+                 episodeId.includes(episodeSlug) || 
+                 episodeSlug.includes(episodeId) ||
+                 ep.title.toLowerCase().includes(episodeId.toLowerCase());
+        });
+        
+        if (index !== -1) {
+          setFoundEpisodeIndex(index);
+          
+          // Ensure URL has correct slug
+          const generatedSlug = episodes[index].title
+            .toLowerCase()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/\s+/g, '-');
+            
+          if (episodeId !== generatedSlug) {
+            navigate(`/podcast/${generatedSlug}`, { replace: true });
+          }
+        }
+      }
+    }
+    else if (slug && !episodeId) {
+      // New format: just the slug
+      const index = episodes.findIndex(ep => {
+        const episodeSlug = ep.title
+          .toLowerCase()
+          .replace(/[^\w\s-]/g, '')
+          .replace(/\s+/g, '-');
+        
+        return slug === episodeSlug || 
+               slug.includes(episodeSlug) || 
+               episodeSlug.includes(slug) ||
+               ep.title.toLowerCase().includes(slug.toLowerCase());
+      });
+      
+      if (index !== -1) {
+        setFoundEpisodeIndex(index);
+        
+        // Ensure URL has correct slug
+        const generatedSlug = episodes[index].title
+          .toLowerCase()
+          .replace(/[^\w\s-]/g, '')
+          .replace(/\s+/g, '-');
+          
+        if (slug !== generatedSlug) {
+          navigate(`/podcast/${generatedSlug}`, { replace: true });
+        }
+      }
+    }
+  }, [episodes, isLoading, episodeId, slug, navigate]);
+
+  const episode = foundEpisodeIndex !== null && episodes ? episodes[foundEpisodeIndex] : null;
 
   useEffect(() => {
     // Set page title
     if (episode) {
       document.title = `${episode.title} | GOMA WEBRADIO`;
-      
-      // If we're on the non-slug URL, redirect to the slug URL
-      if (!slug && episode) {
-        const generatedSlug = episode.title
-          .toLowerCase()
-          .replace(/[^\w\s-]/g, '')
-          .replace(/\s+/g, '-');
-        
-        navigate(`/podcast/${episodeId}/${generatedSlug}`, { replace: true });
-      }
     }
     
     return () => {
       document.title = 'GOMA WEBRADIO';
     };
-  }, [episode, episodeId, slug, navigate]);
+  }, [episode]);
 
   const handlePlay = () => {
     if (!episode) return;
@@ -70,19 +154,21 @@ const PodcastPlayer = ({
   };
 
   const handleShare = () => {
-    // Generate slug if we need it
-    const generatedSlug = episode?.title
+    if (!episode) return;
+    
+    // Generate slug
+    const generatedSlug = episode.title
       .toLowerCase()
       .replace(/[^\w\s-]/g, '')
       .replace(/\s+/g, '-');
       
-    // Use the full URL with slug for sharing
-    const shareUrl = `${window.location.origin}/podcast/${episodeId}/${generatedSlug}`;
+    // Use the new URL format without ID
+    const shareUrl = `${window.location.origin}/podcast/${generatedSlug}`;
     
     if (navigator.share) {
       navigator.share({
-        title: episode?.title,
-        text: episode?.description,
+        title: episode.title,
+        text: episode.description,
         url: shareUrl,
       }).catch(error => console.log('Error sharing', error));
     } else {
@@ -94,12 +180,24 @@ const PodcastPlayer = ({
     }
   };
 
-  if (isLoading || !episode) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
         <Header />
         <div className="max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:px-8 flex items-center justify-center">
           <Loader2 className="w-10 h-10 text-primary animate-spin" />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!episode) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
+        <Header />
+        <div className="max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:px-8 flex items-center justify-center">
+          <div className="text-white text-xl">Podcast non trouvé</div>
         </div>
         <Footer />
       </div>

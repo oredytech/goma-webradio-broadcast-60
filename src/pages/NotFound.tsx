@@ -21,10 +21,10 @@ const NotFound = () => {
       if (articleMatch) {
         const pathSegment = articleMatch[1];
         
-        // First try to match by ID at path start (for backward compatibility)
-        const idMatch = pathSegment.match(/^(\d+)/);
-        if (idMatch) {
-          const id = parseInt(idMatch[1]);
+        // Check if it's just a numeric ID (old format)
+        const isJustId = /^\d+$/.test(pathSegment);
+        if (isJustId) {
+          const id = parseInt(pathSegment);
           const article = articles.find(a => a.id === id);
           if (article) {
             setMatchedArticle(article);
@@ -40,7 +40,9 @@ const NotFound = () => {
             .replace(/[^\w\s-]/g, '')
             .replace(/\s+/g, '-');
           
-          return pathSegment.includes(articleSlug) || 
+          return pathSegment === articleSlug || 
+                 pathSegment.includes(articleSlug) || 
+                 articleSlug.includes(pathSegment) ||
                  pathSegment.toLowerCase().includes(decodedTitle.toLowerCase()) ||
                  decodedTitle.toLowerCase().includes(pathSegment.toLowerCase());
         });
@@ -53,22 +55,40 @@ const NotFound = () => {
 
     // Check for podcast paths
     if (podcasts && !podcastsLoading) {
-      const podcastMatch = location.pathname.match(/\/podcast\/(\d+)(?:\/(.+))?/);
+      // Match both old format with ID and new format without ID
+      const podcastMatch = location.pathname.match(/\/podcast\/(?:(\d+)\/)?(.+)?/);
       if (podcastMatch) {
-        const episodeId = parseInt(podcastMatch[1]);
-        // Check if the episode ID is valid
-        if (episodeId >= 0 && episodeId < podcasts.length) {
-          const episode = podcasts[episodeId];
-          const generatedSlug = episode.title
-            .toLowerCase()
-            .replace(/[^\w\s-]/g, '')
-            .replace(/\s+/g, '-');
-          
-          setMatchedPodcastInfo({
-            index: episodeId,
-            slug: generatedSlug
+        const idStr = podcastMatch[1];
+        const slug = podcastMatch[2] || (idStr && !podcastMatch[2] ? idStr : null);
+        
+        if (slug) {
+          // Try to find matching podcast by slug
+          const podcastIndex = podcasts.findIndex(episode => {
+            const episodeSlug = episode.title
+              .toLowerCase()
+              .replace(/[^\w\s-]/g, '')
+              .replace(/\s+/g, '-');
+            
+            return slug === episodeSlug || 
+                   slug.includes(episodeSlug) || 
+                   episodeSlug.includes(slug) ||
+                   episode.title.toLowerCase().includes(slug.toLowerCase()) ||
+                   slug.toLowerCase().includes(episode.title.toLowerCase());
           });
-          return;
+          
+          if (podcastIndex !== -1) {
+            const episode = podcasts[podcastIndex];
+            const generatedSlug = episode.title
+              .toLowerCase()
+              .replace(/[^\w\s-]/g, '')
+              .replace(/\s+/g, '-');
+            
+            setMatchedPodcastInfo({
+              index: podcastIndex,
+              slug: generatedSlug
+            });
+            return;
+          }
         }
       }
     }
@@ -94,12 +114,12 @@ const NotFound = () => {
       .replace(/[^\w\s-]/g, '')
       .replace(/\s+/g, '-');
     
-    return <Navigate to={`/article/${matchedArticle.id}/${articleSlug}`} replace />;
+    return <Navigate to={`/article/${articleSlug}`} replace />;
   }
 
   // If we matched a podcast, redirect to the proper podcast URL
   if (matchedPodcastInfo) {
-    return <Navigate to={`/podcast/${matchedPodcastInfo.index}/${matchedPodcastInfo.slug}`} replace />;
+    return <Navigate to={`/podcast/${matchedPodcastInfo.slug}`} replace />;
   }
 
   return (

@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
-import type { WordPressArticle } from "@/hooks/useWordpressArticles";
+import { useWordpressArticles, WordPressArticle } from "@/hooks/useWordpressArticles";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { updateMetaTags } from "@/utils/metaService";
 import ExtraArticles from "@/components/ExtraArticles";
+import { Loader2 } from "lucide-react";
 
 interface ArticleProps {
   isPlaying: boolean;
@@ -19,22 +20,54 @@ interface ArticleProps {
 }
 
 const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: ArticleProps) => {
-  const { id } = useParams();
+  const { id, slug } = useParams();
   const [comment, setComment] = useState({ name: "", email: "", content: "" });
   const location = useLocation();
   const navigate = useNavigate();
+  const { data: allArticles } = useWordpressArticles();
+  const [articleId, setArticleId] = useState<number | null>(null);
+
+  // Find article ID if we only have slug
+  useEffect(() => {
+    if (!id && slug && allArticles) {
+      const foundArticle = allArticles.find(article => {
+        const decodedTitle = new DOMParser().parseFromString(
+          article.title.rendered, 'text/html'
+        ).body.textContent || article.title.rendered;
+        
+        const articleSlug = decodedTitle
+          .toLowerCase()
+          .replace(/[^\w\s-]/g, '')
+          .replace(/\s+/g, '-');
+        
+        return slug === articleSlug || 
+               slug.includes(articleSlug) || 
+               articleSlug.includes(slug);
+      });
+      
+      if (foundArticle) {
+        setArticleId(foundArticle.id);
+      }
+    } else if (id) {
+      // If we have an ID, use it directly
+      setArticleId(parseInt(id));
+    }
+  }, [id, slug, allArticles]);
 
   const { data: article, isLoading } = useQuery<WordPressArticle>({
-    queryKey: ["article", id],
+    queryKey: ["article", articleId],
     queryFn: async () => {
+      if (!articleId) throw new Error("No article ID found");
+      
       const response = await fetch(
-        `https://totalementactus.net/wp-json/wp/v2/posts/${id}?_embed`
+        `https://totalementactus.net/wp-json/wp/v2/posts/${articleId}?_embed`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       return response.json();
     },
+    enabled: !!articleId,
   });
 
   useEffect(() => {
@@ -45,9 +78,16 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
         .replace(/[^\w\s-]/g, '')
         .replace(/\s+/g, '-');
       
-      // Si l'URL ne contient pas le slug, mettre à jour pour SEO
-      if (!location.pathname.includes(articleSlug) && location.pathname.match(/\/article\/\d+$/)) {
-        navigate(`/article/${id}/${articleSlug}`, { replace: true });
+      // Si l'URL contient un ID mais pas le slug moderne, rediriger
+      if (id && !location.pathname.includes(articleSlug)) {
+        navigate(`/article/${articleSlug}`, { replace: true });
+        return;
+      }
+      
+      // Si l'URL utilise le vieux format avec ID/slug, rediriger vers le nouveau format
+      if (id && slug) {
+        navigate(`/article/${articleSlug}`, { replace: true });
+        return;
       }
       
       // Mise à jour des meta tags
@@ -62,23 +102,34 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
         url: window.location.href
       });
     }
-  }, [article, id, location.pathname, navigate]);
+  }, [article, id, slug, location.pathname, navigate]);
 
-  if (isLoading) {
+  if (isLoading || (!article && articleId)) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-secondary to-black flex items-center justify-center">
-        <div className="text-white">Chargement...</div>
+      <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
+        <Header />
+        <div className="container mx-auto px-4 py-24 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+        <Footer />
       </div>
     );
   }
 
-  if (!article) {
+  if (!article && !isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-secondary to-black flex items-center justify-center">
-        <div className="text-white">Article non trouvé</div>
+      <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
+        <Header />
+        <div className="container mx-auto px-4 py-24 flex items-center justify-center">
+          <div className="text-white text-xl">Article non trouvé</div>
+        </div>
+        <Footer />
       </div>
     );
   }
+
+  // For TS safety, early return if article is undefined
+  if (!article) return null;
 
   const handleSubmitComment = (e: React.FormEvent) => {
     e.preventDefault();

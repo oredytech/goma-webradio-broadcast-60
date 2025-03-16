@@ -54,9 +54,9 @@ const App = () => {
                 />
               } 
             />
-            {/* Routes d'articles supportant les slugs */}
+            {/* Routes d'articles avec et sans ID (pour compatibilité) */}
             <Route 
-              path="/article/:id" 
+              path="/article/:id/:slug" 
               element={
                 <Article 
                   isPlaying={isPlaying}
@@ -67,7 +67,7 @@ const App = () => {
               } 
             />
             <Route 
-              path="/article/:id/:slug" 
+              path="/article/:slug" 
               element={
                 <Article 
                   isPlaying={isPlaying}
@@ -93,9 +93,9 @@ const App = () => {
                 />
               } 
             />
-            {/* Updated podcast player routes to support slugs */}
+            {/* Routes pour podcasts avec et sans ID pour compatibilité */}
             <Route 
-              path="/podcast/:episodeId" 
+              path="/podcast/:episodeId/:slug" 
               element={
                 <PodcastPlayer 
                   isPlaying={isPlaying}
@@ -106,7 +106,7 @@ const App = () => {
               } 
             />
             <Route 
-              path="/podcast/:episodeId/:slug" 
+              path="/podcast/:slug" 
               element={
                 <PodcastPlayer 
                   isPlaying={isPlaying}

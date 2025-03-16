@@ -26,15 +26,15 @@ const PodcastSection = ({
   const { data: episodes, isLoading } = usePodcastFeed();
   const [loadingEpisode, setLoadingEpisode] = useState<string | null>(null);
 
-  const handlePlayEpisode = (episode: any, index: number) => {
+  const handlePlayEpisode = (episode: any) => {
     // Create a slug from the episode title
     const slug = episode.title
       .toLowerCase()
       .replace(/[^\w\s-]/g, '')
       .replace(/\s+/g, '-');
     
-    // Navigate to the podcast player page with both ID and slug
-    navigate(`/podcast/${index}/${slug}`);
+    // Navigate to the podcast player page with slug only
+    navigate(`/podcast/${slug}`);
   };
 
   if (isLoading) {
@@ -88,7 +88,7 @@ const PodcastSection = ({
                     </div>
                   )}
                   <Button
-                    onClick={() => handlePlayEpisode(episode, index)}
+                    onClick={() => handlePlayEpisode(episode)}
                     className="w-full group relative z-10"
                     variant={currentAudio === episode.enclosure.url ? "secondary" : "default"}
                   >

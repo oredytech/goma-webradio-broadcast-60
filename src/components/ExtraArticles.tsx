@@ -34,7 +34,7 @@ const ExtraArticles = () => {
               className="group relative overflow-hidden rounded-lg bg-secondary/50 hover:bg-secondary/70 transition-all duration-300"
             >
               <Link
-                to={`/article/${article.id}/${getArticleSlug(article)}`}
+                to={`/article/${getArticleSlug(article)}`}
                 className="block"
               >
                 <div className="aspect-video overflow-hidden">
