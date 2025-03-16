@@ -11,6 +11,7 @@ import Article from "./pages/Article";
 import News from "./pages/News";
 import About from "./pages/About";
 import Podcasts from "./pages/Podcasts";
+import PodcastPlayer from "./pages/PodcastPlayer";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
@@ -21,6 +22,8 @@ const queryClient = new QueryClient();
 const App = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentAudio, setCurrentAudio] = useState<string | null>(null);
+  const [currentTrack, setCurrentTrack] = useState("Goma Webradio Live");
+  const [currentArtist, setCurrentArtist] = useState("");
 
   // Définir les meta tags par défaut pour le site entier
   useEffect(() => {
@@ -83,6 +86,18 @@ const App = () => {
               path="/podcasts" 
               element={
                 <Podcasts 
+                  isPlaying={isPlaying}
+                  setIsPlaying={setIsPlaying}
+                  currentAudio={currentAudio}
+                  setCurrentAudio={setCurrentAudio}
+                />
+              } 
+            />
+            {/* New podcast player route */}
+            <Route 
+              path="/podcast/:episodeId" 
+              element={
+                <PodcastPlayer 
                   isPlaying={isPlaying}
                   setIsPlaying={setIsPlaying}
                   currentAudio={currentAudio}

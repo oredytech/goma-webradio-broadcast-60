@@ -25,22 +25,9 @@ const PodcastSection = ({
   const { data: episodes, isLoading } = usePodcastFeed();
   const [loadingEpisode, setLoadingEpisode] = useState<string | null>(null);
 
-  const handlePlayEpisode = (episode: any) => {
-    if (currentAudio === episode.enclosure.url) {
-      setIsPlaying(!isPlaying);
-      return;
-    }
-    
-    setLoadingEpisode(episode.enclosure.url);
-    setCurrentAudio(episode.enclosure.url);
-    setCurrentTrack(episode.title);
-    setCurrentArtist("Podcast");
-    setIsPlaying(true);
-
-    const audio = new Audio(episode.enclosure.url);
-    audio.addEventListener('canplay', () => {
-      setLoadingEpisode(null);
-    });
+  const handlePlayEpisode = (episode: any, index: number) => {
+    // Navigate to the podcast player page
+    navigate(`/podcast/${index}`);
   };
 
   if (isLoading) {
@@ -94,22 +81,12 @@ const PodcastSection = ({
                     </div>
                   )}
                   <Button
-                    onClick={() => handlePlayEpisode(episode)}
+                    onClick={() => handlePlayEpisode(episode, index)}
                     className="w-full group relative z-10"
                     variant={currentAudio === episode.enclosure.url ? "secondary" : "default"}
-                    disabled={loadingEpisode === episode.enclosure.url}
                   >
-                    {currentAudio === episode.enclosure.url && isPlaying ? (
-                      <>
-                        <Pause className="w-4 h-4 mr-2" />
-                        En lecture
-                      </>
-                    ) : (
-                      <>
-                        <Play className="w-4 h-4 mr-2" />
-                        Écouter
-                      </>
-                    )}
+                    <Play className="w-4 h-4 mr-2" />
+                    Écouter
                   </Button>
                 </div>
               </div>

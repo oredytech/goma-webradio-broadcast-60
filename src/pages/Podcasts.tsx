@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { usePodcastFeed } from '@/hooks/usePodcastFeed';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, Loader2 } from 'lucide-react';
+import { Play, Loader2 } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -18,24 +19,12 @@ const Podcasts = ({
   currentAudio,
   setCurrentAudio,
 }: PodcastsProps) => {
+  const navigate = useNavigate();
   const { data: episodes, isLoading } = usePodcastFeed();
   const [loadingEpisode, setLoadingEpisode] = useState<string | null>(null);
 
-  const handlePlayEpisode = (episode: any) => {
-    if (currentAudio === episode.enclosure.url) {
-      setIsPlaying(!isPlaying);
-      return;
-    }
-    
-    setLoadingEpisode(episode.enclosure.url);
-    setCurrentAudio(episode.enclosure.url);
-    setIsPlaying(true);
-
-    // Simuler la fin du chargement lorsque l'audio commence à jouer
-    const audio = new Audio(episode.enclosure.url);
-    audio.addEventListener('canplay', () => {
-      setLoadingEpisode(null);
-    });
+  const handlePlayEpisode = (episode: any, index: number) => {
+    navigate(`/podcast/${index}`);
   };
 
   if (isLoading) {
@@ -86,22 +75,12 @@ const Podcasts = ({
                     </div>
                   )}
                   <Button
-                    onClick={() => handlePlayEpisode(episode)}
+                    onClick={() => handlePlayEpisode(episode, index)}
                     className="w-full group relative z-10"
                     variant={currentAudio === episode.enclosure.url ? "secondary" : "default"}
-                    disabled={loadingEpisode === episode.enclosure.url}
                   >
-                    {currentAudio === episode.enclosure.url && isPlaying ? (
-                      <>
-                        <Pause className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-                        En lecture
-                      </>
-                    ) : (
-                      <>
-                        <Play className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-                        Écouter
-                      </>
-                    )}
+                    <Play className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                    Écouter
                   </Button>
                 </div>
               </div>
