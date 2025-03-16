@@ -1,5 +1,8 @@
+
 import { useMultiSourceArticles, sources, WordPressArticle } from "@/hooks/useMultiSourceArticles";
 import { Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { getArticleSlug } from "@/utils/articleUtils";
 
 const Actualites = () => {
   const results = useMultiSourceArticles();
@@ -33,11 +36,9 @@ const Actualites = () => {
             <h2 className="text-2xl font-semibold text-white mb-6">{source.name}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {(results[sourceIndex].data as WordPressArticle[])?.map((article) => (
-                <a
+                <Link
                   key={article.id}
-                  href={article.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  to={`/article/${getArticleSlug(article)}`}
                   className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300"
                 >
                   {article._embedded?.["wp:featuredmedia"]?.[0]?.source_url && (
@@ -58,7 +59,7 @@ const Actualites = () => {
                       dangerouslySetInnerHTML={{ __html: article.excerpt.rendered }}
                     />
                   </div>
-                </a>
+                </Link>
               ))}
             </div>
           </div>

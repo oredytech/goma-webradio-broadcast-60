@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
+import { getArticleSlug } from "@/utils/articleUtils";
 
 const ArticlesSlider = () => {
   const { data: articles, isLoading, error } = useWordpressArticles();
@@ -32,15 +33,6 @@ const ArticlesSlider = () => {
   };
 
   const currentArticle = articles[currentIndex];
-  
-  // Generate slug from title
-  const getArticleSlug = (article: WordPressArticle) => {
-    const decodedTitle = new DOMParser().parseFromString(article.title.rendered, 'text/html').body.textContent || article.title.rendered;
-    return decodedTitle
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-');
-  };
 
   return (
     <div className="relative overflow-hidden py-16">

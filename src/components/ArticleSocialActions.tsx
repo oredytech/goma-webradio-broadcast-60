@@ -16,12 +16,10 @@ const ArticleSocialActions = ({ articleId }: ArticleSocialActionsProps) => {
   const handleShare = async () => {
     // Find the article by ID to get its slug
     const article = articles?.find(a => a.id === articleId);
-    let shareUrl = `${window.location.origin}/article/${articleId}`;
+    if (!article) return;
     
-    if (article) {
-      const slug = getArticleSlug(article);
-      shareUrl = `${window.location.origin}/article/${slug}`;
-    }
+    const slug = getArticleSlug(article);
+    const shareUrl = `${window.location.origin}/article/${slug}`;
     
     if (navigator.share) {
       navigator.share({
