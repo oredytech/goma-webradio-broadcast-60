@@ -1,10 +1,10 @@
 
-import { useParams, useLocation, useNavigate, useEffect } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { WordPressArticle } from "@/hooks/useWordpressArticles";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
