@@ -24,7 +24,7 @@ const fetchPodcastFeed = async (): Promise<PodcastEpisode[]> => {
     console.log("Fetching podcast feed...");
     const encodedUrl = encodeURIComponent(RSS_URL);
     const response = await fetch(`${CORS_PROXY}${encodedUrl}`, {
-      cache: 'force-cache', // Utiliser le cache par défaut du navigateur
+      cache: 'no-cache', // Don't use browser cache - always fetch fresh content
       headers: {
         'Accept': 'text/xml, application/xml, application/rss+xml'
       }
@@ -49,6 +49,11 @@ const fetchPodcastFeed = async (): Promise<PodcastEpisode[]> => {
     // Extract episodes
     const items = xmlDoc.querySelectorAll("item");
     
+    if (items.length === 0) {
+      console.log("No podcast episodes found in feed");
+      return [];
+    }
+    
     const episodes: PodcastEpisode[] = Array.from(items).map((item) => {
       const title = item.querySelector("title")?.textContent || "";
       const description = item.querySelector("description")?.textContent || "";
@@ -72,6 +77,7 @@ const fetchPodcastFeed = async (): Promise<PodcastEpisode[]> => {
       };
     });
 
+    console.log(`Successfully fetched ${episodes.length} podcast episodes`);
     return episodes;
   } catch (error) {
     console.error("Error fetching podcast feed:", error);
@@ -85,9 +91,10 @@ export const usePodcastFeed = () => {
   return useQuery<PodcastEpisode[]>({
     queryKey: ['podcastFeed'],
     queryFn: fetchPodcastFeed,
-    staleTime: 15 * 60 * 1000, // Cache pendant 15 minutes
-    gcTime: 30 * 60 * 1000, // Garbage collection après 30 minutes
-    retry: 2,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes only
+    gcTime: 10 * 60 * 1000, // Garbage collection after 10 minutes
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000), // Exponential backoff
     meta: {
       onError: (error: Error) => {
         console.error("Podcast feed error:", error);

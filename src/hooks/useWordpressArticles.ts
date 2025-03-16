@@ -24,6 +24,7 @@ export interface WordPressArticle {
 
 const fetchArticles = async () => {
   try {
+    console.log("Fetching WordPress articles...");
     const proxyUrl = "https://api.allorigins.win/raw?url=";
     const apiUrl = encodeURIComponent("https://totalementactus.net/wp-json/wp/v2/posts?_embed&per_page=30");
     
@@ -31,17 +32,19 @@ const fetchArticles = async () => {
       headers: {
         'Accept': 'application/json',
       },
-      cache: 'force-cache' // Utiliser le cache par défaut du navigateur
+      cache: 'no-cache' // Don't use browser cache - always fetch fresh content
     });
     
     if (!response.ok) {
+      console.error(`Network response error: ${response.status}`);
       throw new Error(`Network response was not ok: ${response.status}`);
     }
     
     const data = await response.json();
+    console.log(`Successfully fetched ${data.length} articles`);
     return data;
   } catch (error) {
-    console.error("Erreur lors de la récupération des articles:", error);
+    console.error("Error fetching articles:", error);
     throw error;
   }
 };
@@ -52,13 +55,14 @@ export const useWordpressArticles = () => {
   return useQuery<WordPressArticle[]>({
     queryKey: ["wordpress-articles"],
     queryFn: fetchArticles,
-    staleTime: 15 * 60 * 1000, // Cache pendant 15 minutes
-    gcTime: 30 * 60 * 1000, // Garbage collection après 30 minutes
-    retry: 2,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes only
+    gcTime: 10 * 60 * 1000, // Garbage collection after 10 minutes
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000), // Exponential backoff
     refetchOnWindowFocus: false,
     meta: {
       onError: (error: Error) => {
-        console.error("Erreur de récupération des articles:", error);
+        console.error("Error fetching articles:", error);
         toast({
           title: "Erreur de chargement",
           description: "Impossible de charger les articles. Veuillez réessayer ultérieurement.",

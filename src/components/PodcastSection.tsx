@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Play, Pause, Loader2, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { createSlug } from '@/utils/articleUtils';
 import { usePodcastFeed, PodcastEpisode } from '@/hooks/usePodcastFeed';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { useToast } from '@/hooks/use-toast';
 
 interface PodcastSectionProps {
   isPlaying: boolean;
@@ -25,11 +26,23 @@ const PodcastSection = ({
   setCurrentTrack,
   setCurrentArtist,
 }: PodcastSectionProps) => {
-  const { data: episodes, isLoading } = usePodcastFeed();
+  const { data: episodes, isLoading, refetch } = usePodcastFeed();
   const [loadingEpisode, setLoadingEpisode] = useState<string | null>(null);
+  const { toast } = useToast();
   
   // Only display the 3 most recent episodes
   const recentEpisodes = episodes ? episodes.slice(0, 3) : [];
+
+  // Effect to auto-retry loading if no episodes are loaded
+  useEffect(() => {
+    if (!isLoading && (!episodes || episodes.length === 0)) {
+      const timer = setTimeout(() => {
+        refetch();
+      }, 3000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [episodes, isLoading, refetch]);
 
   const handlePlayEpisode = (episode: PodcastEpisode) => {
     if (currentAudio === episode.enclosure.url) {
@@ -50,11 +63,36 @@ const PodcastSection = ({
       setCurrentArtist("Goma Webradio");
     }
 
-    // Simuler la fin du chargement lorsque l'audio commence à jouer
-    const audio = new Audio(episode.enclosure.url);
-    audio.addEventListener('canplay', () => {
+    // Create a new audio element to preload content, but with error handling
+    const audio = new Audio();
+    
+    // Handle errors during loading
+    audio.onerror = () => {
+      toast({
+        title: "Erreur de chargement",
+        description: "Impossible de charger l'audio. Veuillez réessayer.",
+        variant: "destructive",
+      });
       setLoadingEpisode(null);
-    });
+    };
+    
+    // Handle successful loading
+    audio.oncanplay = () => {
+      setLoadingEpisode(null);
+    };
+    
+    // Set timeout to avoid infinite loading state
+    const loadingTimeout = setTimeout(() => {
+      if (loadingEpisode === episode.enclosure.url) {
+        setLoadingEpisode(null);
+      }
+    }, 10000);
+    
+    // Clean up timeout if component unmounts
+    audio.src = episode.enclosure.url;
+    audio.load();
+    
+    return () => clearTimeout(loadingTimeout);
   };
 
   // Format date to French locale
@@ -89,70 +127,80 @@ const PodcastSection = ({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {recentEpisodes.map((episode, index) => {
-              const episodeSlug = createSlug(episode.title);
-              return (
-                <div 
-                  key={index} 
-                  className="bg-secondary/50 rounded-lg overflow-hidden border border-primary/20 hover:border-primary/40 transition-all duration-300"
-                >
-                  <Link to={`/podcast/${episodeSlug}`}>
-                    <img 
-                      src={episode.itunes?.image || '/placeholder.svg'} 
-                      alt={episode.title} 
-                      className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
-                    />
-                  </Link>
-                  <div className="p-6">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm text-gray-400">{formatPubDate(episode.pubDate)}</span>
-                      <span className="text-sm text-gray-400">{episode.itunes?.duration || ''}</span>
-                    </div>
+            {recentEpisodes.length > 0 ? (
+              recentEpisodes.map((episode, index) => {
+                const episodeSlug = createSlug(episode.title);
+                return (
+                  <div 
+                    key={index} 
+                    className="bg-secondary/50 rounded-lg overflow-hidden border border-primary/20 hover:border-primary/40 transition-all duration-300"
+                  >
                     <Link to={`/podcast/${episodeSlug}`}>
-                      <h3 className="text-xl font-bold text-white mb-2 hover:text-primary transition-colors">{episode.title}</h3>
+                      <img 
+                        src={episode.itunes?.image || '/placeholder.svg'} 
+                        alt={episode.title} 
+                        className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
+                        loading="lazy"
+                      />
                     </Link>
-                    <p className="text-gray-300 mb-4 line-clamp-3">{episode.description}</p>
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        {loadingEpisode === episode.enclosure.url && (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="absolute inset-0 bg-primary/30 rounded-md animate-ping"></div>
-                            <Loader2 className="w-6 h-6 text-primary animate-spin absolute" />
-                          </div>
-                        )}
-                        <Button
-                          onClick={() => handlePlayEpisode(episode)}
-                          className="w-full group relative z-10"
-                          variant={currentAudio === episode.enclosure.url && isPlaying ? "secondary" : "default"}
-                          disabled={loadingEpisode === episode.enclosure.url}
-                        >
-                          {currentAudio === episode.enclosure.url && isPlaying ? (
-                            <>
-                              <Pause className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-                              En lecture
-                            </>
-                          ) : (
-                            <>
-                              <Play className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-                              Écouter
-                            </>
+                    <div className="p-6">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm text-gray-400">{formatPubDate(episode.pubDate)}</span>
+                        <span className="text-sm text-gray-400">{episode.itunes?.duration || ''}</span>
+                      </div>
+                      <Link to={`/podcast/${episodeSlug}`}>
+                        <h3 className="text-xl font-bold text-white mb-2 hover:text-primary transition-colors">{episode.title}</h3>
+                      </Link>
+                      <p className="text-gray-300 mb-4 line-clamp-3">{episode.description}</p>
+                      <div className="flex gap-2">
+                        <div className="relative flex-1">
+                          {loadingEpisode === episode.enclosure.url && (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="absolute inset-0 bg-primary/30 rounded-md animate-ping"></div>
+                              <Loader2 className="w-6 h-6 text-primary animate-spin absolute" />
+                            </div>
                           )}
+                          <Button
+                            onClick={() => handlePlayEpisode(episode)}
+                            className="w-full group relative z-10"
+                            variant={currentAudio === episode.enclosure.url && isPlaying ? "secondary" : "default"}
+                            disabled={loadingEpisode === episode.enclosure.url}
+                          >
+                            {currentAudio === episode.enclosure.url && isPlaying ? (
+                              <>
+                                <Pause className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                                En lecture
+                              </>
+                            ) : (
+                              <>
+                                <Play className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                                Écouter
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                        <Button
+                          variant="outline"
+                          className="bg-transparent text-white hover:bg-white/10"
+                          asChild
+                        >
+                          <Link to={`/podcast/${episodeSlug}`}>
+                            <ExternalLink className="w-4 h-4" />
+                          </Link>
                         </Button>
                       </div>
-                      <Button
-                        variant="outline"
-                        className="bg-transparent text-white hover:bg-white/10"
-                        asChild
-                      >
-                        <Link to={`/podcast/${episodeSlug}`}>
-                          <ExternalLink className="w-4 h-4" />
-                        </Link>
-                      </Button>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            ) : (
+              <div className="col-span-3 text-center py-8">
+                <p className="text-gray-300 mb-4">Aucun podcast disponible pour le moment.</p>
+                <Button onClick={() => refetch()} variant="secondary">
+                  Réessayer
+                </Button>
+              </div>
+            )}
           </div>
         )}
         

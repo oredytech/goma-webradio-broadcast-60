@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Play, Pause, Loader2, ExternalLink } from 'lucide-react';
@@ -22,16 +22,32 @@ const PodcastCard = ({
   loadingEpisode
 }: PodcastCardProps) => {
   const episodeSlug = createSlug(episode.title);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  
+  // Clean up loading state if component unmounts while loading
+  useEffect(() => {
+    return () => {
+      // Component cleanup logic if needed
+    };
+  }, []);
   
   return (
     <div 
       className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300 transform hover:-translate-y-1"
     >
-      <Link to={`/podcast/${episodeSlug}`} className="block">
+      <Link to={`/podcast/${episodeSlug}`} className="block relative">
+        {!imageLoaded && (
+          <div className="absolute inset-0 bg-secondary/70 flex items-center justify-center">
+            <Loader2 className="w-6 h-6 text-primary animate-spin" />
+          </div>
+        )}
         <img
           src={episode.itunes?.image || '/placeholder.svg'}
           alt={episode.title}
-          className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"
+          className={`w-full h-48 object-cover transition-transform duration-300 hover:scale-105 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+          onLoad={() => setImageLoaded(true)}
+          onError={() => setImageLoaded(true)}
+          loading="lazy"
         />
       </Link>
       <div className="p-6">

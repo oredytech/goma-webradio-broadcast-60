@@ -5,52 +5,99 @@ import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { createSlug, decodeHtmlTitle } from "@/utils/articleUtils";
+import { useToast } from "@/hooks/use-toast";
 
 const ArticlesSlider = () => {
-  const { data: articles, isLoading, error } = useWordpressArticles();
+  const { data: articles, isLoading, error, refetch } = useWordpressArticles();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const { toast } = useToast();
 
+  // Effect to handle auto-retry if there's an error or no articles
+  useEffect(() => {
+    if (!isLoading && (!articles || articles.length === 0)) {
+      const timer = setTimeout(() => {
+        refetch();
+      }, 3000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [articles, isLoading, refetch]);
+
+  // Effect to rotate articles
   useEffect(() => {
     if (!articles?.length) return;
     
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % articles.length);
+      setIsImageLoaded(false); // Reset image loaded state for the next article
     }, 6000);
 
     return () => clearInterval(interval);
   }, [articles]);
 
+  // Handle retry
+  const handleRetry = () => {
+    toast({
+      title: "Actualisation en cours",
+      description: "Chargement des derniers articles...",
+    });
+    refetch();
+  };
+
   if (isLoading) {
     return (
-      <div className="text-center py-8 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary mr-2" />
-        <span>Chargement des articles...</span>
+      <div className="relative overflow-hidden py-16 bg-secondary/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-white mb-8">Derniers Articles</h2>
+          <div className="bg-secondary/50 rounded-lg p-6 h-[400px] animate-pulse flex items-center justify-center">
+            <Loader2 className="w-8 h-8 animate-spin text-primary mr-2" />
+            <span className="text-white">Chargement des articles...</span>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error) {
-    console.error("Erreur lors du chargement des articles:", error);
     return (
-      <div className="text-center py-8 text-red-500">
-        Une erreur est survenue lors du chargement des articles. Veuillez réessayer plus tard.
+      <div className="relative overflow-hidden py-16 bg-secondary/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-white mb-8">Derniers Articles</h2>
+          <div className="bg-secondary/50 rounded-lg p-6 h-[400px] flex flex-col items-center justify-center">
+            <p className="text-red-400 mb-4">Impossible de charger les articles. Veuillez réessayer.</p>
+            <Button onClick={handleRetry} variant="secondary">
+              Réessayer
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!articles?.length) {
     return (
-      <div className="text-center py-8 text-gray-400">
-        Aucun article disponible pour le moment.
+      <div className="relative overflow-hidden py-16 bg-secondary/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-white mb-8">Derniers Articles</h2>
+          <div className="bg-secondary/50 rounded-lg p-6 h-[400px] flex flex-col items-center justify-center">
+            <p className="text-gray-400 mb-4">Aucun article disponible pour le moment.</p>
+            <Button onClick={handleRetry} variant="secondary">
+              Réessayer
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
 
   const nextSlide = () => {
+    setIsImageLoaded(false);
     setCurrentIndex((prev) => (prev + 1) % articles.length);
   };
 
   const prevSlide = () => {
+    setIsImageLoaded(false);
     setCurrentIndex((prev) => (prev - 1 + articles.length) % articles.length);
   };
 
@@ -61,18 +108,20 @@ const ArticlesSlider = () => {
 
   return (
     <div className="relative overflow-hidden py-16">
-      {/* Background Image */}
+      {/* Background Image with loading state */}
       <div 
-        className="absolute inset-0 w-full h-full"
+        className={`absolute inset-0 w-full h-full transition-opacity duration-500 ${isImageLoaded ? 'opacity-20' : 'opacity-0'}`}
         style={{
           backgroundImage: `url(${featuredImageUrl})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           filter: 'blur(8px) brightness(0.3)',
           transform: 'scale(1.1)',
-          transition: 'all 0.7s ease-in-out'
         }}
       />
+      
+      {/* Placeholder background while loading */}
+      <div className={`absolute inset-0 w-full h-full bg-secondary transition-opacity duration-500 ${isImageLoaded ? 'opacity-0' : 'opacity-100'}`} />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <h2 className="text-3xl font-bold text-white mb-8">Derniers Articles</h2>
@@ -97,11 +146,18 @@ const ArticlesSlider = () => {
           </div>
           <div className="relative bg-secondary/50 rounded-lg overflow-hidden backdrop-blur-sm">
             <div className="relative w-full h-[400px] transition-transform duration-700 ease-out">
+              {!isImageLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center bg-secondary/70">
+                  <Loader2 className="w-6 h-6 text-primary animate-spin" />
+                </div>
+              )}
               <img
                 src={featuredImageUrl}
                 alt={decodedTitle}
-                className="w-full h-[400px] object-cover transform transition-all duration-700 ease-out scale-105 hover:scale-100"
+                className={`w-full h-[400px] object-cover transform transition-all duration-700 ease-out scale-105 hover:scale-100 ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
                 loading="lazy"
+                onLoad={() => setIsImageLoaded(true)}
+                onError={() => setIsImageLoaded(true)} // Show UI even if image fails
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent transition-opacity duration-700">
                 <div className="absolute bottom-0 left-0 right-0 p-6 transform transition-all duration-500 ease-out">
