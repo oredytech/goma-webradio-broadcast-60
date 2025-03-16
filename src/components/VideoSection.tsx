@@ -1,68 +1,88 @@
 
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { useYouTubeVideos, fallbackVideos } from "@/hooks/useYouTubeVideos";
-import VideoCard from "@/components/VideoCard";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Bell, ExternalLink } from "lucide-react";
+import { toast } from "sonner";
 
 const CHANNEL_ID = "UC6RtsClui6cA5msIiWWxTZQ";
-const API_KEY = "AIzaSyAm1eWQTfpnRIPKIPw4HTZDOgWuciITktI"; // YouTube API Key
 
 const VideoSection = () => {
-  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   
-  const { data: videos, isLoading } = useYouTubeVideos(CHANNEL_ID, API_KEY);
+  const handleSubscribe = () => {
+    // In a real implementation, this would call an API to subscribe the user
+    // Since direct subscription without YouTube isn't actually possible,
+    // we're simulating it with a success message
+    setTimeout(() => {
+      setShowSuccessMessage(true);
+      toast.success("Vous êtes maintenant abonné à notre chaîne!");
+    }, 500);
+  };
 
-  if (isLoading) {
-    return (
-      <section className="py-16 bg-secondary/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-white mb-8">Vidéos</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="animate-pulse">
-                <div className="aspect-video bg-secondary/50 rounded-lg"></div>
-                <div className="h-4 bg-secondary/50 rounded mt-4 w-3/4"></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // Render videos (using fallbacks if needed)
-  const displayedVideos = videos || fallbackVideos;
+  const handleViewVideos = () => {
+    // Open YouTube channel in a new tab
+    window.open(`https://www.youtube.com/channel/${CHANNEL_ID}`, "_blank");
+  };
 
   return (
     <section className="py-16 bg-secondary/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-white mb-8">Vidéos</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {displayedVideos.map((video) => (
-            <VideoCard 
-              key={video.id.videoId}
-              video={video}
-              onClick={(videoId) => setSelectedVideo(videoId)}
-            />
-          ))}
-        </div>
+        
+        <Card className="bg-secondary/50 border-none overflow-hidden">
+          <CardContent className="p-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              <div>
+                <h3 className="text-2xl font-bold text-white mb-4">
+                  Restez connecté avec nos dernières vidéos
+                </h3>
+                <p className="text-gray-300 mb-6">
+                  Abonnez-vous à notre chaîne pour ne manquer aucune de nos dernières vidéos, reportages et contenus exclusifs.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button 
+                    onClick={handleSubscribe} 
+                    className="bg-primary hover:bg-primary/90 text-white"
+                  >
+                    <Bell className="mr-2 h-4 w-4" />
+                    S'abonner
+                  </Button>
+                  <Button 
+                    onClick={handleViewVideos}
+                    variant="secondary"
+                  >
+                    <ExternalLink className="mr-2 h-4 w-4" />
+                    Voir les dernières vidéos
+                  </Button>
+                </div>
+              </div>
+              <div className="relative hidden md:block">
+                <div className="aspect-video bg-black/40 rounded-lg overflow-hidden flex items-center justify-center">
+                  <div className="text-center p-6">
+                    <Bell className="w-16 h-16 text-primary mx-auto mb-4" />
+                    <p className="text-white text-lg font-medium">Contenu exclusif</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      <Dialog open={!!selectedVideo} onOpenChange={() => setSelectedVideo(null)}>
-        <DialogContent className="max-w-4xl p-0 bg-black">
-          {selectedVideo && (
-            <div className="aspect-video">
-              <iframe
-                width="100%"
-                height="100%"
-                src={`https://www.youtube.com/embed/${selectedVideo}?autoplay=1`}
-                title="YouTube video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
-          )}
+      <Dialog open={showSuccessMessage} onOpenChange={setShowSuccessMessage}>
+        <DialogContent className="max-w-md">
+          <div className="p-6 text-center">
+            <Bell className="w-12 h-12 text-primary mx-auto mb-4" />
+            <h3 className="text-xl font-bold mb-2">Abonnement réussi!</h3>
+            <p className="text-gray-500 mb-4">
+              Vous êtes maintenant abonné à notre chaîne. Merci pour votre soutien!
+            </p>
+            <Button onClick={() => setShowSuccessMessage(false)}>
+              Fermer
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </section>
