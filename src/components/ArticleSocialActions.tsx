@@ -2,6 +2,8 @@
 import { Share2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { useToast } from './ui/use-toast';
+import { getArticleSlug } from '@/utils/articleUtils';
+import { useWordpressArticles } from '@/hooks/useWordpressArticles';
 
 interface ArticleSocialActionsProps {
   articleId: number;
@@ -9,11 +11,17 @@ interface ArticleSocialActionsProps {
 
 const ArticleSocialActions = ({ articleId }: ArticleSocialActionsProps) => {
   const { toast } = useToast();
-
+  const { data: articles } = useWordpressArticles();
+  
   const handleShare = async () => {
-    // Generate an article slug (simplified version)
-    // In a real scenario, you might want to fetch the actual article title
-    const shareUrl = `${window.location.origin}/article/${articleId}`;
+    // Find the article by ID to get its slug
+    const article = articles?.find(a => a.id === articleId);
+    let shareUrl = `${window.location.origin}/article/${articleId}`;
+    
+    if (article) {
+      const slug = getArticleSlug(article);
+      shareUrl = `${window.location.origin}/article/${slug}`;
+    }
     
     if (navigator.share) {
       navigator.share({
