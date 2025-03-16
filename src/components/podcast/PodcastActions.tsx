@@ -30,7 +30,7 @@ const PodcastActions = ({
     // Clean up on unmount
     return () => {
       if (audioRef.current) {
-        audioRef.current.pause();
+        // Don't pause here as it would stop global playback
         audioRef.current = null;
       }
     };
@@ -38,17 +38,8 @@ const PodcastActions = ({
 
   const handlePlay = () => {
     if (currentAudio === episode.enclosure.url) {
-      // Toggle play/pause without resetting audio
+      // Toggle play/pause without resetting audio - let RadioPlayer handle this
       setIsPlaying(!isPlaying);
-      
-      if (!isPlaying && audioRef.current) {
-        // Resume from current position
-        audioRef.current.play();
-      } else if (audioRef.current) {
-        // Pause and save current position
-        playbackPositionRef.current = audioRef.current.currentTime;
-        audioRef.current.pause();
-      }
       return;
     }
     
@@ -56,20 +47,6 @@ const PodcastActions = ({
     setLoadingAudio(true);
     setCurrentAudio(episode.enclosure.url);
     setIsPlaying(true);
-
-    // Create new audio instance for the new source
-    const audio = new Audio(episode.enclosure.url);
-    audioRef.current = audio;
-    
-    audio.addEventListener('canplay', () => {
-      setLoadingAudio(false);
-      audio.play();
-    });
-    
-    audio.addEventListener('timeupdate', () => {
-      // Update the current playback position
-      playbackPositionRef.current = audio.currentTime;
-    });
   };
 
   const handleShare = () => {

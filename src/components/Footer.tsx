@@ -1,5 +1,6 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Link } from "react-router-dom";
 import { Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -17,9 +18,9 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-bold text-white mb-4">Liens rapides</h3>
             <ul className="space-y-2">
-              <li><a href="/" className="text-gray-300 hover:text-primary transition-colors">Accueil</a></li>
-              <li><a href="/actualites" className="text-gray-300 hover:text-primary transition-colors">Actualités</a></li>
-              <li><a href="/a-propos" className="text-gray-300 hover:text-primary transition-colors">À propos</a></li>
+              <li><Link to="/" className="text-gray-300 hover:text-primary transition-colors">Accueil</Link></li>
+              <li><Link to="/actualites" className="text-gray-300 hover:text-primary transition-colors">Actualités</Link></li>
+              <li><Link to="/a-propos" className="text-gray-300 hover:text-primary transition-colors">À propos</Link></li>
               <li>
                 <Dialog>
                   <DialogTrigger asChild>

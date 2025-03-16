@@ -18,6 +18,7 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
   const [duration, setDuration] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioElementCreated = useRef<boolean>(false);
 
   const handleVolumeChange = (value: number[]) => {
     const newVolume = value[0];
@@ -51,43 +52,54 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
   };
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.addEventListener('timeupdate', () => {
-        if (audioRef.current) {
-          setProgress((audioRef.current.currentTime / audioRef.current.duration) * 100);
-        }
+    if (!audioElementCreated.current) {
+      const audio = new Audio();
+      audioRef.current = audio;
+      audioElementCreated.current = true;
+      
+      audio.addEventListener('timeupdate', () => {
+        setProgress((audio.currentTime / audio.duration) * 100);
       });
 
-      audioRef.current.addEventListener('loadedmetadata', () => {
-        if (audioRef.current) {
-          setDuration(audioRef.current.duration);
-        }
+      audio.addEventListener('loadedmetadata', () => {
+        setDuration(audio.duration);
       });
 
-      audioRef.current.addEventListener('playing', () => {
+      audio.addEventListener('playing', () => {
         setIsLoading(false);
-        navigator.mediaSession.setActionHandler('play', () => setIsPlaying(true));
-        navigator.mediaSession.setActionHandler('pause', () => setIsPlaying(false));
+        if ('mediaSession' in navigator) {
+          navigator.mediaSession.setActionHandler('play', () => setIsPlaying(true));
+          navigator.mediaSession.setActionHandler('pause', () => setIsPlaying(false));
+        }
       });
 
-      audioRef.current.addEventListener('waiting', () => {
+      audio.addEventListener('waiting', () => {
         setIsLoading(true);
       });
+
+      audio.volume = volume / 100;
     }
-  }, [setIsPlaying]);
+
+    return () => {
+      // We don't destroy the audio element on unmount to keep playback going
+    };
+  }, []);
 
   useEffect(() => {
     if (audioRef.current) {
-      setIsLoading(true);
-      audioRef.current.src = currentAudio || 'https://stream.zeno.fm/4d61wprrp7zuv';
-      if (isPlaying) {
+      if (audioRef.current.src !== (currentAudio || 'https://stream.zeno.fm/4d61wprrp7zuv')) {
+        setIsLoading(true);
+        audioRef.current.src = currentAudio || 'https://stream.zeno.fm/4d61wprrp7zuv';
+      }
+      
+      if (isPlaying && audioRef.current.paused) {
         audioRef.current.play().catch(error => {
           console.error('Error playing audio:', error);
           setIsPlaying(false);
         }).finally(() => {
           setIsLoading(false);
         });
-      } else {
+      } else if (!isPlaying && !audioRef.current.paused) {
         audioRef.current.pause();
         setIsLoading(false);
       }
@@ -166,11 +178,6 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
           </div>
         </div>
       </div>
-      <audio
-        ref={audioRef}
-        src={currentAudio || "https://stream.zeno.fm/4d61wprrp7zuv"}
-        preload="none"
-      />
     </div>
   );
 };
