@@ -58,7 +58,7 @@ export const useAudioEvents = ({
     const handlePlaying = () => {
       setIsLoading(false);
       setError(null);
-      setRetryCount(0);
+      setRetryCount(() => 0); // Fixed: pass callback function instead of direct number
       if ('mediaSession' in navigator) {
         navigator.mediaSession.setActionHandler('play', () => setIsPlaying(true));
         navigator.mediaSession.setActionHandler('pause', () => setIsPlaying(false));

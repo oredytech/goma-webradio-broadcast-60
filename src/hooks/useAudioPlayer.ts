@@ -19,6 +19,18 @@ export const useAudioPlayer = ({ currentAudio, isPlaying, setIsPlaying }: UseAud
   const [retryCount, setRetryCount] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
+  
+  // Create a compatible toast object that matches the expected interface
+  const toastWrapper = {
+    toast: (props: {
+      title?: string;
+      description?: string;
+      action?: React.ReactElement;
+      variant?: "default" | "destructive";
+    }) => {
+      return toast(props);
+    }
+  };
 
   // Import functionality from separate hooks
   const { handleVolumeChange, togglePlay, handleSeek } = usePlaybackControls({
@@ -31,7 +43,7 @@ export const useAudioPlayer = ({ currentAudio, isPlaying, setIsPlaying }: UseAud
     setIsPlaying,
     setIsLoading,
     setError,
-    toast
+    toast: toastWrapper
   });
 
   // Set up audio event listeners
@@ -46,7 +58,7 @@ export const useAudioPlayer = ({ currentAudio, isPlaying, setIsPlaying }: UseAud
     setError,
     retryCount,
     setRetryCount,
-    toast
+    toast: toastWrapper
   });
 
   return {
