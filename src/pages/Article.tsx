@@ -1,4 +1,5 @@
-import { useParams } from "react-router-dom";
+
+import { useParams, useLocation, useNavigate, useEffect } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +8,8 @@ import { useState } from "react";
 import type { WordPressArticle } from "@/hooks/useWordpressArticles";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { updateMetaTags } from "@/utils/metaService";
+import ExtraArticles from "@/components/ExtraArticles";
 
 interface ArticleProps {
   isPlaying: boolean;
@@ -18,6 +21,8 @@ interface ArticleProps {
 const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: ArticleProps) => {
   const { id } = useParams();
   const [comment, setComment] = useState({ name: "", email: "", content: "" });
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const { data: article, isLoading } = useQuery<WordPressArticle>({
     queryKey: ["article", id],
@@ -31,6 +36,33 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
       return response.json();
     },
   });
+
+  useEffect(() => {
+    if (article) {
+      const decodedTitle = new DOMParser().parseFromString(article.title.rendered, 'text/html').body.textContent || article.title.rendered;
+      const articleSlug = decodedTitle
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-');
+      
+      // Si l'URL ne contient pas le slug, mettre à jour pour SEO
+      if (!location.pathname.includes(articleSlug) && location.pathname.match(/\/article\/\d+$/)) {
+        navigate(`/article/${id}/${articleSlug}`, { replace: true });
+      }
+      
+      // Mise à jour des meta tags
+      const featuredImageUrl = article._embedded?.["wp:featuredmedia"]?.[0]?.source_url || '/GOWERA__3_-removebg-preview.png';
+      const excerpt = new DOMParser().parseFromString(article.excerpt.rendered, 'text/html').body.textContent || '';
+      
+      updateMetaTags({
+        title: decodedTitle,
+        description: excerpt.substring(0, 160),
+        image: featuredImageUrl,
+        type: 'article',
+        url: window.location.href
+      });
+    }
+  }, [article, id, location.pathname, navigate]);
 
   if (isLoading) {
     return (
@@ -156,6 +188,7 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
         </div>
       </div>
 
+      <ExtraArticles />
       <Footer />
     </div>
   );
