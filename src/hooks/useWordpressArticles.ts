@@ -24,26 +24,21 @@ export interface WordPressArticle {
 
 const fetchArticles = async () => {
   try {
-    console.log("Début de la récupération des articles WordPress");
-    // Utiliser un proxy CORS pour éviter les problèmes de CORS sur Netlify
     const proxyUrl = "https://api.allorigins.win/raw?url=";
     const apiUrl = encodeURIComponent("https://totalementactus.net/wp-json/wp/v2/posts?_embed&per_page=30");
     
-    console.log("Envoi de la requête au proxy CORS");
     const response = await fetch(`${proxyUrl}${apiUrl}`, {
       headers: {
         'Accept': 'application/json',
       },
-      cache: 'no-cache'
+      cache: 'force-cache' // Utiliser le cache par défaut du navigateur
     });
     
     if (!response.ok) {
       throw new Error(`Network response was not ok: ${response.status}`);
     }
     
-    console.log("Réponse reçue, analyse du JSON");
     const data = await response.json();
-    console.log("Articles récupérés avec succès:", data.length);
     return data;
   } catch (error) {
     console.error("Erreur lors de la récupération des articles:", error);
@@ -57,9 +52,9 @@ export const useWordpressArticles = () => {
   return useQuery<WordPressArticle[]>({
     queryKey: ["wordpress-articles"],
     queryFn: fetchArticles,
-    retry: 5,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 15 * 60 * 1000, // Cache pendant 15 minutes
+    gcTime: 30 * 60 * 1000, // Garbage collection après 30 minutes
+    retry: 2,
     refetchOnWindowFocus: false,
     meta: {
       onError: (error: Error) => {

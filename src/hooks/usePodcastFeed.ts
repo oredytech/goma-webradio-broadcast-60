@@ -24,19 +24,17 @@ const fetchPodcastFeed = async (): Promise<PodcastEpisode[]> => {
     console.log("Fetching podcast feed...");
     const encodedUrl = encodeURIComponent(RSS_URL);
     const response = await fetch(`${CORS_PROXY}${encodedUrl}`, {
-      cache: 'no-cache',
+      cache: 'force-cache', // Utiliser le cache par défaut du navigateur
       headers: {
         'Accept': 'text/xml, application/xml, application/rss+xml'
       }
     });
     
     if (!response.ok) {
-      console.error("Failed to fetch podcast feed:", response.status, response.statusText);
       throw new Error(`Failed to fetch podcast feed: ${response.status}`);
     }
     
     const xmlText = await response.text();
-    console.log("Podcast feed fetched, parsing XML...");
     
     // Parse XML to DOM
     const parser = new DOMParser();
@@ -45,13 +43,11 @@ const fetchPodcastFeed = async (): Promise<PodcastEpisode[]> => {
     // Check for parser errors
     const parserError = xmlDoc.querySelector("parsererror");
     if (parserError) {
-      console.error("XML parsing error:", parserError.textContent);
       throw new Error("Failed to parse podcast XML feed");
     }
     
     // Extract episodes
     const items = xmlDoc.querySelectorAll("item");
-    console.log(`Found ${items.length} podcast episodes`);
     
     const episodes: PodcastEpisode[] = Array.from(items).map((item) => {
       const title = item.querySelector("title")?.textContent || "";
@@ -76,7 +72,6 @@ const fetchPodcastFeed = async (): Promise<PodcastEpisode[]> => {
       };
     });
 
-    console.log("Podcast episodes processed successfully");
     return episodes;
   } catch (error) {
     console.error("Error fetching podcast feed:", error);
@@ -90,8 +85,9 @@ export const usePodcastFeed = () => {
   return useQuery<PodcastEpisode[]>({
     queryKey: ['podcastFeed'],
     queryFn: fetchPodcastFeed,
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
-    retry: 3,
+    staleTime: 15 * 60 * 1000, // Cache pendant 15 minutes
+    gcTime: 30 * 60 * 1000, // Garbage collection après 30 minutes
+    retry: 2,
     meta: {
       onError: (error: Error) => {
         console.error("Podcast feed error:", error);
