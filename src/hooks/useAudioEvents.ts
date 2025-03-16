@@ -52,6 +52,7 @@ export const useAudioEvents = ({
     const handleLoadedMetadata = () => {
       if (audio) {
         setDuration(audio.duration);
+        setIsLoading(false);
       }
     };
 
@@ -109,11 +110,31 @@ export const useAudioEvents = ({
       }
     };
 
+    const handleCanPlay = () => {
+      setIsLoading(false);
+      // Si l'utilisateur veut jouer mais l'audio est en pause, on le démarre
+      if (isPlaying && audio.paused) {
+        audio.play().catch(e => {
+          console.error("Error starting audio after canplay:", e);
+        });
+      }
+    };
+
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setProgress(0);
+      if (audio) {
+        audio.currentTime = 0;
+      }
+    };
+
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
     audio.addEventListener('playing', handlePlaying);
     audio.addEventListener('waiting', handleWaiting);
     audio.addEventListener('error', handleError);
+    audio.addEventListener('canplay', handleCanPlay);
+    audio.addEventListener('ended', handleEnded);
 
     return () => {
       audio.removeEventListener('timeupdate', handleTimeUpdate);
@@ -121,6 +142,8 @@ export const useAudioEvents = ({
       audio.removeEventListener('playing', handlePlaying);
       audio.removeEventListener('waiting', handleWaiting);
       audio.removeEventListener('error', handleError);
+      audio.removeEventListener('canplay', handleCanPlay);
+      audio.removeEventListener('ended', handleEnded);
     };
   }, [toast, setIsPlaying, retryCount, currentAudio, isPlaying, setError, setIsLoading, setProgress, setDuration, setRetryCount, audioRef]);
 
@@ -139,27 +162,35 @@ export const useAudioEvents = ({
         // Utiliser la propriété crossOrigin pour éviter des problèmes CORS
         audioRef.current.crossOrigin = "anonymous";
         audioRef.current.preload = "auto"; // Ensure preloading
+        audioRef.current.load(); // Forcer le rechargement de l'audio
       } else if (!currentAudio && currentSrc !== "https://stream.zeno.fm/4d61wprrp7zuv") {
         // Si pas d'audio spécifique, on revient à la radio en direct
         setIsLoading(true);
         audioRef.current.src = "https://stream.zeno.fm/4d61wprrp7zuv";
         audioRef.current.crossOrigin = "anonymous";
+        audioRef.current.load(); // Forcer le rechargement de l'audio
       }
       
       // On joue ou on met en pause selon l'état
       if (isPlaying) {
-        audioRef.current.play().catch(error => {
-          console.error('Error playing audio:', error);
-          setIsPlaying(false);
-          setError("Erreur de lecture audio. Veuillez réessayer.");
-          toast.toast({
-            title: "Erreur de lecture",
-            description: "Impossible de lire l'audio. Connexion perdue ou source non disponible.",
-            variant: "destructive",
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.error('Error playing audio:', error);
+            // Si l'erreur est liée à l'interaction utilisateur, on ne change pas l'état de lecture
+            if (error.name !== 'NotAllowedError') {
+              setIsPlaying(false);
+              setError("Erreur de lecture audio. Veuillez réessayer.");
+              toast.toast({
+                title: "Erreur de lecture",
+                description: "Impossible de lire l'audio. Connexion perdue ou source non disponible.",
+                variant: "destructive",
+              });
+            }
+          }).finally(() => {
+            setIsLoading(false);
           });
-        }).finally(() => {
-          setIsLoading(false);
-        });
+        }
       } else {
         audioRef.current.pause();
         setIsLoading(false);

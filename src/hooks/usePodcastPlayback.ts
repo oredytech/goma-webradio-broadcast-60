@@ -60,31 +60,19 @@ export const usePodcastPlayback = ({
       setCurrentArtist("Goma Webradio");
     }
 
-    // Create a new audio element to preload content with comprehensive error handling
-    const audio = new Audio();
-    
-    // Set up error handling first, before setting the source
-    audio.onerror = () => {
-      console.error("Audio playback error:", audio.error);
-      
-      toast({
-        title: "Erreur de lecture",
-        description: "Impossible de lire l'audio. Connexion perdue ou source non disponible.",
-        variant: "destructive",
+    // Réglage des métadonnées pour MediaSession API
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: episode.title,
+        artist: 'Goma Webradio',
+        album: 'LE REPORTAGE',
+        artwork: [
+          { src: episode.itunes?.image || '/placeholder.svg', sizes: '512x512', type: 'image/jpeg' }
+        ]
       });
-      
-      setLoadingEpisode(null);
-      setIsPlaying(false);
-    };
-    
-    // Handle successful loading
-    audio.oncanplay = () => {
-      setCurrentAudio(episode.enclosure.url);
-      setIsPlaying(true);
-      setLoadingEpisode(null);
-    };
-    
-    // Handle timeouts for slow connections
+    }
+
+    // Définir un délai de sécurité pour annuler le chargement si trop long
     const loadingTimeout = setTimeout(() => {
       if (loadingEpisode === episode.enclosure.url) {
         setLoadingEpisode(null);
@@ -95,20 +83,23 @@ export const usePodcastPlayback = ({
           variant: "destructive",
         });
       }
-    }, 15000); // 15 seconds timeout
-    
-    // Use CORS proxy for better compatibility
+    }, 20000); // 20 secondes timeout (augmenté de 15 à 20 secondes)
+
+    // Utiliser directement l'URL pour éviter les problèmes CORS
     let audioUrl = episode.enclosure.url;
     
-    // Set the source and attempt to load
-    audio.crossOrigin = "anonymous";
-    audio.src = audioUrl;
-    audio.load();
+    // Mise à jour directe pour éviter l'état de chargement persistant
+    setCurrentAudio(audioUrl);
+    setIsPlaying(true);
     
+    // Annuler l'état de chargement après un court délai pour garantir que le lecteur a eu le temps de changer d'état
+    setTimeout(() => {
+      setLoadingEpisode(null);
+    }, 1500);
+    
+    // Nettoyer le timeout si le composant est démonté
     return () => {
       clearTimeout(loadingTimeout);
-      audio.oncanplay = null;
-      audio.onerror = null;
     };
   };
 

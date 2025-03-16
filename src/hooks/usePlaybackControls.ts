@@ -51,20 +51,44 @@ export const usePlaybackControls = ({
         audioRef.current.pause();
         setIsLoading(false);
       } else {
-        audioRef.current.play()
-          .then(() => {
-            setIsLoading(false);
-          })
-          .catch((err) => {
-            console.error('Playback error:', err);
-            setIsLoading(false);
-            setError("Impossible de lire l'audio. Veuillez réessayer.");
-            toast.toast({
-              title: "Erreur de lecture",
-              description: "Impossible de lire l'audio. Veuillez réessayer.",
-              variant: "destructive",
+        // Vérifiez si l'audio a déjà été chargé
+        if (audioRef.current.readyState >= 2) {
+          audioRef.current.play()
+            .then(() => {
+              setIsLoading(false);
+            })
+            .catch((err) => {
+              console.error('Playback error:', err);
+              setIsLoading(false);
+              setError("Impossible de lire l'audio. Veuillez réessayer.");
+              toast.toast({
+                title: "Erreur de lecture",
+                description: "Impossible de lire l'audio. Veuillez réessayer.",
+                variant: "destructive",
+              });
+              // Ne pas changer l'état isPlaying si on ne peut pas démarrer la lecture
+              return;
             });
-          });
+        } else {
+          // Si l'audio n'est pas encore chargé, on charge d'abord
+          audioRef.current.load();
+          audioRef.current.play()
+            .then(() => {
+              setIsLoading(false);
+            })
+            .catch((err) => {
+              console.error('Playback error:', err);
+              setIsLoading(false);
+              setError("Impossible de lire l'audio. Veuillez réessayer.");
+              toast.toast({
+                title: "Erreur de lecture",
+                description: "Impossible de lire l'audio. Veuillez réessayer.",
+                variant: "destructive",
+              });
+              // Ne pas changer l'état isPlaying si on ne peut pas démarrer la lecture
+              return;
+            });
+        }
       }
       setIsPlaying(!isPlaying);
     }

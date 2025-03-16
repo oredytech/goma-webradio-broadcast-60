@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Progress } from "@/components/ui/progress";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 import { formatTime } from "@/utils/audioUtils";
@@ -28,6 +28,20 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
     togglePlay,
     handleSeek,
   } = useAudioPlayer({ currentAudio, isPlaying, setIsPlaying });
+
+  // Mettre à jour le titre et l'artiste en fonction de l'URL de l'audio
+  useEffect(() => {
+    if (currentAudio) {
+      // Extraire le nom du fichier de l'URL pour afficher un titre plus descriptif
+      const filename = currentAudio.split('/').pop() || '';
+      if (filename) {
+        setCurrentTrack("Podcast en cours");
+      }
+    } else {
+      setCurrentTrack("Goma Webradio Live");
+      setCurrentArtist("");
+    }
+  }, [currentAudio]);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-secondary/95 backdrop-blur-sm border-t border-primary/20 h-[80px] p-2 z-50">
@@ -67,7 +81,7 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
       <audio
         ref={audioRef}
         src={currentAudio || "https://stream.zeno.fm/4d61wprrp7zuv"}
-        preload="none"
+        preload="auto"
         crossOrigin="anonymous"
       />
     </div>

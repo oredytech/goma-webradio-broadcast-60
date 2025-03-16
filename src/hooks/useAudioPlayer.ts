@@ -1,5 +1,5 @@
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useAudioEvents } from './useAudioEvents';
 import { usePlaybackControls } from './usePlaybackControls';
@@ -31,6 +31,13 @@ export const useAudioPlayer = ({ currentAudio, isPlaying, setIsPlaying }: UseAud
       return toast(props);
     }
   };
+
+  // Initialiser le volume de l'audio lors du premier rendu
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume / 100;
+    }
+  }, [volume]);
 
   // Import functionality from separate hooks
   const { handleVolumeChange, togglePlay, handleSeek } = usePlaybackControls({
