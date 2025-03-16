@@ -1,3 +1,4 @@
+
 import { useNavigate } from 'react-router-dom';
 import { usePodcastFeed } from '@/hooks/usePodcastFeed';
 import { Button } from '@/components/ui/button';
@@ -56,6 +57,13 @@ const PodcastSection = ({
     }
   };
 
+  // Function to strip HTML tags from text
+  const stripHtml = (html: string) => {
+    const tmp = document.createElement('DIV');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+  };
+
   if (isLoading) {
     return (
       <section className="py-16">
@@ -102,7 +110,9 @@ const PodcastSection = ({
               />
               <div className="p-6">
                 <h3 className="text-xl font-bold text-white mb-2">{episode.title}</h3>
-                <p className="text-gray-300 line-clamp-2 mb-4">{episode.description}</p>
+                <p className="text-gray-300 line-clamp-2 mb-4">
+                  {episode.description ? stripHtml(episode.description) : ''}
+                </p>
                 <div className="flex justify-end">
                   <Button
                     onClick={(e) => handleShare(episode, e)}

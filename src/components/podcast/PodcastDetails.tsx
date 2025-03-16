@@ -29,7 +29,10 @@ const PodcastDetails = ({
       
       <div className="prose prose-lg prose-invert max-w-none">
         <h2 className="text-xl font-bold text-white mb-4">Description</h2>
-        <p className="text-gray-300">{episode.description}</p>
+        <div 
+          className="text-gray-300"
+          dangerouslySetInnerHTML={{ __html: episode.description || '' }}
+        />
       </div>
     </div>
   );
