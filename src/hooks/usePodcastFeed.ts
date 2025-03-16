@@ -1,6 +1,6 @@
 
 import { useQuery } from '@tanstack/react-query';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 export interface PodcastEpisode {
   title: string;
@@ -87,18 +87,20 @@ const fetchPodcastFeed = async (): Promise<PodcastEpisode[]> => {
 export const usePodcastFeed = () => {
   const { toast } = useToast();
   
-  return useQuery({
+  return useQuery<PodcastEpisode[]>({
     queryKey: ['podcastFeed'],
     queryFn: fetchPodcastFeed,
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
     retry: 3,
-    onError: (error) => {
-      console.error("Podcast feed error:", error);
-      toast({
-        title: "Erreur de chargement",
-        description: "Impossible de charger les podcasts. Veuillez réessayer ultérieurement.",
-        variant: "destructive",
-      });
+    meta: {
+      onError: (error: Error) => {
+        console.error("Podcast feed error:", error);
+        toast({
+          title: "Erreur de chargement",
+          description: "Impossible de charger les podcasts. Veuillez réessayer ultérieurement.",
+          variant: "destructive",
+        });
+      }
     }
   });
 };

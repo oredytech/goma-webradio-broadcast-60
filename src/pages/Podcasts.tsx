@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { usePodcastFeed } from '@/hooks/usePodcastFeed';
+import { usePodcastFeed, PodcastEpisode } from '@/hooks/usePodcastFeed';
 import { Button } from '@/components/ui/button';
 import { Play, Pause, Loader2, ExternalLink } from 'lucide-react';
 import Header from '@/components/Header';
@@ -24,7 +24,7 @@ const Podcasts = ({
   const { data: episodes, isLoading } = usePodcastFeed();
   const [loadingEpisode, setLoadingEpisode] = useState<string | null>(null);
 
-  const handlePlayEpisode = (episode: any) => {
+  const handlePlayEpisode = (episode: PodcastEpisode) => {
     if (currentAudio === episode.enclosure.url) {
       setIsPlaying(!isPlaying);
       return;
@@ -68,7 +68,7 @@ const Podcasts = ({
       <main className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-bold text-white mb-12">Tous les épisodes</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {episodes?.map((episode, index) => {
+          {episodes && episodes.map((episode, index) => {
             const episodeSlug = createSlug(episode.title);
             return (
               <div 

@@ -1,10 +1,10 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Play, Pause, Loader2, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { createSlug } from '@/utils/articleUtils';
-import { usePodcastFeed } from '@/hooks/usePodcastFeed';
+import { usePodcastFeed, PodcastEpisode } from '@/hooks/usePodcastFeed';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -29,9 +29,9 @@ const PodcastSection = ({
   const [loadingEpisode, setLoadingEpisode] = useState<string | null>(null);
   
   // Only display the 3 most recent episodes
-  const recentEpisodes = episodes?.slice(0, 3) || [];
+  const recentEpisodes = episodes ? episodes.slice(0, 3) : [];
 
-  const handlePlayEpisode = (episode: any) => {
+  const handlePlayEpisode = (episode: PodcastEpisode) => {
     if (currentAudio === episode.enclosure.url) {
       setIsPlaying(!isPlaying);
       return;

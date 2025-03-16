@@ -1,6 +1,6 @@
 
 import { useParams, useNavigate } from 'react-router-dom';
-import { usePodcastFeed } from '@/hooks/usePodcastFeed';
+import { usePodcastFeed, PodcastEpisode as PodcastEpisodeType } from '@/hooks/usePodcastFeed';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Play, Pause, Calendar, Clock, ArrowLeft, Loader2, Share2, MessageSquare } from 'lucide-react';
@@ -10,7 +10,7 @@ import { createSlug } from '@/utils/articleUtils';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import ArticleSocialActions from '@/components/ArticleSocialActions';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 interface PodcastEpisodeProps {
   isPlaying: boolean;
@@ -31,10 +31,10 @@ const PodcastEpisode = ({
   const [loadingEpisode, setLoadingEpisode] = useState<string | null>(null);
   const { toast } = useToast();
   
-  const episode = episodes?.find(ep => createSlug(ep.title) === slug);
+  const episode = episodes ? episodes.find(ep => createSlug(ep.title) === slug) : undefined;
   
   useEffect(() => {
-    if (!isLoading && !episode && episodes?.length > 0) {
+    if (!isLoading && !episode && episodes && episodes.length > 0) {
       navigate('/podcasts');
     }
   }, [episode, isLoading, episodes, navigate]);
