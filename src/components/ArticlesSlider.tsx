@@ -2,7 +2,7 @@
 import { useWordpressArticles, WordPressArticle } from "@/hooks/useWordpressArticles";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { createSlug, decodeHtmlTitle } from "@/utils/articleUtils";
 
@@ -20,9 +20,31 @@ const ArticlesSlider = () => {
     return () => clearInterval(interval);
   }, [articles]);
 
-  if (isLoading) return <div className="text-center py-8">Chargement des articles...</div>;
-  if (error) return <div className="text-center py-8 text-red-500">Erreur de chargement des articles</div>;
-  if (!articles?.length) return null;
+  if (isLoading) {
+    return (
+      <div className="text-center py-8 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary mr-2" />
+        <span>Chargement des articles...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error("Erreur lors du chargement des articles:", error);
+    return (
+      <div className="text-center py-8 text-red-500">
+        Une erreur est survenue lors du chargement des articles. Veuillez réessayer plus tard.
+      </div>
+    );
+  }
+
+  if (!articles?.length) {
+    return (
+      <div className="text-center py-8 text-gray-400">
+        Aucun article disponible pour le moment.
+      </div>
+    );
+  }
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % articles.length);
@@ -35,6 +57,7 @@ const ArticlesSlider = () => {
   const currentArticle = articles[currentIndex];
   const decodedTitle = decodeHtmlTitle(currentArticle.title.rendered);
   const articleSlug = createSlug(decodedTitle);
+  const featuredImageUrl = currentArticle._embedded?.["wp:featuredmedia"]?.[0]?.source_url || '/placeholder.svg';
 
   return (
     <div className="relative overflow-hidden py-16">
@@ -42,7 +65,7 @@ const ArticlesSlider = () => {
       <div 
         className="absolute inset-0 w-full h-full"
         style={{
-          backgroundImage: `url(${currentArticle._embedded?.["wp:featuredmedia"]?.[0]?.source_url})`,
+          backgroundImage: `url(${featuredImageUrl})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           filter: 'blur(8px) brightness(0.3)',
@@ -75,9 +98,10 @@ const ArticlesSlider = () => {
           <div className="relative bg-secondary/50 rounded-lg overflow-hidden backdrop-blur-sm">
             <div className="relative w-full h-[400px] transition-transform duration-700 ease-out">
               <img
-                src={currentArticle._embedded?.["wp:featuredmedia"]?.[0]?.source_url}
+                src={featuredImageUrl}
                 alt={decodedTitle}
                 className="w-full h-[400px] object-cover transform transition-all duration-700 ease-out scale-105 hover:scale-100"
+                loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent transition-opacity duration-700">
                 <div className="absolute bottom-0 left-0 right-0 p-6 transform transition-all duration-500 ease-out">

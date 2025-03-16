@@ -3,13 +3,36 @@ import { useWordpressArticles } from "@/hooks/useWordpressArticles";
 import { Link } from "react-router-dom";
 import ArticleSocialActions from "./ArticleSocialActions";
 import { createSlug, decodeHtmlTitle } from "@/utils/articleUtils";
+import { Loader2 } from "lucide-react";
 
 const ExtraArticles = () => {
   const { data: articles, isLoading, error } = useWordpressArticles();
 
-  if (isLoading) return <div className="text-center py-8">Chargement des articles...</div>;
-  if (error) return null;
-  if (!articles?.length) return null;
+  if (isLoading) {
+    return (
+      <div className="text-center py-8 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary mr-2" />
+        <span>Chargement des articles...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error("Erreur lors du chargement des articles:", error);
+    return (
+      <div className="text-center py-8 text-red-500">
+        Une erreur est survenue lors du chargement des articles. Veuillez réessayer plus tard.
+      </div>
+    );
+  }
+
+  if (!articles?.length) {
+    return (
+      <div className="text-center py-8 text-gray-400">
+        Aucun article disponible pour le moment.
+      </div>
+    );
+  }
 
   // Get 6 random articles instead of 3
   const randomArticles = [...articles]
@@ -27,7 +50,7 @@ const ExtraArticles = () => {
             return (
               <div
                 key={article.id}
-                className="group relative overflow-hidden rounded-lg bg-secondary/50 hover:bg-secondary/70 transition-all duration-300 flex flex-col"
+                className="group relative overflow-hidden rounded-lg bg-secondary/50 hover:bg-secondary/70 transition-all duration-300 flex flex-col h-full"
               >
                 <Link
                   to={`/article/${articleSlug}`}
@@ -39,6 +62,7 @@ const ExtraArticles = () => {
                         src={article._embedded["wp:featuredmedia"][0].source_url}
                         alt={article.title.rendered}
                         className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
                       />
                     )}
                   </div>

@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 
 interface WordPressArticle {
@@ -21,19 +22,33 @@ interface WordPressArticle {
 }
 
 const fetchArticles = async () => {
-  const response = await fetch(
-    "https://totalementactus.net/wp-json/wp/v2/posts?_embed&per_page=30"
-  );
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
+  try {
+    // Utiliser un proxy CORS pour éviter les problèmes de CORS sur Netlify
+    const proxyUrl = "https://api.allorigins.win/raw?url=";
+    const apiUrl = encodeURIComponent("https://totalementactus.net/wp-json/wp/v2/posts?_embed&per_page=30");
+    
+    const response = await fetch(`${proxyUrl}${apiUrl}`);
+    
+    if (!response.ok) {
+      throw new Error(`Network response was not ok: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log("Articles récupérés avec succès:", data.length);
+    return data;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des articles:", error);
+    throw error;
   }
-  return response.json();
 };
 
 export const useWordpressArticles = () => {
   return useQuery<WordPressArticle[]>({
     queryKey: ["wordpress-articles"],
     queryFn: fetchArticles,
+    retry: 3,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 };
 
