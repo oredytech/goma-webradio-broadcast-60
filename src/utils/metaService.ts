@@ -24,64 +24,32 @@ export const updateMetaTags = (metadata: MetaData): void => {
   updateOrCreateMetaTag('og:title', metadata.title);
   updateOrCreateMetaTag('og:description', metadata.description);
   updateOrCreateMetaTag('og:type', metadata.type || 'website');
+  updateOrCreateMetaTag('og:url', metadata.url || window.location.href);
   updateOrCreateMetaTag('og:site_name', metadata.siteName || 'GOMA WEBRADIO');
   updateOrCreateMetaTag('og:locale', metadata.locale || 'fr_FR');
   
+  // Créer les balises Open Graph pour l'image
   if (metadata.image) {
     // S'assurer que l'URL de l'image est absolue
     const imageUrl = metadata.image.startsWith('http') 
       ? metadata.image 
       : `${window.location.origin}${metadata.image.startsWith('/') ? '' : '/'}${metadata.image}`;
     
-    // Mettre à jour directement les balises meta dans le head du document
-    const ogImage = document.querySelector('meta[property="og:image"]');
-    if (ogImage) ogImage.setAttribute('content', imageUrl);
-    
-    const ogImageSecure = document.querySelector('meta[property="og:image:secure_url"]');
-    if (ogImageSecure) ogImageSecure.setAttribute('content', imageUrl.replace('http:', 'https:'));
-    
-    const ogImageWidth = document.querySelector('meta[property="og:image:width"]');
-    if (ogImageWidth) ogImageWidth.setAttribute('content', '1200');
-    
-    const ogImageHeight = document.querySelector('meta[property="og:image:height"]');
-    if (ogImageHeight) ogImageHeight.setAttribute('content', '630');
-    
-    const ogImageAlt = document.querySelector('meta[property="og:image:alt"]');
-    if (ogImageAlt) ogImageAlt.setAttribute('content', metadata.title);
-    
-    // Mettre à jour les éléments avec ID directement dans le HTML
-    const ogImageById = document.getElementById('og-image');
-    if (ogImageById) ogImageById.setAttribute('content', imageUrl);
-    
-    const twitterImageById = document.getElementById('twitter-image');
-    if (twitterImageById) twitterImageById.setAttribute('content', imageUrl);
-    
-    const ogImageAltById = document.getElementById('og-image-alt');
-    if (ogImageAltById) ogImageAltById.setAttribute('content', metadata.title);
+    updateOrCreateMetaTag('og:image', imageUrl);
+    updateOrCreateMetaTag('og:image:secure_url', imageUrl.replace('http:', 'https:'));
+    updateOrCreateMetaTag('og:image:width', '1200');
+    updateOrCreateMetaTag('og:image:height', '630');
+    updateOrCreateMetaTag('og:image:alt', metadata.title);
     
     // Mettre à jour les balises Twitter
-    const twitterImage = document.querySelector('meta[property="twitter:image"]');
-    if (twitterImage) twitterImage.setAttribute('content', imageUrl);
+    updateOrCreateMetaTag('twitter:image', imageUrl);
   }
   
-  if (metadata.url) {
-    const ogUrl = document.querySelector('meta[property="og:url"]');
-    if (ogUrl) ogUrl.setAttribute('content', metadata.url);
-  } else {
-    // Utiliser l'URL actuelle si aucune n'est spécifiée
-    const ogUrl = document.querySelector('meta[property="og:url"]');
-    if (ogUrl) ogUrl.setAttribute('content', window.location.href);
-  }
-  
-  // Mettre à jour les balises Twitter Card directement
-  const twitterCard = document.querySelector('meta[property="twitter:card"]');
-  if (twitterCard) twitterCard.setAttribute('content', 'summary_large_image');
-  
-  const twitterTitle = document.querySelector('meta[property="twitter:title"]');
-  if (twitterTitle) twitterTitle.setAttribute('content', metadata.title);
-  
-  const twitterDesc = document.querySelector('meta[property="twitter:description"]');
-  if (twitterDesc) twitterDesc.setAttribute('content', metadata.description);
+  // Mettre à jour les balises Twitter Card
+  updateOrCreateMetaTag('twitter:card', 'summary_large_image');
+  updateOrCreateMetaTag('twitter:title', metadata.title);
+  updateOrCreateMetaTag('twitter:description', metadata.description);
+  updateOrCreateMetaTag('twitter:url', metadata.url || window.location.href);
 };
 
 const updateOrCreateMetaTag = (name: string, content: string): void => {
