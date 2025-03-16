@@ -123,7 +123,7 @@ const PodcastPlayer = ({
   return (
     <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
       <Header />
-      <main className="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+      <main className="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8 mt-8">
         <Button 
           variant="ghost" 
           className="text-gray-300 hover:text-white mb-6"
