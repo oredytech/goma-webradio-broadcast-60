@@ -19,6 +19,9 @@ const PodcastPlayButton = ({
   loadingEpisode,
   onPlay
 }: PodcastPlayButtonProps) => {
+  // Check if the audio URL is valid
+  const hasValidUrl = Boolean(episode.enclosure?.url && episode.enclosure.url.startsWith('http'));
+  
   return (
     <div className="relative flex-1">
       {loadingEpisode === episode.enclosure.url && (
@@ -31,7 +34,7 @@ const PodcastPlayButton = ({
         onClick={() => onPlay(episode)}
         className="w-full group relative z-10"
         variant={currentAudio === episode.enclosure.url && isPlaying ? "secondary" : "default"}
-        disabled={loadingEpisode === episode.enclosure.url}
+        disabled={loadingEpisode === episode.enclosure.url || !hasValidUrl}
       >
         {currentAudio === episode.enclosure.url && isPlaying ? (
           <>

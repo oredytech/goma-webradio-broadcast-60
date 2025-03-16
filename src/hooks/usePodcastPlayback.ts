@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PodcastEpisode } from '@/hooks/usePodcastFeed';
 import { useToast } from '@/hooks/use-toast';
 
@@ -23,16 +23,34 @@ export const usePodcastPlayback = ({
   const [loadingEpisode, setLoadingEpisode] = useState<string | null>(null);
   const { toast } = useToast();
 
+  // Clear any abandoned loading states when component unmounts
+  useEffect(() => {
+    return () => {
+      if (loadingEpisode) {
+        setLoadingEpisode(null);
+      }
+    };
+  }, [loadingEpisode]);
+
   const handlePlayEpisode = (episode: PodcastEpisode) => {
+    // Validation check - ensure valid URL
+    if (!episode.enclosure?.url || !episode.enclosure.url.startsWith('http')) {
+      toast({
+        title: "URL invalide",
+        description: "L'URL de cet épisode n'est pas valide. Veuillez essayer un autre épisode.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Toggle playback if already selected
     if (currentAudio === episode.enclosure.url) {
       setIsPlaying(!isPlaying);
       return;
     }
     
     setLoadingEpisode(episode.enclosure.url);
-    setCurrentAudio(episode.enclosure.url);
-    setIsPlaying(true);
-
+    
     // Set track and artist information for media session if provided
     if (setCurrentTrack) {
       setCurrentTrack(episode.title);
@@ -42,36 +60,56 @@ export const usePodcastPlayback = ({
       setCurrentArtist("Goma Webradio");
     }
 
-    // Create a new audio element to preload content, but with error handling
+    // Create a new audio element to preload content with comprehensive error handling
     const audio = new Audio();
     
-    // Handle errors during loading
+    // Set up error handling first, before setting the source
     audio.onerror = () => {
+      console.error("Audio playback error:", audio.error);
+      
       toast({
-        title: "Erreur de chargement",
-        description: "Impossible de charger l'audio. Veuillez réessayer.",
+        title: "Erreur de lecture",
+        description: "Impossible de lire l'audio. Connexion perdue ou source non disponible.",
         variant: "destructive",
       });
+      
       setLoadingEpisode(null);
+      setIsPlaying(false);
     };
     
     // Handle successful loading
     audio.oncanplay = () => {
+      setCurrentAudio(episode.enclosure.url);
+      setIsPlaying(true);
       setLoadingEpisode(null);
     };
     
-    // Set timeout to avoid infinite loading state
+    // Handle timeouts for slow connections
     const loadingTimeout = setTimeout(() => {
       if (loadingEpisode === episode.enclosure.url) {
         setLoadingEpisode(null);
+        
+        toast({
+          title: "Chargement lent",
+          description: "Le chargement prend plus de temps que prévu. Vérifiez votre connexion.",
+          variant: "destructive",
+        });
       }
-    }, 10000);
+    }, 15000); // 15 seconds timeout
     
-    // Clean up timeout if component unmounts
-    audio.src = episode.enclosure.url;
+    // Use CORS proxy for better compatibility
+    let audioUrl = episode.enclosure.url;
+    
+    // Set the source and attempt to load
+    audio.crossOrigin = "anonymous";
+    audio.src = audioUrl;
     audio.load();
     
-    return () => clearTimeout(loadingTimeout);
+    return () => {
+      clearTimeout(loadingTimeout);
+      audio.oncanplay = null;
+      audio.onerror = null;
+    };
   };
 
   return {

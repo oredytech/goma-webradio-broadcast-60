@@ -14,6 +14,7 @@ export const useAudioPlayer = ({ currentAudio, isPlaying, setIsPlaying }: UseAud
   const [duration, setDuration] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
 
@@ -61,6 +62,13 @@ export const useAudioPlayer = ({ currentAudio, isPlaying, setIsPlaying }: UseAud
     }
   };
 
+  // Reset on url change
+  useEffect(() => {
+    setProgress(0);
+    setDuration(0);
+    setRetryCount(0);
+  }, [currentAudio]);
+
   // Effect to set up and manage audio event listeners
   useEffect(() => {
     const audio = audioRef.current;
@@ -82,6 +90,7 @@ export const useAudioPlayer = ({ currentAudio, isPlaying, setIsPlaying }: UseAud
     const handlePlaying = () => {
       setIsLoading(false);
       setError(null);
+      setRetryCount(0);
       if ('mediaSession' in navigator) {
         navigator.mediaSession.setActionHandler('play', () => setIsPlaying(true));
         navigator.mediaSession.setActionHandler('pause', () => setIsPlaying(false));
@@ -93,15 +102,43 @@ export const useAudioPlayer = ({ currentAudio, isPlaying, setIsPlaying }: UseAud
     };
 
     const handleError = (e: Event) => {
-      console.error('Audio error:', e);
+      console.error('Audio error:', e, audio.error);
       setIsLoading(false);
-      setError("Erreur de lecture audio. Veuillez réessayer.");
-      toast({
-        title: "Erreur de lecture",
-        description: "Impossible de lire l'audio. Veuillez réessayer.",
-        variant: "destructive",
-      });
-      setIsPlaying(false);
+      
+      // Maximum retry attempts
+      const maxRetries = 3;
+      
+      if (retryCount < maxRetries && currentAudio) {
+        setRetryCount(prev => prev + 1);
+        
+        // Wait before retrying
+        setTimeout(() => {
+          if (audioRef.current) {
+            audioRef.current.load();
+            if (isPlaying) {
+              audioRef.current.play().catch(err => {
+                console.error("Retry failed:", err);
+                setIsPlaying(false);
+                setError("Erreur de lecture audio après plusieurs tentatives.");
+              });
+            }
+          }
+        }, 2000);
+        
+        toast({
+          title: "Problème de connexion",
+          description: `Tentative de reconnexion ${retryCount + 1}/${maxRetries}...`,
+          variant: "destructive",
+        });
+      } else {
+        setError("Erreur de lecture audio. Veuillez réessayer.");
+        toast({
+          title: "Erreur de lecture",
+          description: "Impossible de lire l'audio. Connexion perdue ou source non disponible.",
+          variant: "destructive",
+        });
+        setIsPlaying(false);
+      }
     };
 
     audio.addEventListener('timeupdate', handleTimeUpdate);
@@ -117,7 +154,7 @@ export const useAudioPlayer = ({ currentAudio, isPlaying, setIsPlaying }: UseAud
       audio.removeEventListener('waiting', handleWaiting);
       audio.removeEventListener('error', handleError);
     };
-  }, [toast, setIsPlaying]);
+  }, [toast, setIsPlaying, retryCount, currentAudio, isPlaying]);
 
   // Effect to handle audio source changes and playback state
   useEffect(() => {
@@ -133,6 +170,7 @@ export const useAudioPlayer = ({ currentAudio, isPlaying, setIsPlaying }: UseAud
         audioRef.current.src = currentAudio;
         // Utiliser la propriété crossOrigin pour éviter des problèmes CORS
         audioRef.current.crossOrigin = "anonymous";
+        audioRef.current.preload = "auto"; // Ensure preloading
       } else if (!currentAudio && currentSrc !== "https://stream.zeno.fm/4d61wprrp7zuv") {
         // Si pas d'audio spécifique, on revient à la radio en direct
         setIsLoading(true);
