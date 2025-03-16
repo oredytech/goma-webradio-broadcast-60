@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
@@ -15,6 +14,7 @@ import ArticleCommentForm from "@/components/ArticleCommentForm";
 import ArticleCommentsList from "@/components/ArticleCommentsList";
 import { createSlug, extractMetaDescription, decodeHtmlTitle } from "@/utils/articleUtils";
 import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ArticleProps {
   isPlaying: boolean;
@@ -29,7 +29,6 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
   const [commentsUpdated, setCommentsUpdated] = useState(false);
   const [articleNotFound, setArticleNotFound] = useState(false);
 
-  // Récupérer tous les articles pour trouver celui qui correspond au slug
   const { data: articles, isLoading: articlesLoading, error: articlesError } = useQuery<WordPressArticle[]>({
     queryKey: ["wordpress-articles"],
     queryFn: async () => {
@@ -55,13 +54,11 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
     refetchOnWindowFocus: false,
   });
 
-  // Trouver l'article qui correspond au slug
   const article = articles?.find(article => {
     const title = decodeHtmlTitle(article.title.rendered);
     return createSlug(title) === slug;
   });
 
-  // Récupérer l'article par ID si on a trouvé une correspondance
   const { data: fullArticle, isLoading: articleLoading } = useQuery<WordPressArticle>({
     queryKey: ["article", article?.id],
     queryFn: async () => {
@@ -88,7 +85,6 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
     refetchOnWindowFocus: false,
   });
 
-  // Utiliser useEffect pour vérifier si l'article est trouvé après le chargement
   useEffect(() => {
     if (!articlesLoading && !articles?.length) {
       console.log("Aucun article n'a été trouvé");
@@ -112,7 +108,6 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
     setCommentsUpdated(prev => !prev);
   };
 
-  // Si nous avons une erreur lors du chargement des articles
   if (articlesError) {
     console.error("Erreur lors du chargement des articles:", articlesError);
     return (
@@ -133,7 +128,6 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
     );
   }
 
-  // Si l'article n'est pas trouvé après le chargement
   if (articleNotFound) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
@@ -153,7 +147,6 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
     );
   }
 
-  // Afficher un état de chargement amélioré
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
@@ -197,18 +190,15 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
       <Header />
       <ArticleHero title={decodedTitle} imageUrl={featuredImageUrl} />
 
-      {/* Content Section with Right Sidebar */}
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8">
             <ArticleContent content={fullArticle.content.rendered} articleId={fullArticle.id} />
             
-            {/* Article Social Actions */}
             <div className="my-8">
               <ArticleSocialActions articleId={fullArticle.id} />
             </div>
 
-            {/* Comments Section */}
             <div className="mt-12">
               <ArticleCommentForm 
                 articleId={fullArticle.id} 

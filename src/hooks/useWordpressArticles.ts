@@ -74,4 +74,4 @@ export const useWordpressArticles = () => {
   });
 };
 
-export type { WordPressArticle };
+// Removed the duplicate export type here
