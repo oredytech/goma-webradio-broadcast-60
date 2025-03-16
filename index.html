@@ -19,6 +19,7 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="GOMA WEBRADIO Logo" id="og-image-alt" />
+    <meta property="og:image:secure_url" content="https://gomawebradio.com/GOWERA__3_-removebg-preview.png" />
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
@@ -26,6 +27,22 @@
     <meta property="twitter:title" content="GOMA WEBRADIO" />
     <meta property="twitter:description" content="La voix de Goma" />
     <meta property="twitter:image" content="/GOWERA__3_-removebg-preview.png" id="twitter-image" />
+    
+    <!-- Initialisation du service de métadonnées -->
+    <script>
+      // Cette fonction sera appelée après le chargement de metaService
+      window.initMetaTags = function() {
+        if (window.metaService && window.metaService.updateMetaTags) {
+          window.metaService.updateMetaTags({
+            title: "GOMA WEBRADIO",
+            description: "La voix de Goma - Actualités, Podcasts et Émissions en direct",
+            image: "/GOWERA__3_-removebg-preview.png",
+            type: "website",
+            url: window.location.origin
+          });
+        }
+      };
+    </script>
   </head>
 
   <body>

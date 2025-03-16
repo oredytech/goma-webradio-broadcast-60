@@ -116,3 +116,13 @@ export const resetMetaTags = (): void => {
     url: window.location.origin
   });
 };
+
+// Exposer les fonctions globalement pour l'accès depuis le HTML
+if (typeof window !== 'undefined') {
+  window.metaService = { updateMetaTags, resetMetaTags };
+  
+  // Indiquer que le service est chargé
+  if (window.initMetaTags) {
+    window.initMetaTags();
+  }
+}
