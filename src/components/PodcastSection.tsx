@@ -1,7 +1,7 @@
 
-import { useState, useEffect } from 'react';
-import { usePodcastFeed, PodcastEpisode } from '@/hooks/usePodcastFeed';
-import { useToast } from '@/hooks/use-toast';
+import { useEffect } from 'react';
+import { usePodcastFeed } from '@/hooks/usePodcastFeed';
+import { usePodcastPlayback } from '@/hooks/usePodcastPlayback';
 import PodcastSectionHeader from './podcast/PodcastSectionHeader';
 import PodcastSectionItem from './podcast/PodcastSectionItem';
 import PodcastSectionLoading from './podcast/PodcastSectionLoading';
@@ -26,8 +26,14 @@ const PodcastSection = ({
   setCurrentArtist,
 }: PodcastSectionProps) => {
   const { data: episodes, isLoading, refetch } = usePodcastFeed();
-  const [loadingEpisode, setLoadingEpisode] = useState<string | null>(null);
-  const { toast } = useToast();
+  const { loadingEpisode, handlePlayEpisode } = usePodcastPlayback({
+    isPlaying,
+    setIsPlaying,
+    currentAudio,
+    setCurrentAudio,
+    setCurrentTrack,
+    setCurrentArtist
+  });
   
   // Only display the 3 most recent episodes
   const recentEpisodes = episodes ? episodes.slice(0, 3) : [];
@@ -42,57 +48,6 @@ const PodcastSection = ({
       return () => clearTimeout(timer);
     }
   }, [episodes, isLoading, refetch]);
-
-  const handlePlayEpisode = (episode: PodcastEpisode) => {
-    if (currentAudio === episode.enclosure.url) {
-      setIsPlaying(!isPlaying);
-      return;
-    }
-    
-    setLoadingEpisode(episode.enclosure.url);
-    setCurrentAudio(episode.enclosure.url);
-    setIsPlaying(true);
-
-    // Set track and artist information for media session if provided
-    if (setCurrentTrack) {
-      setCurrentTrack(episode.title);
-    }
-    
-    if (setCurrentArtist) {
-      setCurrentArtist("Goma Webradio");
-    }
-
-    // Create a new audio element to preload content, but with error handling
-    const audio = new Audio();
-    
-    // Handle errors during loading
-    audio.onerror = () => {
-      toast({
-        title: "Erreur de chargement",
-        description: "Impossible de charger l'audio. Veuillez réessayer.",
-        variant: "destructive",
-      });
-      setLoadingEpisode(null);
-    };
-    
-    // Handle successful loading
-    audio.oncanplay = () => {
-      setLoadingEpisode(null);
-    };
-    
-    // Set timeout to avoid infinite loading state
-    const loadingTimeout = setTimeout(() => {
-      if (loadingEpisode === episode.enclosure.url) {
-        setLoadingEpisode(null);
-      }
-    }, 10000);
-    
-    // Clean up timeout if component unmounts
-    audio.src = episode.enclosure.url;
-    audio.load();
-    
-    return () => clearTimeout(loadingTimeout);
-  };
 
   return (
     <section className="py-16 bg-secondary">
