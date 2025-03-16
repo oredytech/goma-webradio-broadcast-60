@@ -73,5 +73,3 @@ export const useWordpressArticles = () => {
     }
   });
 };
-
-// Removed the duplicate export type here

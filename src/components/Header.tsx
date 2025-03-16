@@ -6,7 +6,7 @@ import Logo from "./header/Logo";
 import MobileMenuButton from "./header/MobileMenuButton";
 import NavigationLink from "./header/NavigationLink";
 import { useAuth } from "@/hooks/useAuth";
-import { LogIn, LogOut } from "lucide-react";
+import { LogIn, LogOut, User } from "lucide-react";
 import { Button } from "./ui/button";
 
 const Header = () => {
@@ -70,8 +70,8 @@ const Header = () => {
                     className="bg-accent hover:bg-accent/80 text-white shadow-sm hover:shadow-md transition-all"
                   >
                     <NavigationLink to="/login" className="text-white hover:text-white">
-                      <LogIn className="mr-2 h-4 w-4" />
-                      Se connecter
+                      <User className="mr-2 h-4 w-4" />
+                      Espace membre
                     </NavigationLink>
                   </Button>
                 )}
@@ -116,8 +116,8 @@ const Header = () => {
                         className="w-full bg-accent hover:bg-accent/80 text-white shadow-sm hover:shadow-md transition-all"
                       >
                         <NavigationLink to="/login" className="text-white hover:text-white">
-                          <LogIn className="mr-2 h-4 w-4" />
-                          Se connecter
+                          <User className="mr-2 h-4 w-4" />
+                          Espace membre
                         </NavigationLink>
                       </Button>
                     )}

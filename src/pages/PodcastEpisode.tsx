@@ -29,15 +29,16 @@ const PodcastEpisode = ({
   const navigate = useNavigate();
   const { data: episodes, isLoading } = usePodcastFeed();
   const [loadingEpisode, setLoadingEpisode] = useState<string | null>(null);
+  const [episodeNotFound, setEpisodeNotFound] = useState(false);
   const { toast } = useToast();
   
-  const episode = episodes ? episodes.find(ep => createSlug(ep.title) === slug) : undefined;
+  const episode = episodes && slug ? episodes.find(ep => createSlug(ep.title) === slug) : undefined;
   
   useEffect(() => {
-    if (!isLoading && !episode && episodes && episodes.length > 0) {
-      navigate('/podcasts');
+    if (!isLoading && !episode && episodes && episodes.length > 0 && slug) {
+      setEpisodeNotFound(true);
     }
-  }, [episode, isLoading, episodes, navigate]);
+  }, [episode, isLoading, episodes, slug]);
 
   const handlePlayEpisode = () => {
     if (!episode) return;
@@ -73,6 +74,25 @@ const PodcastEpisode = ({
       variant: "destructive",
     });
   };
+
+  if (episodeNotFound) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
+        <Header />
+        <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-3xl font-bold text-white mb-4">Épisode non trouvé</h1>
+          <p className="text-lg text-gray-300 mb-8">L'épisode que vous recherchez n'existe pas ou a été déplacé.</p>
+          <Button 
+            onClick={() => navigate('/podcasts')}
+            variant="default"
+          >
+            Voir tous les podcasts
+          </Button>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (isLoading || !episode) {
     return (
