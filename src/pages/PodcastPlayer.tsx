@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useToast } from '@/components/ui/use-toast';
+import { updateMetaTags } from '@/utils/metaService';
 
 interface PodcastPlayerProps {
   isPlaying: boolean;
@@ -125,9 +126,17 @@ const PodcastPlayer = ({
   const episode = foundEpisodeIndex !== null && episodes ? episodes[foundEpisodeIndex] : null;
 
   useEffect(() => {
-    // Set page title
+    // Set page title and meta tags
     if (episode) {
       document.title = `${episode.title} | GOMA WEBRADIO`;
+      
+      updateMetaTags({
+        title: episode.title,
+        description: episode.description.substring(0, 160),
+        image: episode.itunes?.image || '/GOWERA__3_-removebg-preview.png',
+        type: 'article',
+        url: window.location.href
+      });
     }
     
     return () => {

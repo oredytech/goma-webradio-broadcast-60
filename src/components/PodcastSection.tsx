@@ -3,7 +3,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePodcastFeed } from '@/hooks/usePodcastFeed';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, Loader2 } from 'lucide-react';
+import { Share2 } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
 interface PodcastSectionProps {
   isPlaying: boolean;
@@ -24,9 +25,9 @@ const PodcastSection = ({
 }: PodcastSectionProps) => {
   const navigate = useNavigate();
   const { data: episodes, isLoading } = usePodcastFeed();
-  const [loadingEpisode, setLoadingEpisode] = useState<string | null>(null);
+  const { toast } = useToast();
 
-  const handlePlayEpisode = (episode: any) => {
+  const handleOpenPodcast = (episode: any) => {
     // Create a slug from the episode title
     const slug = episode.title
       .toLowerCase()
@@ -35,6 +36,32 @@ const PodcastSection = ({
     
     // Navigate to the podcast player page with slug only
     navigate(`/podcast/${slug}`);
+  };
+
+  const handleShare = (episode: any, event: React.MouseEvent) => {
+    event.stopPropagation();
+    
+    // Create a slug from the episode title
+    const slug = episode.title
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-');
+      
+    const shareUrl = `${window.location.origin}/podcast/${slug}`;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: episode.title,
+        text: episode.description,
+        url: shareUrl,
+      }).catch(error => console.log('Error sharing', error));
+    } else {
+      navigator.clipboard.writeText(shareUrl);
+      toast({
+        title: "Lien copié",
+        description: "Le lien a été copié dans le presse-papier"
+      });
+    }
   };
 
   if (isLoading) {
@@ -71,7 +98,11 @@ const PodcastSection = ({
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {episodes?.slice(0, 6).map((episode, index) => (
-            <div key={index} className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300">
+            <div 
+              key={index} 
+              className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300 cursor-pointer"
+              onClick={() => handleOpenPodcast(episode)}
+            >
               <img
                 src={episode.itunes?.image || '/placeholder.svg'}
                 alt={episode.title}
@@ -80,20 +111,15 @@ const PodcastSection = ({
               <div className="p-6">
                 <h3 className="text-xl font-bold text-white mb-2">{episode.title}</h3>
                 <p className="text-gray-300 line-clamp-2 mb-4">{episode.description}</p>
-                <div className="relative">
-                  {loadingEpisode === episode.enclosure.url && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="absolute inset-0 bg-primary/30 rounded-md animate-ping"></div>
-                      <Loader2 className="w-6 h-6 text-primary animate-spin absolute" />
-                    </div>
-                  )}
+                <div className="flex justify-end">
                   <Button
-                    onClick={() => handlePlayEpisode(episode)}
-                    className="w-full group relative z-10"
-                    variant={currentAudio === episode.enclosure.url ? "secondary" : "default"}
+                    onClick={(e) => handleShare(episode, e)}
+                    variant="secondary"
+                    size="sm"
+                    className="gap-2"
                   >
-                    <Play className="w-4 h-4 mr-2" />
-                    Écouter
+                    <Share2 className="w-4 h-4" />
+                    Partager
                   </Button>
                 </div>
               </div>
