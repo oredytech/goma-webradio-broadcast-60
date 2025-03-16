@@ -27,11 +27,11 @@ const ExtraArticles = () => {
             return (
               <div
                 key={article.id}
-                className="group relative overflow-hidden rounded-lg bg-secondary/50 hover:bg-secondary/70 transition-all duration-300"
+                className="group relative overflow-hidden rounded-lg bg-secondary/50 hover:bg-secondary/70 transition-all duration-300 flex flex-col"
               >
                 <Link
                   to={`/article/${articleSlug}`}
-                  className="block"
+                  className="block flex-1"
                 >
                   <div className="aspect-video overflow-hidden">
                     {article._embedded?.["wp:featuredmedia"]?.[0]?.source_url && (
@@ -42,9 +42,9 @@ const ExtraArticles = () => {
                       />
                     )}
                   </div>
-                  <div className="p-6">
+                  <div className="p-6 flex-1">
                     <h3
-                      className="text-xl font-bold text-white group-hover:text-primary transition-colors line-clamp-2"
+                      className="text-xl font-bold text-white group-hover:text-primary transition-colors line-clamp-2 mb-2"
                       dangerouslySetInnerHTML={{ __html: article.title.rendered }}
                     />
                     <div
@@ -53,7 +53,7 @@ const ExtraArticles = () => {
                     />
                   </div>
                 </Link>
-                <div className="px-6 pb-6">
+                <div className="px-6 pb-6 mt-auto">
                   <ArticleSocialActions articleId={article.id} />
                 </div>
               </div>

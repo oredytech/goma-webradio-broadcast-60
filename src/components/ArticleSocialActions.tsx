@@ -126,7 +126,7 @@ const ArticleSocialActions = ({ articleId }: ArticleSocialActionsProps) => {
   };
 
   return (
-    <div className="flex items-center gap-4 mt-4">
+    <div className="flex items-center flex-wrap gap-3">
       <LikeButton 
         likes={likes} 
         isActive={userLiked} 
