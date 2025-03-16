@@ -38,6 +38,11 @@ export const updateMetaTags = (metadata: MetaData): void => {
     updateOrCreateMetaTag('og:image:width', '1200');
     updateOrCreateMetaTag('og:image:height', '630');
     updateOrCreateMetaTag('og:image:alt', metadata.title);
+    
+    // Mettre à jour les éléments avec ID directement dans le HTML
+    updateElementById('og-image', 'content', imageUrl);
+    updateElementById('twitter-image', 'content', imageUrl);
+    updateElementById('og-image-alt', 'content', metadata.title);
   }
   
   if (metadata.url) {
@@ -79,6 +84,16 @@ const updateOrCreateMetaTag = (name: string, content: string): void => {
   
   // Mettre à jour le contenu
   tag.setAttribute('content', content);
+};
+
+/**
+ * Met à jour un élément HTML par son ID
+ */
+const updateElementById = (id: string, attribute: string, value: string): void => {
+  const element = document.getElementById(id);
+  if (element) {
+    element.setAttribute(attribute, value);
+  }
 };
 
 /**
