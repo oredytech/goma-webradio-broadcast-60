@@ -33,13 +33,15 @@ export const updateMetaTags = (metadata: MetaData): void => {
       ? metadata.image 
       : `${window.location.origin}${metadata.image.startsWith('/') ? '' : '/'}${metadata.image}`;
     
+    // Mettre à jour les balises Open Graph
     updateOrCreateMetaTag('og:image', imageUrl);
     updateOrCreateMetaTag('og:image:secure_url', imageUrl.replace('http:', 'https:'));
     updateOrCreateMetaTag('og:image:width', '1200');
     updateOrCreateMetaTag('og:image:height', '630');
     updateOrCreateMetaTag('og:image:alt', metadata.title);
     
-    // Mettre à jour les éléments avec ID directement dans le HTML
+    // Mettre à jour directement les éléments avec ID dans le HTML
+    // Ceci est crucial pour que les partages sur réseaux sociaux affichent les bonnes images
     updateElementById('og-image', 'content', imageUrl);
     updateElementById('twitter-image', 'content', imageUrl);
     updateElementById('og-image-alt', 'content', metadata.title);

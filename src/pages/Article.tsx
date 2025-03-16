@@ -82,10 +82,11 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
         return;
       }
       
-      // Mise à jour des meta tags
+      // Mise à jour des meta tags avec l'image mise en avant de l'article pour OG et Twitter
       const featuredImageUrl = getFeaturedImageUrl(article);
       const excerpt = decodeHtmlTitle(article.excerpt.rendered);
       
+      // Force l'image mise en avant pour les balises OG et Twitter
       updateMetaTags({
         title: decodedTitle,
         description: excerpt.substring(0, 160),

@@ -95,10 +95,13 @@ const PodcastPlayer = ({
     if (foundEpisode) {
       document.title = `${foundEpisode.title} | GOMA WEBRADIO`;
       
+      // Force l'image de l'épisode pour les balises OG et Twitter
+      const episodeImage = foundEpisode.itunes?.image || '/GOWERA__3_-removebg-preview.png';
+      
       updateMetaTags({
         title: foundEpisode.title,
         description: foundEpisode.description?.substring(0, 160) || "",
-        image: foundEpisode.itunes?.image || '/GOWERA__3_-removebg-preview.png',
+        image: episodeImage,
         type: 'article',
         url: window.location.href
       });

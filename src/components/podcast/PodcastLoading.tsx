@@ -8,6 +8,7 @@ import { updateMetaTags } from "@/utils/metaService";
 const PodcastLoading = () => {
   useEffect(() => {
     // Mettre à jour les meta tags pour la page de chargement
+    // En utilisant l'image par défaut de la radio
     updateMetaTags({
       title: "Chargement du podcast",
       description: "Veuillez patienter pendant le chargement du podcast...",
