@@ -23,7 +23,7 @@
   [headers.values]
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
-    Content-Security-Policy = "default-src 'self' *.googleapis.com *.gstatic.com *.googletagmanager.com *.zenomedia.com *.allorigins.win *.totalementactus.net *.firebase.com *.firebaseio.com *.firebaseapp.com https://cdn.gpteng.co; img-src 'self' data: https: blob:; style-src 'self' 'unsafe-inline' *.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.googletagmanager.com *.google-analytics.com *.gpteng.co; connect-src 'self' *.googleapis.com *.firebaseio.com *.firebaseapp.com *.totalementactus.net *.zenomedia.com *.allorigins.win wss://*.firebaseio.com api.allorigins.win;"
+    Content-Security-Policy = "default-src 'self' *.googleapis.com *.gstatic.com *.googletagmanager.com *.zenomedia.com *.allorigins.win *.totalementactus.net *.firebase.com *.firebaseio.com *.firebaseapp.com https://cdn.gpteng.co; media-src * blob:; img-src 'self' data: https: blob:; style-src 'self' 'unsafe-inline' *.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.googletagmanager.com *.google-analytics.com *.gpteng.co; connect-src 'self' *.googleapis.com *.firebaseio.com *.firebaseapp.com *.totalementactus.net *.zenomedia.com *.allorigins.win wss://*.firebaseio.com api.allorigins.win *.zeno.fm stream.zeno.fm;"
     
 # Optimisation du cache pour les ressources statiques
 [[headers]]
