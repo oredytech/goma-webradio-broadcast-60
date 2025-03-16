@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,9 +7,8 @@ import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
-interface ArticleCommentFormProps {
+export interface ArticleCommentFormProps {
   articleId: number;
-  onCommentAdded?: () => void;
 }
 
 const ArticleCommentForm = ({ articleId, onCommentAdded }: ArticleCommentFormProps) => {

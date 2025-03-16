@@ -8,7 +8,8 @@ import {
   updateProfile,
   User
 } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 type AuthContextType = {
   user: User | null;
@@ -41,6 +42,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         await updateProfile(userCredential.user, {
           displayName: name
         });
+        
+        // Create a user document in Firestore
+        await setDoc(doc(db, 'users', userCredential.user.uid), {
+          name,
+          email,
+          createdAt: new Date().toISOString(),
+          uid: userCredential.user.uid
+        });
+        
         // Force refresh to get the updated user data
         setUser({ ...userCredential.user });
       }

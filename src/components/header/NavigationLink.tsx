@@ -1,25 +1,35 @@
-import { Link } from "react-router-dom";
-import { NavigationMenuLink } from "@/components/ui/navigation-menu";
-import { cn } from "@/lib/utils";
 
-interface NavigationLinkProps {
-  to: string;
+import { Link, LinkProps } from "react-router-dom";
+import React from "react";
+
+export interface NavigationLinkProps extends LinkProps {
   children: React.ReactNode;
+  to: string;
   className?: string;
+  onClick?: () => void | Promise<void>;
 }
 
-const NavigationLink = ({ to, children, className }: NavigationLinkProps) => {
+const NavigationLink = ({ 
+  children, 
+  to, 
+  className = "", 
+  onClick,
+  ...props 
+}: NavigationLinkProps) => {
+  const handleClick = async (e: React.MouseEvent) => {
+    if (onClick) {
+      await onClick();
+    }
+  };
+
   return (
-    <Link to={to} className="w-full sm:w-auto">
-      <NavigationMenuLink
-        className={cn(
-          "group inline-flex h-10 w-full items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-primary/20 hover:text-primary focus:bg-primary/20 focus:text-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-primary/20 data-[state=open]:bg-primary/20",
-          "text-white",
-          className
-        )}
-      >
-        {children}
-      </NavigationMenuLink>
+    <Link
+      to={to}
+      className={`text-white hover:text-primary transition-colors duration-200 ${className}`}
+      onClick={handleClick}
+      {...props}
+    >
+      {children}
     </Link>
   );
 };
