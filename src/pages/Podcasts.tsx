@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePodcastFeed } from '@/hooks/usePodcastFeed';
@@ -24,7 +25,14 @@ const Podcasts = ({
   const [loadingEpisode, setLoadingEpisode] = useState<string | null>(null);
 
   const handlePlayEpisode = (episode: any, index: number) => {
-    navigate(`/podcast/${index}`);
+    // Create a slug from the episode title
+    const slug = episode.title
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-');
+    
+    // Navigate to the podcast player page with both ID and slug
+    navigate(`/podcast/${index}/${slug}`);
   };
 
   if (isLoading) {

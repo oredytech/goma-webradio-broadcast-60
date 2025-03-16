@@ -21,7 +21,7 @@ const PodcastPlayer = ({
   currentAudio,
   setCurrentAudio,
 }: PodcastPlayerProps) => {
-  const { episodeId } = useParams<{ episodeId: string }>();
+  const { episodeId, slug } = useParams<{ episodeId: string; slug?: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { data: episodes, isLoading } = usePodcastFeed();
@@ -34,12 +34,22 @@ const PodcastPlayer = ({
     // Set page title
     if (episode) {
       document.title = `${episode.title} | GOMA WEBRADIO`;
+      
+      // If we're on the non-slug URL, redirect to the slug URL
+      if (!slug && episode) {
+        const generatedSlug = episode.title
+          .toLowerCase()
+          .replace(/[^\w\s-]/g, '')
+          .replace(/\s+/g, '-');
+        
+        navigate(`/podcast/${episodeId}/${generatedSlug}`, { replace: true });
+      }
     }
     
     return () => {
       document.title = 'GOMA WEBRADIO';
     };
-  }, [episode]);
+  }, [episode, episodeId, slug, navigate]);
 
   const handlePlay = () => {
     if (!episode) return;
@@ -60,14 +70,23 @@ const PodcastPlayer = ({
   };
 
   const handleShare = () => {
+    // Generate slug if we need it
+    const generatedSlug = episode?.title
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-');
+      
+    // Use the full URL with slug for sharing
+    const shareUrl = `${window.location.origin}/podcast/${episodeId}/${generatedSlug}`;
+    
     if (navigator.share) {
       navigator.share({
         title: episode?.title,
         text: episode?.description,
-        url: window.location.href,
+        url: shareUrl,
       }).catch(error => console.log('Error sharing', error));
     } else {
-      navigator.clipboard.writeText(window.location.href);
+      navigator.clipboard.writeText(shareUrl);
       toast({
         title: "Lien copié",
         description: "Le lien a été copié dans le presse-papier"

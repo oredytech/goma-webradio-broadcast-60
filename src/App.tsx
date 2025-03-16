@@ -93,9 +93,20 @@ const App = () => {
                 />
               } 
             />
-            {/* New podcast player route */}
+            {/* Updated podcast player routes to support slugs */}
             <Route 
               path="/podcast/:episodeId" 
+              element={
+                <PodcastPlayer 
+                  isPlaying={isPlaying}
+                  setIsPlaying={setIsPlaying}
+                  currentAudio={currentAudio}
+                  setCurrentAudio={setCurrentAudio}
+                />
+              } 
+            />
+            <Route 
+              path="/podcast/:episodeId/:slug" 
               element={
                 <PodcastPlayer 
                   isPlaying={isPlaying}
