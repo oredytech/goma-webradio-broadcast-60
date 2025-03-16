@@ -1,11 +1,9 @@
-
-import { useMultiSourceArticles, sources } from "@/hooks/useMultiSourceArticles";
+import { useMultiSourceArticles, sources, WordPressArticle } from "@/hooks/useMultiSourceArticles";
+import { Loader2 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArticlesSlider from "@/components/ArticlesSlider";
-import NewsLoading from "@/components/news/NewsLoading";
-import NewsError from "@/components/news/NewsError";
-import NewsSourceSection from "@/components/news/NewsSourceSection";
+import { Link } from "react-router-dom";
 
 interface NewsProps {
   filter?: string;
@@ -16,17 +14,29 @@ const News = ({ filter }: NewsProps) => {
 
   const isLoading = results.some((result) => result.isLoading);
   const isError = results.some((result) => result.isError);
-  
-  const handleRetry = () => {
-    results.forEach((result) => result.refetch());
-  };
 
   if (isLoading) {
-    return <NewsLoading />;
+    return (
+      <div className="min-h-screen bg-secondary">
+        <Header />
+        <div className="pt-24 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+        <Footer />
+      </div>
+    );
   }
 
   if (isError) {
-    return <NewsError onRetry={handleRetry} />;
+    return (
+      <div className="min-h-screen bg-secondary">
+        <Header />
+        <div className="pt-24 flex items-center justify-center">
+          <p className="text-red-500">Une erreur est survenue lors du chargement des articles.</p>
+        </div>
+        <Footer />
+      </div>
+    );
   }
 
   return (
@@ -42,11 +52,38 @@ const News = ({ filter }: NewsProps) => {
         
         <div className="space-y-16">
           {sources.map((source, sourceIndex) => (
-            <NewsSourceSection
-              key={source.id}
-              sourceName={source.name}
-              articles={results[sourceIndex].data || []}
-            />
+            <div key={source.id} className="space-y-8">
+              <h2 className="text-2xl font-semibold text-white">{source.name}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {results[sourceIndex].data?.map((article: WordPressArticle) => (
+                  <Link
+                    key={article.id}
+                    to={`/article/${article.id}`}
+                    className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300 group animate-fade-in"
+                  >
+                    {article._embedded?.["wp:featuredmedia"]?.[0]?.source_url && (
+                      <div className="aspect-video overflow-hidden">
+                        <img
+                          src={article._embedded["wp:featuredmedia"][0].source_url}
+                          alt={article.title.rendered}
+                          className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    )}
+                    <div className="p-6">
+                      <h3
+                        className="text-xl font-bold text-white mb-4 group-hover:text-primary transition-colors"
+                        dangerouslySetInnerHTML={{ __html: article.title.rendered }}
+                      />
+                      <div
+                        className="text-gray-300 line-clamp-3"
+                        dangerouslySetInnerHTML={{ __html: article.excerpt.rendered }}
+                      />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </div>

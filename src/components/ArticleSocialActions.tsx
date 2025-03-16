@@ -1,149 +1,157 @@
-
-import { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useState, useEffect } from 'react';
+import { ThumbsUp, ThumbsDown, MessageSquare } from 'lucide-react';
+import { db, auth } from '@/lib/firebase';
+import { doc, setDoc, getDoc, increment, onSnapshot } from 'firebase/firestore';
+import { Button } from './ui/button';
 import { useToast } from './ui/use-toast';
-import { useArticleInteractions } from '@/hooks/useArticleInteractions';
-import { handleArticleLike, handleArticleDislike, handleArticleShare } from '@/utils/articleInteractions';
-import LikeButton from './articles/LikeButton';
-import DislikeButton from './articles/DislikeButton';
-import CommentButton from './articles/CommentButton';
-import ShareButton from './articles/ShareButton';
-import { useNavigate } from 'react-router-dom';
 
 interface ArticleSocialActionsProps {
   articleId: number;
 }
 
 const ArticleSocialActions = ({ articleId }: ArticleSocialActionsProps) => {
-  const { likes, dislikes, comments, userLiked, userDisliked, isLoading } = useArticleInteractions(articleId);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [likes, setLikes] = useState(0);
+  const [dislikes, setDislikes] = useState(0);
+  const [comments, setComments] = useState(0);
+  const [userLiked, setUserLiked] = useState(false);
+  const [userDisliked, setUserDisliked] = useState(false);
   const { toast } = useToast();
-  const { user } = useAuth();
-  const navigate = useNavigate();
 
-  const redirectToLogin = () => {
-    toast({
-      title: "Connexion requise",
-      description: "Vous devez être connecté pour interagir avec les articles",
-      variant: "destructive"
+  useEffect(() => {
+    const articleRef = doc(db, 'articles', articleId.toString());
+    
+    const unsubscribe = onSnapshot(articleRef, (doc) => {
+      if (doc.exists()) {
+        const data = doc.data();
+        setLikes(data.likes || 0);
+        setDislikes(data.dislikes || 0);
+        setComments(data.comments || 0);
+      }
     });
-    navigate('/login');
-  };
+
+    // Vérifier si l'utilisateur a déjà liké/disliké
+    if (auth.currentUser) {
+      const userInteractionRef = doc(db, 'userInteractions', `${auth.currentUser.uid}_${articleId}`);
+      getDoc(userInteractionRef).then((doc) => {
+        if (doc.exists()) {
+          const data = doc.data();
+          setUserLiked(data.liked || false);
+          setUserDisliked(data.disliked || false);
+        }
+      });
+    }
+
+    return () => unsubscribe();
+  }, [articleId]);
 
   const handleLike = async () => {
-    if (!user) {
-      redirectToLogin();
+    if (!auth.currentUser) {
+      toast({
+        title: "Connexion requise",
+        description: "Vous devez être connecté pour aimer un article",
+        variant: "destructive"
+      });
       return;
     }
 
-    setIsProcessing(true);
-    
-    // Store previous states for rollback if needed
-    const previousLiked = userLiked;
-    const previousDisliked = userDisliked;
-    
-    // Optimistic UI update
-    const newLiked = !userLiked;
-    const newDisliked = newLiked ? false : userDisliked;
-    
-    const success = await handleArticleLike(
-      articleId,
-      userLiked,
-      userDisliked,
-      () => {}, // We're using optimistic updates, so no need for callback
-      () => {
-        // Error handling - show toast and restore previous values
-        toast({
-          title: "Erreur",
-          description: "Une erreur est survenue lors de l'interaction",
-          variant: "destructive"
+    const articleRef = doc(db, 'articles', articleId.toString());
+    const userInteractionRef = doc(db, 'userInteractions', `${auth.currentUser.uid}_${articleId}`);
+
+    try {
+      if (!userLiked) {
+        await setDoc(articleRef, { likes: increment(1) }, { merge: true });
+        if (userDisliked) {
+          await setDoc(articleRef, { dislikes: increment(-1) }, { merge: true });
+        }
+        await setDoc(userInteractionRef, { 
+          liked: true,
+          disliked: false,
+          userId: auth.currentUser.uid,
+          articleId
         });
+        setUserLiked(true);
+        setUserDisliked(false);
+      } else {
+        await setDoc(articleRef, { likes: increment(-1) }, { merge: true });
+        await setDoc(userInteractionRef, { liked: false }, { merge: true });
+        setUserLiked(false);
       }
-    );
-    
-    if (!success) {
-      // Reset to previous state if the operation failed
-      // Note: the hook will automatically update the state from Firestore
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue",
+        variant: "destructive"
+      });
     }
-    
-    setIsProcessing(false);
   };
 
   const handleDislike = async () => {
-    if (!user) {
-      redirectToLogin();
+    if (!auth.currentUser) {
+      toast({
+        title: "Connexion requise",
+        description: "Vous devez être connecté pour ne pas aimer un article",
+        variant: "destructive"
+      });
       return;
     }
 
-    setIsProcessing(true);
-    
-    // Store previous states for rollback if needed
-    const previousLiked = userLiked;
-    const previousDisliked = userDisliked;
-    
-    // Optimistic UI update
-    const newDisliked = !userDisliked;
-    const newLiked = newDisliked ? false : userLiked;
-    
-    const success = await handleArticleDislike(
-      articleId,
-      userLiked,
-      userDisliked,
-      () => {}, // We're using optimistic updates, so no need for callback
-      () => {
-        // Error handling - show toast
-        toast({
-          title: "Erreur",
-          description: "Une erreur est survenue lors de l'interaction",
-          variant: "destructive"
-        });
-      }
-    );
-    
-    if (!success) {
-      // Reset to previous state if the operation failed
-      // Note: the hook will automatically update the state from Firestore
-    }
-    
-    setIsProcessing(false);
-  };
+    const articleRef = doc(db, 'articles', articleId.toString());
+    const userInteractionRef = doc(db, 'userInteractions', `${auth.currentUser.uid}_${articleId}`);
 
-  const handleShare = () => {
-    const success = handleArticleShare();
-    
-    if (success) {
-      toast({
-        title: "Lien copié",
-        description: "Le lien a été copié dans le presse-papier",
-      });
-    } else {
+    try {
+      if (!userDisliked) {
+        await setDoc(articleRef, { dislikes: increment(1) }, { merge: true });
+        if (userLiked) {
+          await setDoc(articleRef, { likes: increment(-1) }, { merge: true });
+        }
+        await setDoc(userInteractionRef, {
+          liked: false,
+          disliked: true,
+          userId: auth.currentUser.uid,
+          articleId
+        });
+        setUserDisliked(true);
+        setUserLiked(false);
+      } else {
+        await setDoc(articleRef, { dislikes: increment(-1) }, { merge: true });
+        await setDoc(userInteractionRef, { disliked: false }, { merge: true });
+        setUserDisliked(false);
+      }
+    } catch (error) {
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue lors du partage",
+        description: "Une erreur est survenue",
         variant: "destructive"
       });
     }
   };
 
   return (
-    <div className="flex items-center flex-wrap gap-3">
-      <LikeButton 
-        likes={likes} 
-        isActive={userLiked} 
+    <div className="flex items-center gap-4 mt-4">
+      <Button
+        variant={userLiked ? "default" : "secondary"}
+        size="sm"
         onClick={handleLike}
-        isDisabled={isLoading || isProcessing}
-      />
+        className="gap-2"
+      >
+        <ThumbsUp className={userLiked ? "text-white" : "text-gray-500"} />
+        <span>{likes}</span>
+      </Button>
       
-      <DislikeButton 
-        dislikes={dislikes} 
-        isActive={userDisliked} 
+      <Button
+        variant={userDisliked ? "default" : "secondary"}
+        size="sm"
         onClick={handleDislike}
-        isDisabled={isLoading || isProcessing}
-      />
+        className="gap-2"
+      >
+        <ThumbsDown className={userDisliked ? "text-white" : "text-gray-500"} />
+        <span>{dislikes}</span>
+      </Button>
 
-      <CommentButton comments={comments} />
-      
-      <ShareButton onClick={handleShare} />
+      <Button variant="secondary" size="sm" className="gap-2">
+        <MessageSquare className="text-gray-500" />
+        <span>{comments}</span>
+      </Button>
     </div>
   );
 };

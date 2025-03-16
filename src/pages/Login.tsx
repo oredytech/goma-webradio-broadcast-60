@@ -1,26 +1,20 @@
-
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import { useState } from "react";
 import LoginForm from "@/components/auth/LoginForm";
 import RegisterForm from "@/components/auth/RegisterForm";
-import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const { toast } = useToast();
   const [isLogin, setIsLogin] = useState(true);
-  const { signIn, signUp } = useAuth();
-  const navigate = useNavigate();
 
   const onSubmitLogin = async (values: any) => {
     try {
-      await signIn(values.email, values.password);
+      console.log(values);
       toast({
         title: "Connexion réussie",
         description: "Vous êtes maintenant connecté.",
       });
-      navigate("/"); // Rediriger vers la page d'accueil après connexion
     } catch (error) {
       toast({
         variant: "destructive",
@@ -32,17 +26,17 @@ const Login = () => {
 
   const onSubmitRegister = async (values: any) => {
     try {
-      await signUp(values.email, values.password, values.name);
+      console.log(values);
       toast({
         title: "Compte créé avec succès",
         description: "Vous pouvez maintenant vous connecter.",
       });
       setIsLogin(true);
-    } catch (error: any) {
+    } catch (error) {
       toast({
         variant: "destructive",
         title: "Erreur lors de la création du compte",
-        description: error.message || "Une erreur est survenue. Veuillez réessayer.",
+        description: "Une erreur est survenue. Veuillez réessayer.",
       });
     }
   };

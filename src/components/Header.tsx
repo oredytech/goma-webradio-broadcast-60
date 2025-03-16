@@ -1,30 +1,15 @@
-
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import Logo from "./header/Logo";
 import MobileMenuButton from "./header/MobileMenuButton";
 import NavigationLink from "./header/NavigationLink";
-import { useAuth } from "@/hooks/useAuth";
-import { LogIn, LogOut, User } from "lucide-react";
-import { Button } from "./ui/button";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, signOut } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleAuthClick = async () => {
-    if (user) {
-      try {
-        await signOut();
-      } catch (error) {
-        console.error("Error signing out:", error);
-      }
-    }
   };
 
   return (
@@ -34,7 +19,7 @@ const Header = () => {
           <Logo />
           
           <NavigationMenu className="hidden sm:flex flex-1 justify-center">
-            <NavigationMenuList className="flex items-center justify-center space-x-6">
+            <NavigationMenuList className="flex items-center justify-center space-x-2">
               <NavigationMenuItem>
                 <NavigationLink to="/">
                   Accueil
@@ -42,9 +27,22 @@ const Header = () => {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <NavigationLink to="/actualites">
+                <NavigationMenuTrigger
+                  className={cn(
+                    "group inline-flex h-10 w-full items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-primary/20 hover:text-primary focus:bg-primary/20 focus:text-primary focus:outline-none disabled:pointer-events-none disabled:opacity-50",
+                    "text-white bg-transparent"
+                  )}
+                >
                   Actualités
-                </NavigationLink>
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="bg-secondary/95 backdrop-blur-sm p-4 rounded-md border border-primary/20">
+                  <NavigationLink to="/actualites">
+                    Toutes les actualités
+                  </NavigationLink>
+                  <NavigationLink to="/actualites/politique">
+                    Politique
+                  </NavigationLink>
+                </NavigationMenuContent>
               </NavigationMenuItem>
 
               <NavigationMenuItem>
@@ -54,27 +52,12 @@ const Header = () => {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                {user ? (
-                  <Button 
-                    onClick={handleAuthClick}
-                    variant="outline"
-                    className="bg-secondary hover:bg-secondary/80 text-white border border-primary/30 hover:border-primary/60 transition-all"
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Se déconnecter
-                  </Button>
-                ) : (
-                  <Button 
-                    asChild
-                    variant="default"
-                    className="bg-accent hover:bg-accent/80 text-white shadow-sm hover:shadow-md transition-all"
-                  >
-                    <NavigationLink to="/login" className="text-white hover:text-white">
-                      <User className="mr-2 h-4 w-4" />
-                      Espace membre
-                    </NavigationLink>
-                  </Button>
-                )}
+                <NavigationLink 
+                  to="/login"
+                  className="bg-primary text-white hover:bg-primary/80"
+                >
+                  Se connecter
+                </NavigationLink>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
@@ -83,7 +66,7 @@ const Header = () => {
           {isMenuOpen && (
             <div className="fixed sm:hidden inset-x-0 top-16 bg-secondary/95 backdrop-blur-sm border-t border-primary/20">
               <NavigationMenu className="w-full">
-                <NavigationMenuList className="flex flex-col items-center justify-center p-4 space-y-4 w-full">
+                <NavigationMenuList className="flex flex-col items-center justify-center p-4 space-y-3 w-full">
                   <NavigationMenuItem className="w-full text-center">
                     <NavigationLink to="/">
                       Accueil
@@ -100,27 +83,12 @@ const Header = () => {
                     </NavigationLink>
                   </NavigationMenuItem>
                   <NavigationMenuItem className="w-full text-center">
-                    {user ? (
-                      <Button 
-                        onClick={handleAuthClick}
-                        variant="outline"
-                        className="w-full bg-secondary hover:bg-secondary/80 text-white border border-primary/30 hover:border-primary/60 transition-all"
-                      >
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Se déconnecter
-                      </Button>
-                    ) : (
-                      <Button 
-                        asChild
-                        variant="default"
-                        className="w-full bg-accent hover:bg-accent/80 text-white shadow-sm hover:shadow-md transition-all"
-                      >
-                        <NavigationLink to="/login" className="text-white hover:text-white">
-                          <User className="mr-2 h-4 w-4" />
-                          Espace membre
-                        </NavigationLink>
-                      </Button>
-                    )}
+                    <NavigationLink 
+                      to="/login"
+                      className="bg-primary text-white hover:bg-primary/80"
+                    >
+                      Se connecter
+                    </NavigationLink>
                   </NavigationMenuItem>
                 </NavigationMenuList>
               </NavigationMenu>

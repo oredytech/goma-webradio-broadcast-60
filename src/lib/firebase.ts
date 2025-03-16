@@ -1,16 +1,15 @@
-
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDoKLfXlxJW0r3ezAouLMgV1Py2hTVo08Q",
-  authDomain: "goma-webradio-a225b.firebaseapp.com",
-  projectId: "goma-webradio-a225b",
-  storageBucket: "goma-webradio-a225b.firebasestorage.app",
-  messagingSenderId: "857289501110",
-  appId: "1:857289501110:web:5a0b72fb37fdcba387f917",
-  measurementId: "G-QBG2QXRVR1"
+  apiKey: "AIzaSyBJ_P0w3penkfApveSvsaj9jfGvmLBMozY",
+  authDomain: "goma-webradio.firebaseapp.com",
+  projectId: "goma-webradio",
+  storageBucket: "goma-webradio.firebasestorage.app",
+  messagingSenderId: "409293929941",
+  appId: "1:409293929941:web:f4b43da4e7df96b0a4515c",
+  measurementId: "G-1ZNC0G7R5E"
 };
 
 const app = initializeApp(firebaseConfig);
