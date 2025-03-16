@@ -22,17 +22,44 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
   const [commentsUpdated, setCommentsUpdated] = useState(false);
   const [articleNotFound, setArticleNotFound] = useState(false);
 
+  // Liste de proxies CORS à essayer dans l'ordre (synchronisée avec useWordpressArticles)
+  const CORS_PROXIES = [
+    "https://api.allorigins.win/raw?url=",
+    "https://cors-anywhere.herokuapp.com/",
+    "https://crossorigin.me/",
+    "https://crosscors.shop/",
+    "https://proxy.cors.sh/",
+  ];
+
   const { data: articles, isLoading: articlesLoading, error: articlesError, refetch } = useQuery<WordPressArticle[]>({
     queryKey: ["wordpress-articles"],
     queryFn: async () => {
       try {
-        const proxyUrl = "https://api.allorigins.win/raw?url=";
         const apiUrl = encodeURIComponent("https://totalementactus.net/wp-json/wp/v2/posts?_embed&per_page=30");
         
-        const response = await fetch(`${proxyUrl}${apiUrl}`);
+        // Essayer chaque proxy dans l'ordre jusqu'à ce qu'un fonctionne
+        let response = null;
+        let error = null;
         
-        if (!response.ok) {
-          throw new Error(`Network response was not ok: ${response.status}`);
+        for (const proxy of CORS_PROXIES) {
+          try {
+            console.log(`Article page trying proxy: ${proxy}`);
+            response = await fetch(`${proxy}${apiUrl}`);
+            
+            if (response.ok) {
+              break; // Si la requête réussit, sortir de la boucle
+            }
+          } catch (err) {
+            error = err;
+            console.warn(`Article page proxy ${proxy} failed:`, err);
+            // Continuer avec le prochain proxy
+          }
+        }
+        
+        // Si aucun proxy n'a fonctionné
+        if (!response || !response.ok) {
+          console.error("All proxies failed in article page");
+          throw error || new Error("All proxies failed");
         }
         
         const data = await response.json();
@@ -58,13 +85,28 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
       if (!article?.id) throw new Error("Article not found");
       
       try {
-        const proxyUrl = "https://api.allorigins.win/raw?url=";
         const apiUrl = encodeURIComponent(`https://totalementactus.net/wp-json/wp/v2/posts/${article.id}?_embed`);
         
-        const response = await fetch(`${proxyUrl}${apiUrl}`);
+        // Essayer chaque proxy dans l'ordre jusqu'à ce qu'un fonctionne
+        let response = null;
+        let error = null;
         
-        if (!response.ok) {
-          throw new Error(`Network response was not ok: ${response.status}`);
+        for (const proxy of CORS_PROXIES) {
+          try {
+            response = await fetch(`${proxy}${apiUrl}`);
+            
+            if (response.ok) {
+              break; // Si la requête réussit, sortir de la boucle
+            }
+          } catch (err) {
+            error = err;
+            // Continuer avec le prochain proxy
+          }
+        }
+        
+        // Si aucun proxy n'a fonctionné
+        if (!response || !response.ok) {
+          throw error || new Error("All proxies failed for full article");
         }
         
         return response.json();

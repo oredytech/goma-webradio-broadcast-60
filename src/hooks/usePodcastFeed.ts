@@ -16,25 +16,51 @@ export interface PodcastEpisode {
   };
 }
 
-// Utilisation d'un proxy CORS plus fiable
-const CORS_PROXY = "https://corsproxy.io/?";
-// URL RSS d'origine reste la même
+// Liste de proxies CORS à essayer dans l'ordre
+const CORS_PROXIES = [
+  "https://api.allorigins.win/raw?url=",
+  "https://cors-anywhere.herokuapp.com/",
+  "https://crossorigin.me/",
+  "https://crosscors.shop/",
+  "https://proxy.cors.sh/",
+];
+
+// L'URL RSS d'origine reste la même
 const RSS_URL = "https://podcast.zenomedia.com/api/public/podcasts/e422f99f-db57-40c3-a92e-778a15e5c2bb/rss";
 
 const fetchPodcastFeed = async (): Promise<PodcastEpisode[]> => {
   try {
     console.log("Fetching podcast feed...");
     const encodedUrl = encodeURIComponent(RSS_URL);
-    const response = await fetch(`${CORS_PROXY}${encodedUrl}`, {
-      cache: 'no-cache',
-      headers: {
-        'Accept': 'text/xml, application/xml, application/rss+xml'
-      }
-    });
     
-    if (!response.ok) {
-      console.error(`Failed to fetch podcast feed: ${response.status}`);
-      throw new Error(`Failed to fetch podcast feed: ${response.status}`);
+    // Essayer chaque proxy dans l'ordre jusqu'à ce qu'un fonctionne
+    let response = null;
+    let error = null;
+    
+    for (const proxy of CORS_PROXIES) {
+      try {
+        console.log(`Trying podcast proxy: ${proxy}`);
+        response = await fetch(`${proxy}${encodedUrl}`, {
+          cache: 'no-cache',
+          headers: {
+            'Accept': 'text/xml, application/xml, application/rss+xml'
+          }
+        });
+        
+        if (response.ok) {
+          break; // Si la requête réussit, sortir de la boucle
+        }
+      } catch (err) {
+        error = err;
+        console.warn(`Podcast proxy ${proxy} failed:`, err);
+        // Continuer avec le prochain proxy
+      }
+    }
+    
+    // Si aucun proxy n'a fonctionné
+    if (!response || !response.ok) {
+      console.error("All proxies failed to fetch podcast feed");
+      throw error || new Error("All proxies failed");
     }
     
     const xmlText = await response.text();
@@ -97,6 +123,25 @@ const fetchPodcastFeed = async (): Promise<PodcastEpisode[]> => {
   }
 };
 
+// Fonction pour récupérer des épisodes statiques de secours au cas où tous les proxies échouent
+const getFallbackEpisodes = (): PodcastEpisode[] => {
+  return [
+    {
+      title: "Contenu temporairement indisponible",
+      description: "Nous rencontrons des difficultés techniques. Merci de réessayer ultérieurement.",
+      pubDate: new Date().toUTCString(),
+      enclosure: {
+        url: "",
+        type: "audio/mpeg"
+      },
+      itunes: {
+        image: "/placeholder.svg",
+        duration: "--:--"
+      }
+    },
+  ];
+};
+
 export const usePodcastFeed = () => {
   const { toast } = useToast();
   
@@ -107,6 +152,7 @@ export const usePodcastFeed = () => {
     gcTime: 10 * 60 * 1000, // Garbage collection after 10 minutes
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000), // Exponential backoff
+    placeholderData: getFallbackEpisodes, // Données de secours en cas d'échec
     meta: {
       onError: (error: Error) => {
         console.error("Podcast feed error:", error);
