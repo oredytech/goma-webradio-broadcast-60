@@ -1,3 +1,4 @@
+
 import { useWordpressArticles, WordPressArticle } from "@/hooks/useWordpressArticles";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
@@ -31,6 +32,15 @@ const ArticlesSlider = () => {
   };
 
   const currentArticle = articles[currentIndex];
+  
+  // Generate slug from title
+  const getArticleSlug = (article: WordPressArticle) => {
+    const decodedTitle = new DOMParser().parseFromString(article.title.rendered, 'text/html').body.textContent || article.title.rendered;
+    return decodedTitle
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-');
+  };
 
   return (
     <div className="relative overflow-hidden py-16">
@@ -78,7 +88,7 @@ const ArticlesSlider = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent transition-opacity duration-700">
                 <div className="absolute bottom-0 left-0 right-0 p-6 transform transition-all duration-500 ease-out">
                   <Link
-                    to={`/article/${currentArticle.id}`}
+                    to={`/article/${currentArticle.id}/${getArticleSlug(currentArticle)}`}
                     className="text-2xl font-bold text-white hover:text-primary transition-colors inline-block"
                     dangerouslySetInnerHTML={{ __html: currentArticle.title.rendered }}
                   />
@@ -86,7 +96,7 @@ const ArticlesSlider = () => {
                     className="text-gray-300 mt-2 line-clamp-2 transform transition-all duration-500"
                     dangerouslySetInnerHTML={{ __html: currentArticle.excerpt.rendered }}
                   />
-                  <Link to={`/article/${currentArticle.id}`}>
+                  <Link to={`/article/${currentArticle.id}/${getArticleSlug(currentArticle)}`}>
                     <Button className="mt-4 transform hover:scale-105 transition-transform">Lire Plus</Button>
                   </Link>
                 </div>

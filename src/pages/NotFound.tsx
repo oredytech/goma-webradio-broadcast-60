@@ -16,27 +16,32 @@ const NotFound = () => {
     if (!articles || isLoading) return;
 
     // Check if it's an article URL with slug
-    const slugMatch = location.pathname.match(/\/article\/(.+)/);
-    if (slugMatch) {
-      const slug = slugMatch[1];
+    const articleMatch = location.pathname.match(/\/article\/(.+)/);
+    if (articleMatch) {
+      const pathSegment = articleMatch[1];
       
-      // First try to match by ID (for backward compatibility)
-      if (/^\d+$/.test(slug)) {
-        const article = articles.find(a => a.id === parseInt(slug));
+      // First try to match by ID at path start (for backward compatibility)
+      const idMatch = pathSegment.match(/^(\d+)/);
+      if (idMatch) {
+        const id = parseInt(idMatch[1]);
+        const article = articles.find(a => a.id === id);
         if (article) {
           setMatchedArticle(article);
           return;
         }
       }
       
-      // Try to match by title
+      // Try to match by title/slug
       const article = articles.find(a => {
         const decodedTitle = new DOMParser().parseFromString(a.title.rendered, 'text/html').body.textContent || a.title.rendered;
         const articleSlug = decodedTitle
           .toLowerCase()
           .replace(/[^\w\s-]/g, '')
           .replace(/\s+/g, '-');
-        return articleSlug === slug || location.pathname.includes(decodedTitle);
+        
+        return pathSegment.includes(articleSlug) || 
+               pathSegment.toLowerCase().includes(decodedTitle.toLowerCase()) ||
+               decodedTitle.toLowerCase().includes(pathSegment.toLowerCase());
       });
       
       if (article) {
@@ -57,9 +62,15 @@ const NotFound = () => {
     );
   }
 
-  // If we matched an article, render the Article component with the matched article
+  // If we matched an article, redirect to the proper article URL
   if (matchedArticle) {
-    return <Navigate to={`/article/${matchedArticle.id}`} replace />;
+    const decodedTitle = new DOMParser().parseFromString(matchedArticle.title.rendered, 'text/html').body.textContent || matchedArticle.title.rendered;
+    const articleSlug = decodedTitle
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-');
+    
+    return <Navigate to={`/article/${matchedArticle.id}/${articleSlug}`} replace />;
   }
 
   return (
