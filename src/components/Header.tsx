@@ -7,10 +7,12 @@ import Logo from "./header/Logo";
 import MobileMenuButton from "./header/MobileMenuButton";
 import NavigationLink from "./header/NavigationLink";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -20,6 +22,10 @@ const Header = () => {
     setIsDarkMode(!isDarkMode);
     // Here you would implement actual dark mode toggle functionality
     // For example, adding/removing a class to the document or updating a context
+  };
+
+  const handleSearchClick = () => {
+    navigate('/recherche');
   };
 
   return (
@@ -107,6 +113,7 @@ const Header = () => {
             <button 
               className="p-2 rounded-full text-white hover:bg-primary/20 hover:text-primary transition-colors"
               aria-label="Search"
+              onClick={handleSearchClick}
             >
               <Search className="h-5 w-5" />
             </button>
@@ -193,6 +200,7 @@ const Header = () => {
                     <button 
                       className="p-2 rounded-full text-white hover:bg-primary/20 hover:text-primary transition-colors"
                       aria-label="Search"
+                      onClick={handleSearchClick}
                     >
                       <Search className="h-5 w-5" />
                     </button>
@@ -217,4 +225,3 @@ const Header = () => {
 };
 
 export default Header;
-
