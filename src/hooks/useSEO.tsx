@@ -60,6 +60,12 @@ export function useSEO(metadata: MetaData) {
     updateMetaTag('og:site_name', metaValues.siteName);
     updateMetaTag('og:locale', metaValues.locale);
     
+    // Ajout explicite de la largeur et hauteur de l'image pour Open Graph
+    // Cela aide certains crawlers à mieux gérer l'image
+    updateMetaTag('og:image:width', '1200');
+    updateMetaTag('og:image:height', '630');
+    updateMetaTag('og:image:alt', metaValues.title);
+    
     // Balises additionnelles pour les articles
     if (metaValues.type === 'article') {
       if (metaValues.publishedTime) {
@@ -78,6 +84,10 @@ export function useSEO(metadata: MetaData) {
     updateMetaTag('twitter:image', imageUrl);
     updateMetaTag('twitter:url', metaValues.url);
     
+    // Pour les crawlers qui ont du mal à détecter les changements dynamiques
+    // On utilise un script injecté pour forcer la mise à jour
+    injectCanonicalLink(metaValues.url);
+    
     // Nettoyage lors du démontage
     return () => {
       // Pas besoin de nettoyer car les balises seront remplacées par la prochaine page
@@ -95,6 +105,23 @@ export function useSEO(metadata: MetaData) {
     metadata.modifiedTime,
     metadata.twitterCard
   ]);
+}
+
+/**
+ * Injecte ou met à jour le lien canonique
+ */
+function injectCanonicalLink(url: string) {
+  // Supprimer tout lien canonique existant
+  const existingCanonical = document.querySelector('link[rel="canonical"]');
+  if (existingCanonical) {
+    existingCanonical.remove();
+  }
+  
+  // Créer et ajouter le nouveau lien canonique
+  const link = document.createElement('link');
+  link.rel = 'canonical';
+  link.href = url;
+  document.head.appendChild(link);
 }
 
 /**
@@ -181,4 +208,3 @@ export function usePodcastSEO(title: string, description: string, image: string)
   
   useSEO(metadata);
 }
-
