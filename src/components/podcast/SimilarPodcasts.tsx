@@ -35,12 +35,22 @@ const SimilarPodcasts = ({
 }: SimilarPodcastsProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<string>("latest");
+  const [activeTab, setActiveTab] = useState<string>("feed");
 
-  // Get latest episodes (excluding current one)
-  const latestEpisodes = useMemo(() => {
+  // Get episodes from the same feed as the current episode
+  const sameFeedEpisodes = useMemo(() => {
+    if (!currentEpisode.feedSource) return [];
+    
     return episodes
-      .filter(ep => ep.title !== currentEpisode.title)
+      .filter(ep => 
+        ep.feedSource === currentEpisode.feedSource && 
+        ep.title !== currentEpisode.title
+      )
+      .sort((a, b) => {
+        const dateA = new Date(a.pubDate).getTime();
+        const dateB = new Date(b.pubDate).getTime();
+        return dateB - dateA;
+      })
       .slice(0, 8);
   }, [episodes, currentEpisode]);
 
@@ -83,29 +93,31 @@ const SimilarPodcasts = ({
     (e.target as HTMLImageElement).src = "/placeholder.svg";
   };
 
-  if (latestEpisodes.length === 0) {
+  if (sameFeedEpisodes.length === 0) {
     return null;
   }
 
   return (
     <div className="similar-podcasts">
-      <h2 className="text-2xl font-bold text-white mb-6">Épisodes similaires</h2>
+      <h2 className="text-2xl font-bold text-white mb-6">
+        Autres épisodes {currentEpisode.feedSource && `de ${currentEpisode.feedSource}`}
+      </h2>
       
-      <Tabs defaultValue="latest" className="w-full" onValueChange={setActiveTab}>
+      <Tabs defaultValue="feed" className="w-full" onValueChange={setActiveTab}>
         <TabsList className="bg-secondary/70 text-gray-300 mb-6">
-          <TabsTrigger value="latest">Derniers épisodes</TabsTrigger>
+          <TabsTrigger value="feed">Suite du podcast</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="latest" className="focus-visible:outline-none">
+        <TabsContent value="feed" className="focus-visible:outline-none">
           <Carousel
             opts={{
               align: "start",
-              loop: latestEpisodes.length > 4,
+              loop: sameFeedEpisodes.length > 4,
             }}
             className="w-full"
           >
             <CarouselContent>
-              {latestEpisodes.map((episode, index) => (
+              {sameFeedEpisodes.map((episode, index) => (
                 <CarouselItem key={index} className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
                   <div 
                     className="p-1 cursor-pointer"
@@ -145,7 +157,7 @@ const SimilarPodcasts = ({
                 </CarouselItem>
               ))}
             </CarouselContent>
-            {latestEpisodes.length > 4 && (
+            {sameFeedEpisodes.length > 4 && (
               <>
                 <CarouselPrevious className="left-1 sm:left-2 lg:-left-12 bg-primary text-white hover:bg-primary/80" />
                 <CarouselNext className="right-1 sm:right-2 lg:-right-12 bg-primary text-white hover:bg-primary/80" />
