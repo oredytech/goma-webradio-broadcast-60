@@ -94,11 +94,46 @@ const PodcastPlayer = ({
   // Setup SEO for the podcast
   useEffect(() => {
     if (foundEpisode) {
-      usePodcastSEO(
-        foundEpisode.title, 
-        foundEpisode.description || "Écoutez ce podcast sur GOMA WEBRADIO",
-        foundEpisode.itunes?.image || "/GOWERA__3_-removebg-preview.png"
-      );
+      const podcastImage = foundEpisode.itunes?.image || "/GOWERA__3_-removebg-preview.png";
+      const podcastTitle = foundEpisode.title;
+      const podcastDescription = foundEpisode.description || "Écoutez ce podcast sur GOMA WEBRADIO";
+      
+      // Set meta tags directly for better compatibility
+      document.title = podcastTitle;
+      
+      const metaTags = [
+        { property: "og:title", content: podcastTitle },
+        { property: "og:description", content: podcastDescription },
+        { property: "og:image", content: podcastImage },
+        { property: "og:url", content: window.location.href },
+        { property: "og:type", content: "article" },
+        { name: "twitter:title", content: podcastTitle },
+        { name: "twitter:description", content: podcastDescription },
+        { name: "twitter:image", content: podcastImage },
+        { name: "description", content: podcastDescription }
+      ];
+      
+      // Update meta tags
+      metaTags.forEach(({ property, name, content }) => {
+        if (property) {
+          let meta = document.querySelector(`meta[property="${property}"]`);
+          if (!meta) {
+            meta = document.createElement('meta');
+            meta.setAttribute('property', property);
+            document.head.appendChild(meta);
+          }
+          meta.setAttribute('content', content);
+        }
+        if (name) {
+          let meta = document.querySelector(`meta[name="${name}"]`);
+          if (!meta) {
+            meta = document.createElement('meta');
+            meta.setAttribute('name', name);
+            document.head.appendChild(meta);
+          }
+          meta.setAttribute('content', content);
+        }
+      });
     }
   }, [foundEpisode]);
 

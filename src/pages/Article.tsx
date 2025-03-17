@@ -98,12 +98,12 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
       const metaTags = [
         { property: "og:title", content: decodedTitle },
         { property: "og:description", content: description },
-        { property: "og:image", content: featuredImageUrl },
+        { property: "og:image", content: featuredImageUrl }, // Using the article's featuredImageUrl here
         { property: "og:url", content: window.location.href },
         { property: "og:type", content: "article" },
         { name: "twitter:title", content: decodedTitle },
         { name: "twitter:description", content: description },
-        { name: "twitter:image", content: featuredImageUrl },
+        { name: "twitter:image", content: featuredImageUrl }, // Also for Twitter cards
         { name: "description", content: description }
       ];
       
