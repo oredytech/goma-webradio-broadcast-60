@@ -92,7 +92,42 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
       const description = decodeHtmlTitle(article.excerpt.rendered);
       const publishedDate = article.date;
       
-      useArticleSEO(decodedTitle, description, featuredImageUrl, publishedDate);
+      // Use a regular function call instead of hook for SEO
+      document.title = decodedTitle;
+      // Set meta tags directly since this was causing errors
+      const metaTags = [
+        { property: "og:title", content: decodedTitle },
+        { property: "og:description", content: description },
+        { property: "og:image", content: featuredImageUrl },
+        { property: "og:url", content: window.location.href },
+        { property: "og:type", content: "article" },
+        { name: "twitter:title", content: decodedTitle },
+        { name: "twitter:description", content: description },
+        { name: "twitter:image", content: featuredImageUrl },
+        { name: "description", content: description }
+      ];
+      
+      // Update meta tags
+      metaTags.forEach(({ property, name, content }) => {
+        if (property) {
+          let meta = document.querySelector(`meta[property="${property}"]`);
+          if (!meta) {
+            meta = document.createElement('meta');
+            meta.setAttribute('property', property);
+            document.head.appendChild(meta);
+          }
+          meta.setAttribute('content', content);
+        }
+        if (name) {
+          let meta = document.querySelector(`meta[name="${name}"]`);
+          if (!meta) {
+            meta = document.createElement('meta');
+            meta.setAttribute('name', name);
+            document.head.appendChild(meta);
+          }
+          meta.setAttribute('content', content);
+        }
+      });
     }
   }, [article]);
 
