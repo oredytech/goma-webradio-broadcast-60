@@ -1,3 +1,4 @@
+
 import { useQuery } from '@tanstack/react-query';
 
 export interface PodcastEpisode {
@@ -12,14 +13,28 @@ export interface PodcastEpisode {
     image?: string;
     duration?: string;
   };
+  feedSource?: string; // Identify which feed this episode comes from
 }
 
 const CORS_PROXY = "https://api.allorigins.win/raw?url=";
-const RSS_URL = "https://podcast.zenomedia.com/api/public/podcasts/e422f99f-db57-40c3-a92e-778a15e5c2bb/rss";
 
-const fetchPodcastFeed = async (): Promise<PodcastEpisode[]> => {
+// Define our podcast feed sources
+const PODCAST_FEEDS = [
+  {
+    id: "feed1",
+    name: "Feed 1",
+    url: "https://podcast.zenomedia.com/api/public/podcasts/e422f99f-db57-40c3-a92e-778a15e5c2bb/rss"
+  },
+  {
+    id: "feed2",
+    name: "Feed 2",
+    url: "https://podcast.zenomedia.com/api/public/podcasts/dccffad2-6a72-41f0-b115-499b7a4bf255/rss"
+  }
+];
+
+const fetchPodcastFeed = async (feedUrl: string, feedName: string): Promise<PodcastEpisode[]> => {
   try {
-    const response = await fetch(CORS_PROXY + encodeURIComponent(RSS_URL));
+    const response = await fetch(CORS_PROXY + encodeURIComponent(feedUrl));
     const xmlText = await response.text();
     
     // Parse XML to DOM
@@ -47,21 +62,46 @@ const fetchPodcastFeed = async (): Promise<PodcastEpisode[]> => {
         itunes: {
           image: itunesImage,
           duration: itunesDuration
-        }
+        },
+        feedSource: feedName
       };
     });
 
     return episodes;
   } catch (error) {
-    console.error("Error fetching podcast feed:", error);
+    console.error(`Error fetching podcast feed ${feedName}:`, error);
+    throw error;
+  }
+};
+
+const fetchAllPodcastFeeds = async (): Promise<PodcastEpisode[]> => {
+  try {
+    // Fetch all feeds in parallel
+    const feedPromises = PODCAST_FEEDS.map(feed => 
+      fetchPodcastFeed(feed.url, feed.name)
+    );
+    
+    const results = await Promise.all(feedPromises);
+    
+    // Combine all episodes into a single array
+    const allEpisodes = results.flat();
+    
+    // Sort all episodes by publication date (newest first)
+    return allEpisodes.sort((a, b) => {
+      const dateA = new Date(a.pubDate).getTime();
+      const dateB = new Date(b.pubDate).getTime();
+      return dateB - dateA;
+    });
+  } catch (error) {
+    console.error("Error fetching podcast feeds:", error);
     throw error;
   }
 };
 
 export const usePodcastFeed = () => {
   return useQuery({
-    queryKey: ['podcastFeed'],
-    queryFn: fetchPodcastFeed,
+    queryKey: ['podcastFeeds'],
+    queryFn: fetchAllPodcastFeeds,
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
     retry: 3
   });

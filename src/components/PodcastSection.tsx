@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Share2 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { getPodcastSlug } from '@/utils/podcastUtils';
+import { Badge } from '@/components/ui/badge';
 
 interface PodcastSectionProps {
   isPlaying: boolean;
@@ -109,6 +110,11 @@ const PodcastSection = ({
                 className="w-full h-48 object-cover"
               />
               <div className="p-6">
+                {episode.feedSource && (
+                  <Badge variant="outline" className="mb-2 bg-primary/20 text-primary border-primary/30">
+                    {episode.feedSource}
+                  </Badge>
+                )}
                 <h3 className="text-xl font-bold text-white mb-2">{episode.title}</h3>
                 <p className="text-gray-300 line-clamp-2 mb-4">
                   {episode.description ? stripHtml(episode.description) : ''}
