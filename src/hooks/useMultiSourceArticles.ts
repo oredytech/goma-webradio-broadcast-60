@@ -13,6 +13,7 @@ interface WordPressArticle {
     rendered: string;
   };
   link: string;
+  date: string; // Adding the missing date property
   _embedded?: {
     "wp:featuredmedia"?: Array<{
       source_url: string;

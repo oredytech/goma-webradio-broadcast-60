@@ -13,6 +13,7 @@ type AnyWordPressArticle = {
       source_url: string;
     }>;
   };
+  date?: string; // Added date as optional property
 };
 
 export const getArticleSlug = (article: AnyWordPressArticle): string => {

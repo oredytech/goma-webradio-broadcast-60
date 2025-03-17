@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 
 interface WordPressArticle {
@@ -18,6 +19,7 @@ interface WordPressArticle {
     }>;
   };
   link: string;
+  date: string; // Adding the date property that was missing
 }
 
 const fetchArticles = async () => {
