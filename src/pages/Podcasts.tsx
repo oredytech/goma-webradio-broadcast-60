@@ -108,7 +108,7 @@ const Podcasts = ({
           <Mic className="h-16 w-16 text-primary mx-auto mb-4" />
           <h1 className="text-5xl font-bold text-white mb-4">PODCASTS</h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Découvrez notre collection de podcasts originaux et laissez-vous captiver par des histoires, des analyses et des interviews.
+            Découvrez notre collection de podcasts originaux.
           </p>
         </div>
       </div>
@@ -124,7 +124,7 @@ const Podcasts = ({
                 className="bg-primary/10 text-primary border-primary/30 hover:bg-primary/20"
                 onClick={() => navigate(`/podcasts/${feedId}`)}
               >
-                Voir tous les épisodes
+                les épisodes
                 <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
