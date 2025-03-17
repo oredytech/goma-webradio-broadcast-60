@@ -2,6 +2,7 @@
 import React from "react";
 import { X } from "lucide-react";
 import NavigationLink from "./NavigationLink";
+import ContactDialog from "./ContactDialog";
 import { Sheet, SheetContent, SheetClose } from "@/components/ui/sheet";
 
 interface MobileNavigationProps {
@@ -17,7 +18,7 @@ const MobileNavigation = ({
 }: MobileNavigationProps) => {
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="left" className="w-full sm:max-w-md p-0 bg-secondary/95 backdrop-blur-sm border-r border-primary/20">
+      <SheetContent side="left" className="max-w-[280px] p-0 bg-secondary/95 backdrop-blur-sm border-r border-primary/20">
         <div className="flex justify-end p-4">
           <SheetClose className="text-white p-2" onClick={onClose} aria-label="Close menu">
             <X className="h-6 w-6" />
@@ -28,7 +29,7 @@ const MobileNavigation = ({
           <NavigationLink to="/actualites" mobile={true} onClick={onClose}>Actualités</NavigationLink>
           <NavigationLink to="/podcasts" mobile={true} onClick={onClose}>Podcasts</NavigationLink>
           <NavigationLink to="/a-propos" mobile={true} onClick={onClose}>À propos</NavigationLink>
-          <NavigationLink to="/login" mobile={true} onClick={onClose}>Connexion</NavigationLink>
+          <ContactDialog />
         </div>
       </SheetContent>
     </Sheet>
