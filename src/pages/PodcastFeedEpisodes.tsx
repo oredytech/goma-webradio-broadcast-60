@@ -66,7 +66,7 @@ const PodcastFeedEpisodes = ({
     return (
       <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
         <Header />
-        <div className="relative w-full h-[40vh] bg-gradient-to-r from-black to-secondary flex items-center justify-center">
+        <div className="relative w-full h-[40vh] bg-gradient-to-r from-black to-secondary flex items-center justify-center pt-40">
           <div className="absolute inset-0 opacity-20 bg-[url('/placeholder.svg')] bg-center bg-cover mix-blend-overlay"></div>
           <div className="absolute inset-0 bg-black/50"></div>
           <div className="container relative z-10 px-4 mx-auto text-center">
@@ -101,7 +101,7 @@ const PodcastFeedEpisodes = ({
     return (
       <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
         <Header />
-        <div className="relative w-full h-[40vh] bg-gradient-to-r from-black to-secondary flex items-center justify-center">
+        <div className="relative w-full h-[40vh] bg-gradient-to-r from-black to-secondary flex items-center justify-center pt-40">
           <div className="absolute inset-0 opacity-20 bg-[url('/placeholder.svg')] bg-center bg-cover mix-blend-overlay"></div>
           <div className="absolute inset-0 bg-black/50"></div>
           <div className="container relative z-10 px-4 mx-auto text-center">
@@ -131,7 +131,7 @@ const PodcastFeedEpisodes = ({
     <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
       <Header />
       {/* Hero Section with Feed Background */}
-      <div className="relative w-full h-[40vh] bg-gradient-to-r from-black to-secondary flex items-center justify-center">
+      <div className="relative w-full h-[40vh] bg-gradient-to-r from-black to-secondary flex items-center justify-center pt-40">
         <div className="absolute inset-0 opacity-20 bg-center bg-cover mix-blend-overlay" style={{backgroundImage: `url(${feedImage})`}}></div>
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="container relative z-10 px-4 mx-auto text-center">

@@ -10,7 +10,7 @@ interface ArticleHeroProps {
 const ArticleHero = ({ title, featuredImageUrl }: ArticleHeroProps) => {
   return (
     <div className="pt-16">
-      <div className="relative h-[40vh] md:h-[50vh] lg:h-[60vh]">
+      <div className="relative h-[40vh] md:h-[50vh] lg:h-[60vh] pt-40">
         <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{ 

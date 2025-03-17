@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -96,7 +95,6 @@ const PodcastPlayer = ({
   const podcastDescription = foundEpisode.description || "Écoutez ce podcast sur GOMA WEBRADIO";
   const currentUrl = window.location.href;
 
-  // Function to strip HTML tags from text
   const stripHtml = (html: string) => {
     const tmp = document.createElement('DIV');
     tmp.innerHTML = html;
@@ -126,8 +124,7 @@ const PodcastPlayer = ({
       
       <Header />
       
-      {/* Hero Section with Episode Background */}
-      <div className="relative w-full h-[50vh] bg-gradient-to-r from-black to-secondary flex items-center justify-center">
+      <div className="relative w-full h-[50vh] bg-gradient-to-r from-black to-secondary flex items-center justify-center pt-40">
         <div className="absolute inset-0 opacity-30 bg-center bg-cover" style={{backgroundImage: `url(${podcastImage})`}}></div>
         <div className="absolute inset-0 bg-black/60"></div>
         <div className="container relative z-10 px-4 mx-auto text-center">
