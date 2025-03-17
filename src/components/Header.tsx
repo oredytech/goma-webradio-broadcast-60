@@ -15,7 +15,14 @@ const Header = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
   const handleSearchClick = () => {
+    if (isMenuOpen) {
+      closeMenu();
+    }
     navigate('/recherche');
   };
 
@@ -33,7 +40,8 @@ const Header = () => {
 
           <MobileNavigation 
             isOpen={isMenuOpen} 
-            onSearchClick={handleSearchClick} 
+            onSearchClick={handleSearchClick}
+            onClose={closeMenu} 
           />
 
           <MobileMenuButton onClick={toggleMenu} className="sm:hidden ml-4" />
