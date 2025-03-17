@@ -17,9 +17,17 @@ interface WordPressArticle {
     "wp:featuredmedia"?: Array<{
       source_url: string;
     }>;
+    author?: Array<{
+      name?: string;
+      avatar_urls?: {
+        [key: string]: string;
+      };
+      description?: string;
+      url?: string;
+    }>;
   };
   link: string;
-  date: string; // Adding the date property that was missing
+  date: string;
 }
 
 const fetchArticles = async () => {

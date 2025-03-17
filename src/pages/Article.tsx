@@ -52,7 +52,7 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
       if (!articleId) throw new Error("No article ID found");
       
       const response = await fetch(
-        `https://totalementactus.net/wp-json/wp/v2/posts/${articleId}?_embed`
+        `https://totalementactus.net/wp-json/wp/v2/posts/${articleId}?_embed=author,wp:featuredmedia`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");

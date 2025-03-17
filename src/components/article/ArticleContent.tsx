@@ -1,12 +1,20 @@
 
 import { WordPressArticle } from "@/hooks/useWordpressArticles";
 import ArticleSocialActions from "@/components/ArticleSocialActions";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface ArticleContentProps {
   article: WordPressArticle;
 }
 
 const ArticleContent = ({ article }: ArticleContentProps) => {
+  // Format the publication date
+  const formattedDate = article.date 
+    ? format(new Date(article.date), "dd MMMM yyyy", { locale: fr })
+    : "";
+
   return (
     <div className="lg:col-span-8">
       {/* Article Content */}
@@ -15,31 +23,35 @@ const ArticleContent = ({ article }: ArticleContentProps) => {
         dangerouslySetInnerHTML={{ __html: article.content.rendered }}
       />
 
-      {/* Comment Form */}
+      {/* Author Information */}
       <div className="bg-secondary/50 rounded-lg p-6 backdrop-blur-sm">
-        <h2 className="text-2xl font-bold text-white mb-6">Laissez un commentaire</h2>
-        <form onSubmit={(e) => {
-          e.preventDefault();
-          console.log("Commentaire soumis");
-        }} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Votre nom"
-            className="w-full px-4 py-2 bg-white/10 border border-primary/20 rounded-md text-white placeholder:text-white/50"
-          />
-          <input
-            type="email"
-            placeholder="Votre email"
-            className="w-full px-4 py-2 bg-white/10 border border-primary/20 rounded-md text-white placeholder:text-white/50"
-          />
-          <textarea
-            placeholder="Votre commentaire"
-            className="w-full px-4 py-2 bg-white/10 border border-primary/20 rounded-md text-white placeholder:text-white/50 min-h-[150px]"
-          />
-          <button type="submit" className="px-4 py-2 bg-primary text-white rounded-md w-full sm:w-auto">
-            Soumettre
-          </button>
-        </form>
+        <h2 className="text-2xl font-bold text-white mb-6">À propos de l'article</h2>
+        <div className="flex items-start gap-4">
+          <Avatar className="h-16 w-16 rounded-full border-2 border-primary">
+            <AvatarImage src="/placeholder.svg" alt="Avatar de l'auteur" />
+            <AvatarFallback className="bg-primary/20 text-primary text-xl">
+              {article._embedded?.author?.[0]?.name?.charAt(0) || "A"}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1">
+            <h3 className="text-xl font-semibold text-white">
+              {article._embedded?.author?.[0]?.name || "Auteur Inconnu"}
+            </h3>
+            <div className="mt-1 space-y-2">
+              <p className="text-sm text-gray-300">
+                Publié le {formattedDate}
+              </p>
+              <p className="text-sm text-gray-300">
+                Source: <span className="text-primary">Totalement Actus</span>
+              </p>
+              {article._embedded?.author?.[0]?.description && (
+                <p className="text-sm text-gray-300 mt-2">
+                  {article._embedded?.author?.[0]?.description}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
