@@ -1,6 +1,7 @@
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useWordpressArticles, WordPressArticle } from "@/hooks/useWordpressArticles";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -11,7 +12,6 @@ import ArticleSidebar from "@/components/article/ArticleSidebar";
 import ArticleLoading from "@/components/article/ArticleLoading";
 import ArticleNotFound from "@/components/article/ArticleNotFound";
 import { decodeHtmlTitle, getArticleSlug, getFeaturedImageUrl } from "@/utils/articleUtils";
-import { useArticleSEO } from "@/hooks/useSEO";
 
 interface ArticleProps {
   isPlaying: boolean;
@@ -93,16 +93,30 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
   const decodedTitle = decodeHtmlTitle(article.title.rendered);
   const description = decodeHtmlTitle(article.excerpt.rendered);
   const publishedDate = article.date;
-  
-  useArticleSEO(
-    decodedTitle,
-    description,
-    featuredImageUrl,
-    publishedDate
-  );
+  const currentUrl = window.location.href;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
+      <Helmet>
+        <title>{decodedTitle}</title>
+        <meta name="description" content={description} />
+        
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={currentUrl} />
+        <meta property="og:title" content={decodedTitle} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={featuredImageUrl} />
+        <meta property="og:site_name" content="GOMA WEBRADIO" />
+        <meta property="og:locale" content="fr_FR" />
+        {publishedDate && <meta property="article:published_time" content={publishedDate} />}
+        
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={currentUrl} />
+        <meta name="twitter:title" content={decodedTitle} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={featuredImageUrl} />
+      </Helmet>
+      
       <Header />
       
       <ArticleHero 
