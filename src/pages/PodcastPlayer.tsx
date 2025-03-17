@@ -110,6 +110,10 @@ const PodcastPlayer = ({
     if (previousEpisode) {
       const slug = getPodcastSlug(previousEpisode.title);
       navigate(`/podcast/${slug}`);
+      
+      // Automatically start playing the previous episode
+      setCurrentAudio(previousEpisode.enclosure.url);
+      setIsPlaying(true);
     }
   };
 
@@ -120,6 +124,10 @@ const PodcastPlayer = ({
     if (nextEpisode) {
       const slug = getPodcastSlug(nextEpisode.title);
       navigate(`/podcast/${slug}`);
+      
+      // Automatically start playing the next episode
+      setCurrentAudio(nextEpisode.enclosure.url);
+      setIsPlaying(true);
     }
   };
 

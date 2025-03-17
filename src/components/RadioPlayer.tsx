@@ -6,6 +6,11 @@ import ProgressBar from './radio/ProgressBar';
 import PlayPauseButton from './radio/PlayPauseButton';
 import VolumeControl from './radio/VolumeControl';
 import { useEffect, useState } from 'react';
+import { SkipBack, SkipForward } from 'lucide-react';
+import { Button } from './ui/button';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { usePodcastFeed } from '@/hooks/usePodcastFeed';
+import { findEpisodeBySlug, findEpisodeById, getPodcastSlug } from '@/utils/podcastUtils';
 
 interface RadioPlayerProps {
   isPlaying: boolean;
@@ -16,6 +21,10 @@ interface RadioPlayerProps {
 
 const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: RadioPlayerProps) => {
   const [liveTitle, setLiveTitle] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { data: podcastData } = usePodcastFeed();
+  const isPodcastRoute = location.pathname.includes('/podcast/');
   
   const {
     volume,
@@ -52,6 +61,58 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }:
     onVolumeDown: handleVolumeDown,
     enabled: true
   });
+
+  // Navigate to previous podcast episode
+  const handlePrevEpisode = () => {
+    if (!isPodcastRoute || !podcastData) return;
+    
+    const currentSlug = location.pathname.split('/podcast/')[1];
+    const episodes = podcastData.allEpisodes;
+    const { episode, index } = findEpisodeBySlug(episodes, currentSlug);
+    
+    if (episode && index > 0) {
+      const prevEpisode = episodes[index - 1];
+      const slug = getPodcastSlug(prevEpisode.title);
+      navigate(`/podcast/${slug}`);
+      
+      // Start playing the previous episode
+      setCurrentAudio?.(prevEpisode.enclosure.url);
+      setIsPlaying?.(true);
+    }
+  };
+
+  // Navigate to next podcast episode
+  const handleNextEpisode = () => {
+    if (!isPodcastRoute || !podcastData) return;
+    
+    const currentSlug = location.pathname.split('/podcast/')[1];
+    const episodes = podcastData.allEpisodes;
+    const { episode, index } = findEpisodeBySlug(episodes, currentSlug);
+    
+    if (episode && index < episodes.length - 1) {
+      const nextEpisode = episodes[index + 1];
+      const slug = getPodcastSlug(nextEpisode.title);
+      navigate(`/podcast/${slug}`);
+      
+      // Start playing the next episode
+      setCurrentAudio?.(nextEpisode.enclosure.url);
+      setIsPlaying?.(true);
+    }
+  };
+
+  // Check if navigation buttons should be enabled
+  const canNavigate = isPodcastRoute && Boolean(podcastData);
+  
+  let hasPrevious = false;
+  let hasNext = false;
+  
+  if (canNavigate && podcastData) {
+    const currentSlug = location.pathname.split('/podcast/')[1];
+    const { index } = findEpisodeBySlug(podcastData.allEpisodes, currentSlug);
+    
+    hasPrevious = index > 0;
+    hasNext = index !== -1 && index < podcastData.allEpisodes.length - 1;
+  }
 
   // Fetch the current playing title from the radio stream periodically
   useEffect(() => {
@@ -125,11 +186,44 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }:
           </div>
           
           <div className="flex items-center gap-2 sm:gap-4">
-            <PlayPauseButton 
-              isPlaying={isPlaying} 
-              isLoading={isLoading} 
-              togglePlay={togglePlay} 
-            />
+            {currentAudio && (
+              <div className="flex items-center gap-1 sm:gap-2">
+                <Button
+                  variant="ghost" 
+                  size="icon"
+                  onClick={handlePrevEpisode}
+                  disabled={!hasPrevious}
+                  className="hover:bg-primary/20 hidden sm:flex"
+                >
+                  <SkipBack className="h-5 w-5 text-white" />
+                </Button>
+                
+                <PlayPauseButton 
+                  isPlaying={isPlaying} 
+                  isLoading={isLoading} 
+                  togglePlay={togglePlay} 
+                />
+                
+                <Button
+                  variant="ghost" 
+                  size="icon"
+                  onClick={handleNextEpisode}
+                  disabled={!hasNext}
+                  className="hover:bg-primary/20 hidden sm:flex"
+                >
+                  <SkipForward className="h-5 w-5 text-white" />
+                </Button>
+              </div>
+            )}
+            
+            {!currentAudio && (
+              <PlayPauseButton 
+                isPlaying={isPlaying} 
+                isLoading={isLoading} 
+                togglePlay={togglePlay} 
+              />
+            )}
+            
             <VolumeControl 
               volume={volume} 
               handleVolumeChange={handleVolumeChange} 
