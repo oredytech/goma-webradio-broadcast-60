@@ -1,59 +1,40 @@
 
-import { NavigationMenu, NavigationMenuList, NavigationMenuItem } from "@/components/ui/navigation-menu";
-import NavigationLink from "./NavigationLink";
-import ContactDialog from "./ContactDialog";
+import React from "react";
+import { X } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 import SearchButton from "./SearchButton";
-import { Search } from "lucide-react";
+import NavigationLink from "./NavigationLink";
 
 interface MobileNavigationProps {
   isOpen: boolean;
-  isDarkMode: boolean;
-  toggleDarkMode: () => void;
   onSearchClick: () => void;
 }
 
 const MobileNavigation = ({ 
   isOpen, 
-  isDarkMode, 
-  toggleDarkMode, 
   onSearchClick 
 }: MobileNavigationProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed sm:hidden inset-x-0 top-16 bg-secondary/95 backdrop-blur-sm border-t border-primary/20">
-      <NavigationMenu className="w-full">
-        <NavigationMenuList className="flex flex-col items-center justify-center p-4 space-y-3 w-full">
-          <NavigationMenuItem className="w-full text-center">
-            <NavigationLink to="/">
-              Accueil
-            </NavigationLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem className="w-full text-center">
-            <NavigationLink to="/actualites">
-              Actualités
-            </NavigationLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem className="w-full text-center">
-            <NavigationLink to="/podcasts">
-              Podcasts
-            </NavigationLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem className="w-full text-center">
-            <NavigationLink to="/a-propos">
-              À propos
-            </NavigationLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem className="w-full text-center">
-            <ContactDialog />
-          </NavigationMenuItem>
-          <div className="flex items-center space-x-4 mt-2">
-            <SearchButton onClick={onSearchClick} />
-            <ThemeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
-          </div>
-        </NavigationMenuList>
-      </NavigationMenu>
+    <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex flex-col">
+      <div className="flex justify-end p-4">
+        <button className="text-white p-2">
+          <X className="h-6 w-6" />
+        </button>
+      </div>
+      <div className="flex flex-col items-center justify-center flex-1 space-y-8">
+        <NavigationLink to="/" mobile>Accueil</NavigationLink>
+        <NavigationLink to="/actualites" mobile>Actualités</NavigationLink>
+        <NavigationLink to="/podcasts" mobile>Podcasts</NavigationLink>
+        <NavigationLink to="/a-propos" mobile>À propos</NavigationLink>
+        <NavigationLink to="/login" mobile>Connexion</NavigationLink>
+        
+        <div className="flex items-center space-x-4 mt-8">
+          <SearchButton onClick={onSearchClick} />
+          <ThemeToggle />
+        </div>
+      </div>
     </div>
   );
 };

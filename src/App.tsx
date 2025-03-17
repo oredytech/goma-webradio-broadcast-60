@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import { HelmetProvider } from "react-helmet-async";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import Index from "./pages/Index";
 import Article from "./pages/Article";
 import News from "./pages/News";
@@ -37,102 +38,104 @@ const App = () => {
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route 
-                path="/" 
-                element={
-                  <Index 
-                    isPlaying={isPlaying}
-                    setIsPlaying={setIsPlaying}
-                    currentAudio={currentAudio}
-                    setCurrentAudio={setCurrentAudio}
-                  />
-                } 
+          <ThemeProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route 
+                  path="/" 
+                  element={
+                    <Index 
+                      isPlaying={isPlaying}
+                      setIsPlaying={setIsPlaying}
+                      currentAudio={currentAudio}
+                      setCurrentAudio={setCurrentAudio}
+                    />
+                  } 
+                />
+                <Route 
+                  path="/article/:id/:slug" 
+                  element={
+                    <Article 
+                      isPlaying={isPlaying}
+                      setIsPlaying={setIsPlaying}
+                      currentAudio={currentAudio}
+                      setCurrentAudio={setCurrentAudio}
+                    />
+                  } 
+                />
+                <Route 
+                  path="/article/:slug" 
+                  element={
+                    <Article 
+                      isPlaying={isPlaying}
+                      setIsPlaying={setIsPlaying}
+                      currentAudio={currentAudio}
+                      setCurrentAudio={setCurrentAudio}
+                    />
+                  } 
+                />
+                <Route path="/actualites/*" element={<News />} />
+                <Route path="/actualites/politique" element={<News filter="politique" />} />
+                <Route path="/a-propos" element={<About />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route 
+                  path="/podcasts" 
+                  element={
+                    <Podcasts 
+                      isPlaying={isPlaying}
+                      setIsPlaying={setIsPlaying}
+                      currentAudio={currentAudio}
+                      setCurrentAudio={setCurrentAudio}
+                    />
+                  } 
+                />
+                <Route 
+                  path="/podcasts/:feedId" 
+                  element={
+                    <PodcastFeedEpisodes 
+                      isPlaying={isPlaying}
+                      setIsPlaying={setIsPlaying}
+                      currentAudio={currentAudio}
+                      setCurrentAudio={setCurrentAudio}
+                    />
+                  } 
+                />
+                <Route 
+                  path="/podcast/:episodeId/:slug" 
+                  element={
+                    <PodcastPlayer 
+                      isPlaying={isPlaying}
+                      setIsPlaying={setIsPlaying}
+                      currentAudio={currentAudio}
+                      setCurrentAudio={setCurrentAudio}
+                    />
+                  } 
+                />
+                <Route 
+                  path="/podcast/:slug" 
+                  element={
+                    <PodcastPlayer 
+                      isPlaying={isPlaying}
+                      setIsPlaying={setIsPlaying}
+                      currentAudio={currentAudio}
+                      setCurrentAudio={setCurrentAudio}
+                    />
+                  } 
+                />
+                <Route path="/recherche" element={<Search />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <RadioPlayer
+                isPlaying={isPlaying}
+                setIsPlaying={setIsPlaying}
+                currentAudio={currentAudio}
+                setCurrentAudio={setCurrentAudio}
               />
-              <Route 
-                path="/article/:id/:slug" 
-                element={
-                  <Article 
-                    isPlaying={isPlaying}
-                    setIsPlaying={setIsPlaying}
-                    currentAudio={currentAudio}
-                    setCurrentAudio={setCurrentAudio}
-                  />
-                } 
-              />
-              <Route 
-                path="/article/:slug" 
-                element={
-                  <Article 
-                    isPlaying={isPlaying}
-                    setIsPlaying={setIsPlaying}
-                    currentAudio={currentAudio}
-                    setCurrentAudio={setCurrentAudio}
-                  />
-                } 
-              />
-              <Route path="/actualites/*" element={<News />} />
-              <Route path="/actualites/politique" element={<News filter="politique" />} />
-              <Route path="/a-propos" element={<About />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route 
-                path="/podcasts" 
-                element={
-                  <Podcasts 
-                    isPlaying={isPlaying}
-                    setIsPlaying={setIsPlaying}
-                    currentAudio={currentAudio}
-                    setCurrentAudio={setCurrentAudio}
-                  />
-                } 
-              />
-              <Route 
-                path="/podcasts/:feedId" 
-                element={
-                  <PodcastFeedEpisodes 
-                    isPlaying={isPlaying}
-                    setIsPlaying={setIsPlaying}
-                    currentAudio={currentAudio}
-                    setCurrentAudio={setCurrentAudio}
-                  />
-                } 
-              />
-              <Route 
-                path="/podcast/:episodeId/:slug" 
-                element={
-                  <PodcastPlayer 
-                    isPlaying={isPlaying}
-                    setIsPlaying={setIsPlaying}
-                    currentAudio={currentAudio}
-                    setCurrentAudio={setCurrentAudio}
-                  />
-                } 
-              />
-              <Route 
-                path="/podcast/:slug" 
-                element={
-                  <PodcastPlayer 
-                    isPlaying={isPlaying}
-                    setIsPlaying={setIsPlaying}
-                    currentAudio={currentAudio}
-                    setCurrentAudio={setCurrentAudio}
-                  />
-                } 
-              />
-              <Route path="/recherche" element={<Search />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <RadioPlayer
-              isPlaying={isPlaying}
-              setIsPlaying={setIsPlaying}
-              currentAudio={currentAudio}
-              setCurrentAudio={setCurrentAudio}
-            />
-          </BrowserRouter>
+            </BrowserRouter>
+          </ThemeProvider>
         </TooltipProvider>
       </QueryClientProvider>
     </HelmetProvider>
