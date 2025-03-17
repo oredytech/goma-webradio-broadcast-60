@@ -2,8 +2,8 @@
 import { useState, useEffect } from 'react';
 import { useWordpressArticles } from '@/hooks/useWordpressArticles';
 import { usePodcastFeed } from '@/hooks/usePodcastFeed';
-import { decodeHtmlTitle, getFeaturedImageUrl } from '@/utils/articleUtils';
-import { stripHtml } from '@/utils/podcastUtils';
+import { decodeHtmlTitle, getFeaturedImageUrl, getArticleSlug } from '@/utils/articleUtils';
+import { stripHtml, getPodcastSlug } from '@/utils/podcastUtils';
 import { SearchResult } from '@/types/search';
 
 export const useSearch = (query: string) => {
@@ -46,7 +46,7 @@ export const useSearch = (query: string) => {
             excerpt: excerpt.substring(0, 150) + "...",
             type: 'article',
             date: article.date || new Date().toISOString(),
-            url: `/article/${article.id}`,
+            url: `/article/${getArticleSlug(article)}`,
             imageUrl: getFeaturedImageUrl(article)
           });
         }
@@ -63,13 +63,14 @@ export const useSearch = (query: string) => {
           title.toLowerCase().includes(lowerCaseQuery) || 
           description.toLowerCase().includes(lowerCaseQuery)
         ) {
+          const podcastSlug = getPodcastSlug(title);
           searchResults.push({
             id: `podcast-${index}`,
             title: title,
             excerpt: description.substring(0, 150) + "...",
             type: 'podcast',
             date: episode.pubDate,
-            url: `/podcast/${index}`,
+            url: `/podcast/${podcastSlug}`,
             imageUrl: episode.itunes?.image
           });
         }

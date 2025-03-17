@@ -1,7 +1,10 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { SearchResult } from '@/types/search';
+import { getArticleSlug } from '@/utils/articleUtils';
+import { getPodcastSlug } from '@/utils/podcastUtils';
 
 interface SearchResultCardProps {
   result: SearchResult;
@@ -10,12 +13,23 @@ interface SearchResultCardProps {
 }
 
 const SearchResultCard = ({ result, searchTerm, highlightSearchTerm }: SearchResultCardProps) => {
+  // Generate the correct URL based on result type
+  const getResultUrl = () => {
+    if (result.type === 'article') {
+      return `/article/${getArticleSlug({id: parseInt(result.id.split('-')[1]), title: {rendered: result.title}})}`;
+    } else {
+      return `/podcast/${getPodcastSlug(result.title)}`;
+    }
+  };
+
+  const resultUrl = getResultUrl();
+
   return (
     <Card key={result.id} className="overflow-hidden hover:shadow-md transition-shadow">
       <CardContent className="p-6">
         <div className="flex gap-4">
           {result.imageUrl && (
-            <a href={result.url} className="shrink-0">
+            <Link to={resultUrl} className="shrink-0">
               <img 
                 src={result.imageUrl} 
                 alt={result.title}
@@ -25,12 +39,12 @@ const SearchResultCard = ({ result, searchTerm, highlightSearchTerm }: SearchRes
                   target.src = '/placeholder.svg'; // Fallback image
                 }}
               />
-            </a>
+            </Link>
           )}
           <div className="flex-1">
             <div className="flex justify-between items-start mb-2">
               <h3 className="font-semibold text-lg hover:text-primary transition-colors">
-                <a href={result.url}>{highlightSearchTerm(result.title, searchTerm)}</a>
+                <Link to={resultUrl}>{highlightSearchTerm(result.title, searchTerm)}</Link>
               </h3>
               <span className="text-xs px-2 py-1 rounded-full bg-secondary text-white uppercase">
                 {result.type === 'article' ? 'Article' : 'Podcast'}
