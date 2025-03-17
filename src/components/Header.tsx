@@ -2,7 +2,7 @@
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { Mail, Radio } from "lucide-react";
+import { Mail, Search, Sun, Moon } from "lucide-react";
 import Logo from "./header/Logo";
 import MobileMenuButton from "./header/MobileMenuButton";
 import NavigationLink from "./header/NavigationLink";
@@ -10,9 +10,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+    // Here you would implement actual dark mode toggle functionality
+    // For example, adding/removing a class to the document or updating a context
   };
 
   return (
@@ -37,10 +44,7 @@ const Header = () => {
               
               <NavigationMenuItem>
                 <NavigationLink to="/podcasts">
-                  <span className="flex items-center">
-                    <Radio className="mr-2 h-4 w-4" />
-                    Podcasts
-                  </span>
+                  Podcasts
                 </NavigationLink>
               </NavigationMenuItem>
 
@@ -98,6 +102,23 @@ const Header = () => {
             </NavigationMenuList>
           </NavigationMenu>
 
+          {/* Actions */}
+          <div className="hidden sm:flex items-center space-x-4">
+            <button 
+              className="p-2 rounded-full text-white hover:bg-primary/20 hover:text-primary transition-colors"
+              aria-label="Search"
+            >
+              <Search className="h-5 w-5" />
+            </button>
+            <button 
+              className="p-2 rounded-full text-white hover:bg-primary/20 hover:text-primary transition-colors"
+              aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+              onClick={toggleDarkMode}
+            >
+              {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </button>
+          </div>
+
           {/* Mobile Menu */}
           {isMenuOpen && (
             <div className="fixed sm:hidden inset-x-0 top-16 bg-secondary/95 backdrop-blur-sm border-t border-primary/20">
@@ -115,10 +136,7 @@ const Header = () => {
                   </NavigationMenuItem>
                   <NavigationMenuItem className="w-full text-center">
                     <NavigationLink to="/podcasts">
-                      <span className="flex items-center justify-center">
-                        <Radio className="mr-2 h-4 w-4" />
-                        Podcasts
-                      </span>
+                      Podcasts
                     </NavigationLink>
                   </NavigationMenuItem>
                   <NavigationMenuItem className="w-full text-center">
@@ -171,6 +189,21 @@ const Header = () => {
                       </DialogContent>
                     </Dialog>
                   </NavigationMenuItem>
+                  <div className="flex items-center space-x-4 mt-2">
+                    <button 
+                      className="p-2 rounded-full text-white hover:bg-primary/20 hover:text-primary transition-colors"
+                      aria-label="Search"
+                    >
+                      <Search className="h-5 w-5" />
+                    </button>
+                    <button 
+                      className="p-2 rounded-full text-white hover:bg-primary/20 hover:text-primary transition-colors"
+                      aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+                      onClick={toggleDarkMode}
+                    >
+                      {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                    </button>
+                  </div>
                 </NavigationMenuList>
               </NavigationMenu>
             </div>
@@ -184,3 +217,4 @@ const Header = () => {
 };
 
 export default Header;
+
