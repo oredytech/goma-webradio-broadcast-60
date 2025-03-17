@@ -1,13 +1,29 @@
 
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" prefix="og: https://ogp.me/ns#">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GOMA WEBRADIO</title>
-    <meta name="description" content="La voix de Goma" />
+    <meta name="description" content="La voix de Goma - Actualités, Podcasts et Émissions en direct" />
     <meta name="author" content="Oredy TECHNOLOGIES" />
     <meta name="google-adsense-account" content="ca-pub-9651519664878161">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://gomawebradio.com/" />
+    <meta property="og:title" content="GOMA WEBRADIO" />
+    <meta property="og:description" content="La voix de Goma - Actualités, Podcasts et Émissions en direct" />
+    <meta property="og:image" content="https://gomawebradio.com/GOWERA__3_-removebg-preview.png" />
+    <meta property="og:site_name" content="GOMA WEBRADIO" />
+    <meta property="og:locale" content="fr_FR" />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://gomawebradio.com/" />
+    <meta name="twitter:title" content="GOMA WEBRADIO" />
+    <meta name="twitter:description" content="La voix de Goma - Actualités, Podcasts et Émissions en direct" />
+    <meta name="twitter:image" content="https://gomawebradio.com/GOWERA__3_-removebg-preview.png" />
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZJFRKKGTTS"></script>
@@ -17,35 +33,6 @@
       gtag('js', new Date());
 
       gtag('config', 'G-ZJFRKKGTTS');
-    </script>
-    
-    <!-- Initialisation forcée des meta tags pour les réseaux sociaux -->
-    <script>
-      // Données de base pour les meta tags
-      const defaultMetaTags = {
-        title: "GOMA WEBRADIO",
-        description: "La voix de Goma - Actualités, Podcasts et Émissions en direct",
-        image: "/GOWERA__3_-removebg-preview.png",
-        type: "website",
-        url: window.location.origin
-      };
-      
-      // Fonction pour initialiser les meta tags après le chargement de metaService
-      window.initMetaTags = function() {
-        console.log("Initialisation des meta tags forcés");
-        if (window.metaService && window.metaService.updateMetaTags) {
-          window.metaService.updateMetaTags(defaultMetaTags);
-        }
-      };
-      
-      // S'assurer que les meta tags sont appliqués même en cas de problème
-      document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(function() {
-          if (window.metaService && window.metaService.updateMetaTags) {
-            window.metaService.updateMetaTags(defaultMetaTags);
-          }
-        }, 300);
-      });
     </script>
   </head>
 

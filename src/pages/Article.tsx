@@ -12,7 +12,6 @@ import ArticleSidebar from "@/components/article/ArticleSidebar";
 import ArticleLoading from "@/components/article/ArticleLoading";
 import ArticleNotFound from "@/components/article/ArticleNotFound";
 import { decodeHtmlTitle, getArticleSlug, getFeaturedImageUrl } from "@/utils/articleUtils";
-import { useArticleSEO } from "@/hooks/useSEO";
 
 interface ArticleProps {
   isPlaying: boolean;
@@ -84,14 +83,6 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
     }
   }, [article, id, slug, location.pathname, navigate]);
 
-  // Setup SEO for the article page
-  const seoTitle = article ? decodeHtmlTitle(article.title.rendered) : "Chargement de l'article...";
-  const seoDescription = article ? decodeHtmlTitle(article.excerpt.rendered) : "";
-  const seoImage = article ? getFeaturedImageUrl(article) : "/GOWERA__3_-removebg-preview.png";
-  
-  // Use the hook
-  useArticleSEO(seoTitle, seoDescription, seoImage);
-
   if (isLoading || (!article && articleId)) {
     return <ArticleLoading />;
   }
@@ -105,12 +96,17 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
 
   const featuredImageUrl = getFeaturedImageUrl(article);
   const decodedTitle = decodeHtmlTitle(article.title.rendered);
+  const description = decodeHtmlTitle(article.excerpt.rendered);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
       <Header />
       
-      <ArticleHero title={decodedTitle} featuredImageUrl={featuredImageUrl} />
+      <ArticleHero 
+        title={decodedTitle} 
+        featuredImageUrl={featuredImageUrl}
+        description={description}
+      />
 
       {/* Content Section with Right Sidebar */}
       <div className="container mx-auto px-4 py-8">

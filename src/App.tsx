@@ -5,7 +5,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { updateMetaTags } from "@/utils/metaService";
 import Index from "./pages/Index";
 import Article from "./pages/Article";
 import News from "./pages/News";
@@ -27,13 +26,25 @@ const App = () => {
 
   // Définir les meta tags par défaut pour le site entier
   useEffect(() => {
-    updateMetaTags({
-      title: "GOMA WEBRADIO",
-      description: "La voix de Goma - Actualités, Podcasts et Émissions en direct",
-      image: "/GOWERA__3_-removebg-preview.png",
-      type: "website",
-      url: window.location.origin
-    });
+    // Titre de la page
+    document.title = "GOMA WEBRADIO";
+    
+    // Méta description standard
+    updateMetaTag('description', "La voix de Goma - Actualités, Podcasts et Émissions en direct");
+    
+    // Open Graph tags
+    updateMetaTag('og:title', "GOMA WEBRADIO");
+    updateMetaTag('og:description', "La voix de Goma - Actualités, Podcasts et Émissions en direct");
+    updateMetaTag('og:image', `${window.location.origin}/GOWERA__3_-removebg-preview.png`);
+    updateMetaTag('og:url', window.location.href);
+    updateMetaTag('og:type', 'website');
+    updateMetaTag('og:site_name', 'GOMA WEBRADIO');
+    
+    // Twitter Card tags
+    updateMetaTag('twitter:card', 'summary_large_image');
+    updateMetaTag('twitter:title', "GOMA WEBRADIO");
+    updateMetaTag('twitter:description', "La voix de Goma - Actualités, Podcasts et Émissions en direct");
+    updateMetaTag('twitter:image', `${window.location.origin}/GOWERA__3_-removebg-preview.png`);
   }, []);
 
   return (
@@ -129,5 +140,26 @@ const App = () => {
     </QueryClientProvider>
   );
 };
+
+// Helper function pour mettre à jour les balises meta
+function updateMetaTag(name: string, content: string) {
+  // Vérifier s'il s'agit d'une propriété Open Graph ou d'un nom standard
+  const isProperty = name.startsWith('og:') || name.startsWith('twitter:');
+  const selector = isProperty ? `meta[property="${name}"]` : `meta[name="${name}"]`;
+  const attribute = isProperty ? 'property' : 'name';
+  
+  // Chercher la balise existante
+  let tag = document.querySelector(selector) as HTMLMetaElement;
+  
+  // Créer la balise si elle n'existe pas
+  if (!tag) {
+    tag = document.createElement('meta');
+    tag.setAttribute(attribute, name);
+    document.head.appendChild(tag);
+  }
+  
+  // Mettre à jour le contenu
+  tag.setAttribute('content', content);
+}
 
 export default App;

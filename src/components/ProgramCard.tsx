@@ -1,4 +1,6 @@
 
+import React from 'react';
+
 interface ProgramCardProps {
   title: string;
   description: string;
@@ -11,6 +13,19 @@ const ProgramCard = ({ title, description, image, time }: ProgramCardProps) => {
     console.log("Program image failed to load:", image);
     // Set fallback image
     (e.target as HTMLImageElement).src = "/placeholder.svg";
+  };
+
+  // S'assurer que l'URL de l'image est absolue pour le partage
+  const getAbsoluteImageUrl = (url: string): string => {
+    if (!url) return `${window.location.origin}/placeholder.svg`;
+    
+    // Si l'URL est déjà absolue, la retourner
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    
+    // Sinon, ajouter l'origine
+    return `${window.location.origin}${url.startsWith('/') ? '' : '/'}${url}`;
   };
 
   return (

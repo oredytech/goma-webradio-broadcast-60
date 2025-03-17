@@ -1,4 +1,5 @@
 
+import { useEffect } from 'react';
 import RadioPlayer from "@/components/RadioPlayer";
 import Header from "@/components/Header";
 import PodcastSection from "@/components/PodcastSection";
@@ -8,7 +9,6 @@ import Footer from "@/components/Footer";
 import ArticlesSlider from "@/components/ArticlesSlider";
 import ExtraArticles from "@/components/ExtraArticles";
 import { Play, Pause } from "lucide-react";
-import { usePageSEO } from "@/hooks/useSEO";
 
 interface IndexProps {
   isPlaying: boolean;
@@ -19,11 +19,27 @@ interface IndexProps {
 
 const Index = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: IndexProps) => {
   // Set up SEO for the homepage
-  usePageSEO(
-    "GOMA WEBRADIO",
-    "La voix de Goma - Actualités, Podcasts et Émissions en direct. Fasi ya Ndule na ma infos za palet",
-    "/GOWERA__3_-removebg-preview.png"
-  );
+  useEffect(() => {
+    // Titre de la page
+    document.title = "GOMA WEBRADIO";
+    
+    // Mise à jour des méta-tags pour SEO et Open Graph
+    // Balises standards
+    updateMetaTag('description', "La voix de Goma - Actualités, Podcasts et Émissions en direct. Fasi ya Ndule na ma infos za palet");
+    
+    // Balises Open Graph
+    updateMetaTag('og:title', "GOMA WEBRADIO");
+    updateMetaTag('og:description', "La voix de Goma - Actualités, Podcasts et Émissions en direct. Fasi ya Ndule na ma infos za palet");
+    updateMetaTag('og:image', `${window.location.origin}/GOWERA__3_-removebg-preview.png`);
+    updateMetaTag('og:url', window.location.href);
+    updateMetaTag('og:type', 'website');
+    
+    // Balises Twitter Card
+    updateMetaTag('twitter:card', 'summary_large_image');
+    updateMetaTag('twitter:title', "GOMA WEBRADIO");
+    updateMetaTag('twitter:description', "La voix de Goma - Actualités, Podcasts et Émissions en direct. Fasi ya Ndule na ma infos za palet");
+    updateMetaTag('twitter:image', `${window.location.origin}/GOWERA__3_-removebg-preview.png`);
+  }, []);
   
   const toggleRadioPlay = () => {
     if (currentAudio) {
@@ -105,5 +121,26 @@ const Index = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Index
     </div>
   );
 };
+
+// Helper function to mettre à jour les balises meta
+function updateMetaTag(name: string, content: string) {
+  // Vérifier s'il s'agit d'une propriété Open Graph ou d'un nom standard
+  const isProperty = name.startsWith('og:') || name.startsWith('twitter:');
+  const selector = isProperty ? `meta[property="${name}"]` : `meta[name="${name}"]`;
+  const attribute = isProperty ? 'property' : 'name';
+  
+  // Chercher la balise existante
+  let tag = document.querySelector(selector) as HTMLMetaElement;
+  
+  // Créer la balise si elle n'existe pas
+  if (!tag) {
+    tag = document.createElement('meta');
+    tag.setAttribute(attribute, name);
+    document.head.appendChild(tag);
+  }
+  
+  // Mettre à jour le contenu
+  tag.setAttribute('content', content);
+}
 
 export default Index;
