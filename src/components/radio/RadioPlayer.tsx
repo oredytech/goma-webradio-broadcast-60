@@ -55,7 +55,7 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }:
   const liveTitle = useLiveStreamTitle(currentAudio);
 
   const handleTogglePlay = () => {
-    // Assurez-vous que togglePlay met à jour l'état global
+    // Make sure togglePlay updates the global state
     togglePlay();
   };
 
@@ -83,6 +83,7 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }:
                 currentAudio={currentAudio}
                 setCurrentAudio={setCurrentAudio}
                 setIsPlaying={setIsPlaying}
+                isPlaying={isPlaying}
               />
             )}
             

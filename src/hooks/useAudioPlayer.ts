@@ -54,6 +54,8 @@ export const useAudioPlayer = ({
           window.clearTimeout(loadingTimeoutRef.current);
           loadingTimeoutRef.current = null;
         }
+        // Update global state if provided
+        setIsPlaying?.(false);
       } else {
         audioRef.current.play().then(() => {
           setIsLoading(false);
@@ -61,6 +63,8 @@ export const useAudioPlayer = ({
             window.clearTimeout(loadingTimeoutRef.current);
             loadingTimeoutRef.current = null;
           }
+          // Update global state if provided
+          setIsPlaying?.(true);
         }).catch(error => {
           console.error('Error playing audio:', error);
           setIsLoading(false);
@@ -70,7 +74,6 @@ export const useAudioPlayer = ({
           }
         });
       }
-      setIsPlaying?.(!isPlaying);
     }
   };
 
@@ -101,6 +104,13 @@ export const useAudioPlayer = ({
       audio.addEventListener('playing', () => {
         setIsLoading(false);
         setupMediaSession(setIsPlaying);
+        // Ensure global state is updated
+        setIsPlaying?.(true);
+      });
+
+      audio.addEventListener('pause', () => {
+        // Ensure global state is updated
+        setIsPlaying?.(false);
       });
 
       audio.addEventListener('waiting', () => {
@@ -114,6 +124,8 @@ export const useAudioPlayer = ({
       audio.addEventListener('error', () => {
         setIsLoading(false);
         console.error('Audio playback error');
+        // On error, ensure isPlaying is false
+        setIsPlaying?.(false);
       });
 
       audio.volume = volume / 100;

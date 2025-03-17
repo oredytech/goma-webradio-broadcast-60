@@ -25,7 +25,7 @@ const PodcastActions = ({
   const [loadingAudio, setLoadingAudio] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Mettre à jour la valeur affichée en fonction de l'état global
+  // Check if this specific episode is currently playing
   const isThisEpisodePlaying = currentAudio === episode.enclosure.url && isPlaying;
 
   useEffect(() => {
@@ -37,15 +37,14 @@ const PodcastActions = ({
 
   const handlePlay = () => {
     if (currentAudio === episode.enclosure.url) {
-      // Toggle play/pause without resetting audio - let RadioPlayer handle this
+      // Just toggle play/pause state without changing source
       setIsPlaying(!isPlaying);
-      return;
+    } else {
+      // Load and play new audio source
+      setLoadingAudio(true);
+      setCurrentAudio(episode.enclosure.url);
+      setIsPlaying(true);
     }
-    
-    // New audio source
-    setLoadingAudio(true);
-    setCurrentAudio(episode.enclosure.url);
-    setIsPlaying(true);
   };
 
   const handleShare = () => {
