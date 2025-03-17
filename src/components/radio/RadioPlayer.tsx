@@ -4,14 +4,13 @@ import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import ProgressBar from './ProgressBar';
 import PlayPauseButton from './PlayPauseButton';
 import VolumeControl from './VolumeControl';
-import { useState } from 'react';
 import NavigationControls from './NavigationControls';
 import TrackInfo from './TrackInfo';
 import useLiveStreamTitle from '@/hooks/useLiveStreamTitle';
 
 interface RadioPlayerProps {
   isPlaying: boolean;
-  setIsPlaying?: (isPlaying: boolean) => void;
+  setIsPlaying: (isPlaying: boolean) => void;
   currentAudio: string | null;
   setCurrentAudio: (audio: string | null) => void;
 }
@@ -55,6 +54,11 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }:
 
   const liveTitle = useLiveStreamTitle(currentAudio);
 
+  const handleTogglePlay = () => {
+    // Assurez-vous que togglePlay met à jour l'état global
+    togglePlay();
+  };
+
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-secondary/95 backdrop-blur-sm border-t border-primary/20 h-[80px] p-2 z-50">
       <div className="max-w-7xl mx-auto h-full">
@@ -86,7 +90,7 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }:
               <PlayPauseButton 
                 isPlaying={isPlaying} 
                 isLoading={isLoading} 
-                togglePlay={togglePlay} 
+                togglePlay={handleTogglePlay} 
               />
             )}
             

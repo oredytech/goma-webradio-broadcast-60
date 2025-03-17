@@ -25,6 +25,9 @@ const PodcastActions = ({
   const [loadingAudio, setLoadingAudio] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Mettre à jour la valeur affichée en fonction de l'état global
+  const isThisEpisodePlaying = currentAudio === episode.enclosure.url && isPlaying;
+
   useEffect(() => {
     // Reset loading state when audio source changes or play state changes
     if (currentAudio === episode.enclosure.url) {
@@ -80,7 +83,7 @@ const PodcastActions = ({
           size="lg"
           disabled={loadingAudio && currentAudio === episode.enclosure.url}
         >
-          {currentAudio === episode.enclosure.url && isPlaying ? (
+          {isThisEpisodePlaying ? (
             <>
               <Pause className="w-5 h-5 mr-2" />
               Pause

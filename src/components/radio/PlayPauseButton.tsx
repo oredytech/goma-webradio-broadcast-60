@@ -22,13 +22,14 @@ const PlayPauseButton = ({ isPlaying, isLoading, togglePlay }: PlayPauseButtonPr
         onClick={togglePlay}
         variant="ghost"
         size="icon"
-        className="hover:bg-primary/20 relative z-10"
+        className="hover:bg-primary/20 relative z-10 active:scale-95 transition-transform"
         disabled={isLoading}
+        aria-label={isPlaying ? "Pause" : "Play"}
       >
         {isPlaying ? (
           <Pause className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
         ) : (
-          <Play className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+          <Play className="h-5 w-5 sm:h-6 sm:w-6 text-white ml-0.5" />
         )}
       </Button>
     </div>
