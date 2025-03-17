@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,7 +16,7 @@ import PodcastPlayer from "./pages/PodcastPlayer";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
-import RadioPlayer from "./components/RadioPlayer";
+import RadioPlayer from "./components/radio/RadioPlayer";
 import { usePageSEO } from "./hooks/useSEO";
 
 const queryClient = new QueryClient();
