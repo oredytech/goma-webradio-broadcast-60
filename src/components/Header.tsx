@@ -2,7 +2,7 @@
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { Mail } from "lucide-react";
+import { Mail, Radio } from "lucide-react";
 import Logo from "./header/Logo";
 import MobileMenuButton from "./header/MobileMenuButton";
 import NavigationLink from "./header/NavigationLink";
@@ -32,6 +32,15 @@ const Header = () => {
               <NavigationMenuItem>
                 <NavigationLink to="/actualites">
                   Actualités
+                </NavigationLink>
+              </NavigationMenuItem>
+              
+              <NavigationMenuItem>
+                <NavigationLink to="/podcasts">
+                  <span className="flex items-center">
+                    <Radio className="mr-2 h-4 w-4" />
+                    Podcasts
+                  </span>
                 </NavigationLink>
               </NavigationMenuItem>
 
@@ -102,6 +111,14 @@ const Header = () => {
                   <NavigationMenuItem className="w-full text-center">
                     <NavigationLink to="/actualites">
                       Actualités
+                    </NavigationLink>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem className="w-full text-center">
+                    <NavigationLink to="/podcasts">
+                      <span className="flex items-center justify-center">
+                        <Radio className="mr-2 h-4 w-4" />
+                        Podcasts
+                      </span>
                     </NavigationLink>
                   </NavigationMenuItem>
                   <NavigationMenuItem className="w-full text-center">
