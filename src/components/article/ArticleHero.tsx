@@ -10,7 +10,11 @@ const ArticleHero = ({ title, featuredImageUrl }: ArticleHeroProps) => {
       <div className="relative h-[40vh] md:h-[50vh] lg:h-[60vh]">
         <div 
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${featuredImageUrl})` }}
+          style={{ 
+            backgroundImage: `url(${featuredImageUrl || '/placeholder.svg'})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center' 
+          }}
         />
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative container mx-auto px-4 h-full flex items-center justify-center">

@@ -1,4 +1,3 @@
-
 /**
  * Service pour gérer les balises meta et Open Graph
  */
@@ -45,9 +44,7 @@ export const updateMetaTags = (metadata: MetaData): void => {
   
   // S'assurer que les balises Open Graph pour l'image sont toujours présentes
   // S'assurer que l'URL de l'image est absolue
-  const imageUrl = forcedMetadata.image.startsWith('http') 
-    ? forcedMetadata.image 
-    : `${window.location.origin}${forcedMetadata.image.startsWith('/') ? '' : '/'}${forcedMetadata.image}`;
+  const imageUrl = getAbsoluteUrl(forcedMetadata.image);
   
   updateOrCreateMetaTag('og:image', imageUrl);
   updateOrCreateMetaTag('og:image:secure_url', imageUrl.replace('http:', 'https:'));
@@ -112,17 +109,33 @@ export const ensureMetaTags = (): void => {
   }
 };
 
+/**
+ * Helper function to convert any URL to absolute URL
+ */
+export const getAbsoluteUrl = (url: string): string => {
+  if (!url) return '';
+  
+  // If the URL is already absolute, return it
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  
+  // Otherwise, prepend the origin
+  const origin = window.location.origin;
+  return `${origin}${url.startsWith('/') ? '' : '/'}${url}`;
+};
+
 // Exposer les fonctions globalement pour l'accès depuis le HTML
 if (typeof window !== 'undefined') {
-  window.metaService = { 
+  (window as any).metaService = { 
     updateMetaTags, 
     resetMetaTags,
     ensureMetaTags
   };
   
   // Indiquer que le service est chargé
-  if (window.initMetaTags) {
-    window.initMetaTags();
+  if ((window as any).initMetaTags) {
+    (window as any).initMetaTags();
   } else {
     // S'assurer que les meta tags sont présents même si initMetaTags n'est pas défini
     ensureMetaTags();

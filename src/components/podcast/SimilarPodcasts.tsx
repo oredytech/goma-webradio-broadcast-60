@@ -77,6 +77,12 @@ const SimilarPodcasts = ({
     }
   };
 
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    console.log("Podcast thumbnail failed to load");
+    // Set fallback image
+    (e.target as HTMLImageElement).src = "/placeholder.svg";
+  };
+
   if (latestEpisodes.length === 0) {
     return null;
   }
@@ -111,6 +117,8 @@ const SimilarPodcasts = ({
                           src={episode.itunes?.image || '/placeholder.svg'} 
                           alt={episode.title} 
                           className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                          onError={handleImageError}
+                          loading="lazy"
                         />
                       </div>
                       <CardHeader className="p-4">

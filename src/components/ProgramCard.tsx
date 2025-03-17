@@ -1,3 +1,4 @@
+
 interface ProgramCardProps {
   title: string;
   description: string;
@@ -6,6 +7,12 @@ interface ProgramCardProps {
 }
 
 const ProgramCard = ({ title, description, image, time }: ProgramCardProps) => {
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    console.log("Program image failed to load:", image);
+    // Set fallback image
+    (e.target as HTMLImageElement).src = "/placeholder.svg";
+  };
+
   return (
     <div className="group relative overflow-hidden rounded-lg bg-secondary/50 hover:bg-secondary/70 transition-all duration-300">
       <div className="aspect-video overflow-hidden">
@@ -13,6 +20,8 @@ const ProgramCard = ({ title, description, image, time }: ProgramCardProps) => {
           src={image}
           alt={title}
           className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+          onError={handleImageError}
+          loading="lazy"
         />
       </div>
       <div className="p-6">

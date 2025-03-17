@@ -1,6 +1,6 @@
 
 import { useEffect } from 'react';
-import { updateMetaTags, MetaData } from '@/utils/metaService';
+import { updateMetaTags, MetaData, getAbsoluteUrl } from '@/utils/metaService';
 
 /**
  * Hook for managing SEO and social sharing meta tags
@@ -8,8 +8,14 @@ import { updateMetaTags, MetaData } from '@/utils/metaService';
  */
 export function useSEO(metadata: MetaData) {
   useEffect(() => {
+    // Ensure image has absolute URL
+    const updatedMetadata = {
+      ...metadata,
+      image: metadata.image ? getAbsoluteUrl(metadata.image) : undefined
+    };
+    
     // Update meta tags when the component mounts or metadata changes
-    updateMetaTags(metadata);
+    updateMetaTags(updatedMetadata);
     
     // Reset meta tags when the component unmounts
     return () => {

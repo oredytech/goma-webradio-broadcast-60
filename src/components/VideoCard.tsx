@@ -8,6 +8,13 @@ interface VideoCardProps {
 }
 
 const VideoCard = ({ video, onClick }: VideoCardProps) => {
+  // Handle image loading errors
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    console.log("Image failed to load:", video.snippet.thumbnails.high.url);
+    // Set fallback image
+    (e.target as HTMLImageElement).src = "/placeholder.svg";
+  };
+
   return (
     <div
       className="group relative overflow-hidden rounded-lg bg-secondary/50 transition-transform hover:scale-105"
@@ -17,10 +24,8 @@ const VideoCard = ({ video, onClick }: VideoCardProps) => {
           src={video.snippet.thumbnails.high.url}
           alt={cleanTitle(video.snippet.title)}
           className="w-full h-full object-cover"
-          onError={(e) => {
-            // Fallback image if thumbnail fails to load
-            (e.target as HTMLImageElement).src = "/placeholder.svg";
-          }}
+          onError={handleImageError}
+          loading="lazy"
         />
         <button
           onClick={() => onClick(video.id.videoId)}
