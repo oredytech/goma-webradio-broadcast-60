@@ -33,7 +33,14 @@ const PodcastPlayer = ({
   const navigate = useNavigate();
   const { podcastData, isLoading, foundEpisode, foundIndex } = useEpisodeFinder();
   
-  const { hasPrevious, hasNext, navigateToPreviousEpisode, navigateToNextEpisode } = useEpisodeNavigation({
+  const { 
+    hasPrevious, 
+    hasNext, 
+    previousTitle, 
+    nextTitle, 
+    navigateToPreviousEpisode, 
+    navigateToNextEpisode 
+  } = useEpisodeNavigation({
     foundIndex,
     podcastData,
     setCurrentAudio,
@@ -86,6 +93,8 @@ const PodcastPlayer = ({
             hasNext={hasNext}
             navigateToPreviousEpisode={navigateToPreviousEpisode}
             navigateToNextEpisode={navigateToNextEpisode}
+            previousTitle={previousTitle}
+            nextTitle={nextTitle}
           />
         </div>
         

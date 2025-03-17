@@ -21,10 +21,16 @@ export const useEpisodeNavigation = ({
   const hasPrevious = podcastData && foundIndex > 0;
   const hasNext = podcastData && foundIndex !== -1 && foundIndex < podcastData.allEpisodes.length - 1;
 
+  // Get the previous and next episode titles if they exist
+  const previousEpisode = hasPrevious ? podcastData.allEpisodes[foundIndex - 1] : null;
+  const nextEpisode = hasNext ? podcastData.allEpisodes[foundIndex + 1] : null;
+  
+  const previousTitle = previousEpisode?.title || '';
+  const nextTitle = nextEpisode?.title || '';
+
   const navigateToPreviousEpisode = () => {
     if (!podcastData || foundIndex <= 0) return;
     
-    const previousEpisode = podcastData.allEpisodes[foundIndex - 1];
     if (previousEpisode) {
       const slug = getPodcastSlug(previousEpisode.title);
       navigate(`/podcast/${slug}`);
@@ -38,7 +44,6 @@ export const useEpisodeNavigation = ({
   const navigateToNextEpisode = () => {
     if (!podcastData || foundIndex === -1 || foundIndex >= podcastData.allEpisodes.length - 1) return;
     
-    const nextEpisode = podcastData.allEpisodes[foundIndex + 1];
     if (nextEpisode) {
       const slug = getPodcastSlug(nextEpisode.title);
       navigate(`/podcast/${slug}`);
@@ -52,6 +57,8 @@ export const useEpisodeNavigation = ({
   return {
     hasPrevious,
     hasNext,
+    previousTitle,
+    nextTitle,
     navigateToPreviousEpisode,
     navigateToNextEpisode
   };
