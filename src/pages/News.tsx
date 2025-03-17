@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { useMultiSourceArticles, sources, WordPressArticle } from "@/hooks/useMultiSourceArticles";
 import { Loader2 } from "lucide-react";
@@ -7,6 +6,7 @@ import Footer from "@/components/Footer";
 import ArticlesSlider from "@/components/ArticlesSlider";
 import { Link } from "react-router-dom";
 import { getArticleSlug } from "@/utils/articleUtils";
+import { usePageSEO } from "@/hooks/useSEO";
 
 interface NewsProps {
   filter?: string;
@@ -16,29 +16,12 @@ const News = ({ filter }: NewsProps) => {
   const results = useMultiSourceArticles();
   
   // Setup SEO for the news page
-  useEffect(() => {
-    const pageTitle = filter ? `Actualités - ${filter}` : "Toutes les actualités";
-    
-    // Titre de la page
-    document.title = `${pageTitle} | GOMA WEBRADIO`;
-    
-    // Mise à jour des méta-tags pour SEO et Open Graph
-    // Balises standards
-    updateMetaTag('description', "Retrouvez toutes les dernières actualités et informations sur GOMA WEBRADIO");
-    
-    // Balises Open Graph
-    updateMetaTag('og:title', `${pageTitle} | GOMA WEBRADIO`);
-    updateMetaTag('og:description', "Retrouvez toutes les dernières actualités et informations sur GOMA WEBRADIO");
-    updateMetaTag('og:image', `${window.location.origin}/GOWERA__3_-removebg-preview.png`);
-    updateMetaTag('og:url', window.location.href);
-    updateMetaTag('og:type', 'website');
-    
-    // Balises Twitter Card
-    updateMetaTag('twitter:card', 'summary_large_image');
-    updateMetaTag('twitter:title', `${pageTitle} | GOMA WEBRADIO`);
-    updateMetaTag('twitter:description', "Retrouvez toutes les dernières actualités et informations sur GOMA WEBRADIO");
-    updateMetaTag('twitter:image', `${window.location.origin}/GOWERA__3_-removebg-preview.png`);
-  }, [filter]);
+  const pageTitle = filter ? `Actualités - ${filter}` : "Toutes les actualités";
+  usePageSEO(
+    pageTitle,
+    "Retrouvez toutes les dernières actualités et informations sur GOMA WEBRADIO",
+    "/GOWERA__3_-removebg-preview.png"
+  );
 
   const isLoading = results.some((result) => result.isLoading);
   const isError = results.some((result) => result.isError);
@@ -119,26 +102,5 @@ const News = ({ filter }: NewsProps) => {
     </div>
   );
 };
-
-// Helper function to mettre à jour les balises meta
-function updateMetaTag(name: string, content: string) {
-  // Vérifier s'il s'agit d'une propriété Open Graph ou d'un nom standard
-  const isProperty = name.startsWith('og:') || name.startsWith('twitter:');
-  const selector = isProperty ? `meta[property="${name}"]` : `meta[name="${name}"]`;
-  const attribute = isProperty ? 'property' : 'name';
-  
-  // Chercher la balise existante
-  let tag = document.querySelector(selector) as HTMLMetaElement;
-  
-  // Créer la balise si elle n'existe pas
-  if (!tag) {
-    tag = document.createElement('meta');
-    tag.setAttribute(attribute, name);
-    document.head.appendChild(tag);
-  }
-  
-  // Mettre à jour le contenu
-  tag.setAttribute('content', content);
-}
 
 export default News;

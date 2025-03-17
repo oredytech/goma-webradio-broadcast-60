@@ -92,12 +92,15 @@ const PodcastPlayer = ({
   }
 
   // Setup SEO for the podcast
-  const seoTitle = foundEpisode ? foundEpisode.title : "Chargement du podcast...";
-  const seoDescription = foundEpisode ? (foundEpisode.description || "").substring(0, 160) : "";
-  const seoImage = foundEpisode ? (foundEpisode.itunes?.image || "/GOWERA__3_-removebg-preview.png") : "/GOWERA__3_-removebg-preview.png";
-  
-  // Use our SEO hook
-  usePodcastSEO(seoTitle, seoDescription, seoImage);
+  useEffect(() => {
+    if (foundEpisode) {
+      usePodcastSEO(
+        foundEpisode.title, 
+        foundEpisode.description || "Écoutez ce podcast sur GOMA WEBRADIO",
+        foundEpisode.itunes?.image || "/GOWERA__3_-removebg-preview.png"
+      );
+    }
+  }, [foundEpisode]);
 
   if (isLoading) {
     return <PodcastLoading />;

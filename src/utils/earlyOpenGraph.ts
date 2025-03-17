@@ -1,6 +1,7 @@
 /**
  * Utility to ensure Open Graph tags are loaded as early as possible
  * This helps ensure social media platforms can properly crawl the page
+ * @deprecated Utilisez le hook useSEO à la place
  */
 
 // Default values for important Open Graph tags
@@ -16,8 +17,11 @@ const DEFAULT_OG_DATA = {
 
 /**
  * Initialize Open Graph tags as early as possible in the page lifecycle
+ * @deprecated Utilisez le hook useSEO à la place
  */
 export function initEarlyOpenGraph() {
+  console.warn("initEarlyOpenGraph est déprécié, utilisez le hook useSEO à la place");
+  
   if (typeof document === 'undefined') return;
   
   // Set default Open Graph tags
@@ -34,8 +38,6 @@ export function initEarlyOpenGraph() {
   setTwitterTag('twitter:title', DEFAULT_OG_DATA.title);
   setTwitterTag('twitter:description', DEFAULT_OG_DATA.description);
   setTwitterTag('twitter:image', getAbsoluteUrl(DEFAULT_OG_DATA.image));
-  
-  console.log('Early Open Graph tags initialized');
 }
 
 // Helper function to set Open Graph tags

@@ -12,6 +12,7 @@ import ArticleSidebar from "@/components/article/ArticleSidebar";
 import ArticleLoading from "@/components/article/ArticleLoading";
 import ArticleNotFound from "@/components/article/ArticleNotFound";
 import { decodeHtmlTitle, getArticleSlug, getFeaturedImageUrl } from "@/utils/articleUtils";
+import { useArticleSEO } from "@/hooks/useSEO";
 
 interface ArticleProps {
   isPlaying: boolean;
@@ -82,6 +83,18 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
       }
     }
   }, [article, id, slug, location.pathname, navigate]);
+
+  // Configurer le SEO pour l'article quand il est chargé
+  useEffect(() => {
+    if (article) {
+      const featuredImageUrl = getFeaturedImageUrl(article);
+      const decodedTitle = decodeHtmlTitle(article.title.rendered);
+      const description = decodeHtmlTitle(article.excerpt.rendered);
+      const publishedDate = article.date;
+      
+      useArticleSEO(decodedTitle, description, featuredImageUrl, publishedDate);
+    }
+  }, [article]);
 
   if (isLoading || (!article && articleId)) {
     return <ArticleLoading />;

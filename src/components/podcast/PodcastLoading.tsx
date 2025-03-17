@@ -1,31 +1,17 @@
 
-import { useEffect } from "react";
+import React from "react";
 import { Loader2 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { usePageSEO } from "@/hooks/useSEO";
 
 const PodcastLoading = () => {
-  useEffect(() => {
-    // Titre de la page
-    document.title = `Chargement du podcast | GOMA WEBRADIO`;
-    
-    // Mettre à jour les meta tags pour la page de chargement
-    // Balises standards
-    updateMetaTag('description', "Veuillez patienter pendant le chargement du podcast...");
-    
-    // Balises Open Graph
-    updateMetaTag('og:title', "Chargement du podcast | GOMA WEBRADIO");
-    updateMetaTag('og:description', "Veuillez patienter pendant le chargement du podcast...");
-    updateMetaTag('og:image', `${window.location.origin}/GOWERA__3_-removebg-preview.png`);
-    updateMetaTag('og:url', window.location.href);
-    updateMetaTag('og:type', 'website');
-    
-    // Balises Twitter Card
-    updateMetaTag('twitter:card', 'summary');
-    updateMetaTag('twitter:title', "Chargement du podcast | GOMA WEBRADIO");
-    updateMetaTag('twitter:description', "Veuillez patienter pendant le chargement du podcast...");
-    updateMetaTag('twitter:image', `${window.location.origin}/GOWERA__3_-removebg-preview.png`);
-  }, []);
+  // Configurer le SEO pour la page de chargement
+  usePageSEO(
+    "Chargement du podcast",
+    "Veuillez patienter pendant le chargement du podcast...",
+    "/GOWERA__3_-removebg-preview.png"
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
@@ -38,26 +24,5 @@ const PodcastLoading = () => {
     </div>
   );
 };
-
-// Helper function to mettre à jour les balises meta
-function updateMetaTag(name: string, content: string) {
-  // Vérifier s'il s'agit d'une propriété Open Graph ou d'un nom standard
-  const isProperty = name.startsWith('og:') || name.startsWith('twitter:');
-  const selector = isProperty ? `meta[property="${name}"]` : `meta[name="${name}"]`;
-  const attribute = isProperty ? 'property' : 'name';
-  
-  // Chercher la balise existante
-  let tag = document.querySelector(selector) as HTMLMetaElement;
-  
-  // Créer la balise si elle n'existe pas
-  if (!tag) {
-    tag = document.createElement('meta');
-    tag.setAttribute(attribute, name);
-    document.head.appendChild(tag);
-  }
-  
-  // Mettre à jour le contenu
-  tag.setAttribute('content', content);
-}
 
 export default PodcastLoading;

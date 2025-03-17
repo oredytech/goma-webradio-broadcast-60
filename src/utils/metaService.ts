@@ -1,5 +1,6 @@
 /**
  * Service pour gérer les balises meta et Open Graph
+ * @deprecated Utilisez le hook useSEO à la place
  */
 
 export interface MetaData {
@@ -13,6 +14,8 @@ export interface MetaData {
 }
 
 export const updateMetaTags = (metadata: MetaData): void => {
+  console.warn("updateMetaTags est déprécié, utilisez le hook useSEO à la place");
+  
   // Forcer l'utilisation des meta tags spécifiés
   const forcedMetadata = {
     ...metadata,
@@ -84,8 +87,11 @@ const updateOrCreateMetaTag = (name: string, content: string): void => {
 
 /**
  * Réinitialise les métadonnées aux valeurs par défaut du site
+ * @deprecated Utilisez le hook useSEO à la place
  */
 export const resetMetaTags = (): void => {
+  console.warn("resetMetaTags est déprécié, utilisez le hook useSEO à la place");
+  
   // Force les métadonnées par défaut
   updateMetaTags({
     title: "GOMA WEBRADIO",
@@ -98,8 +104,11 @@ export const resetMetaTags = (): void => {
 
 /**
  * Assurez-vous que les meta tags sont toujours présents
+ * @deprecated Utilisez le hook useSEO à la place
  */
 export const ensureMetaTags = (): void => {
+  console.warn("ensureMetaTags est déprécié, utilisez le hook useSEO à la place");
+  
   // Vérifier si les balises OG de base sont présentes
   const ogTitleTag = document.querySelector('meta[property="og:title"]');
   
