@@ -1,7 +1,7 @@
-
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useWordpressArticles, WordPressArticle } from "@/hooks/useWordpressArticles";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -12,7 +12,6 @@ import ArticleSidebar from "@/components/article/ArticleSidebar";
 import ArticleLoading from "@/components/article/ArticleLoading";
 import ArticleNotFound from "@/components/article/ArticleNotFound";
 import { decodeHtmlTitle, getArticleSlug, getFeaturedImageUrl } from "@/utils/articleUtils";
-import { useArticleSEO } from "@/hooks/useSEO";
 
 interface ArticleProps {
   isPlaying: boolean;
@@ -28,7 +27,6 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
   const { data: allArticles } = useWordpressArticles();
   const [articleId, setArticleId] = useState<number | null>(null);
 
-  // Find article ID if we only have slug
   useEffect(() => {
     if (!id && slug && allArticles) {
       const foundArticle = allArticles.find(article => {
@@ -44,7 +42,6 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
         setArticleId(foundArticle.id);
       }
     } else if (id) {
-      // If we have an ID, use it directly
       setArticleId(parseInt(id));
     }
   }, [id, slug, allArticles]);
@@ -70,66 +67,17 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
       const decodedTitle = decodeHtmlTitle(article.title.rendered);
       const articleSlug = getArticleSlug(article);
       
-      // Si l'URL contient un ID mais pas le slug moderne, rediriger
       if (id && !location.pathname.includes(articleSlug)) {
         navigate(`/article/${articleSlug}`, { replace: true });
         return;
       }
       
-      // Si l'URL utilise le vieux format avec ID/slug, rediriger vers le nouveau format
       if (id && slug) {
         navigate(`/article/${articleSlug}`, { replace: true });
         return;
       }
     }
   }, [article, id, slug, location.pathname, navigate]);
-
-  // Configurer le SEO pour l'article quand il est chargé
-  useEffect(() => {
-    if (article) {
-      const featuredImageUrl = getFeaturedImageUrl(article);
-      const decodedTitle = decodeHtmlTitle(article.title.rendered);
-      const description = decodeHtmlTitle(article.excerpt.rendered);
-      const publishedDate = article.date;
-      
-      // Use a regular function call instead of hook for SEO
-      document.title = decodedTitle;
-      // Set meta tags directly since this was causing errors
-      const metaTags = [
-        { property: "og:title", content: decodedTitle },
-        { property: "og:description", content: description },
-        { property: "og:image", content: featuredImageUrl }, // Using the article's featuredImageUrl here
-        { property: "og:url", content: window.location.href },
-        { property: "og:type", content: "article" },
-        { name: "twitter:title", content: decodedTitle },
-        { name: "twitter:description", content: description },
-        { name: "twitter:image", content: featuredImageUrl }, // Also for Twitter cards
-        { name: "description", content: description }
-      ];
-      
-      // Update meta tags
-      metaTags.forEach(({ property, name, content }) => {
-        if (property) {
-          let meta = document.querySelector(`meta[property="${property}"]`);
-          if (!meta) {
-            meta = document.createElement('meta');
-            meta.setAttribute('property', property);
-            document.head.appendChild(meta);
-          }
-          meta.setAttribute('content', content);
-        }
-        if (name) {
-          let meta = document.querySelector(`meta[name="${name}"]`);
-          if (!meta) {
-            meta = document.createElement('meta');
-            meta.setAttribute('name', name);
-            document.head.appendChild(meta);
-          }
-          meta.setAttribute('content', content);
-        }
-      });
-    }
-  }, [article]);
 
   if (isLoading || (!article && articleId)) {
     return <ArticleLoading />;
@@ -139,15 +87,36 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
     return <ArticleNotFound />;
   }
 
-  // For TS safety, early return if article is undefined
   if (!article) return null;
 
   const featuredImageUrl = getFeaturedImageUrl(article);
   const decodedTitle = decodeHtmlTitle(article.title.rendered);
   const description = decodeHtmlTitle(article.excerpt.rendered);
+  const publishedDate = article.date;
+  const currentUrl = window.location.href;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
+      <Helmet>
+        <title>{decodedTitle}</title>
+        <meta name="description" content={description} />
+        
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={currentUrl} />
+        <meta property="og:title" content={decodedTitle} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={featuredImageUrl} />
+        <meta property="og:site_name" content="GOMA WEBRADIO" />
+        <meta property="og:locale" content="fr_FR" />
+        {publishedDate && <meta property="article:published_time" content={publishedDate} />}
+        
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={currentUrl} />
+        <meta name="twitter:title" content={decodedTitle} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={featuredImageUrl} />
+      </Helmet>
+      
       <Header />
       
       <ArticleHero 
@@ -156,7 +125,6 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
         description={description}
       />
 
-      {/* Content Section with Right Sidebar */}
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <ArticleContent article={article} />
