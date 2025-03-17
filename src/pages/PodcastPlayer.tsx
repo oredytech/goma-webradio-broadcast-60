@@ -1,8 +1,9 @@
+
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { usePodcastFeed } from '@/hooks/usePodcastFeed';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -101,6 +102,30 @@ const PodcastPlayer = ({
     return tmp.textContent || tmp.innerText || '';
   };
 
+  // Navigation to previous and next episodes
+  const navigateToPreviousEpisode = () => {
+    if (!podcastData || foundIndex <= 0) return;
+    
+    const previousEpisode = podcastData.allEpisodes[foundIndex - 1];
+    if (previousEpisode) {
+      const slug = getPodcastSlug(previousEpisode.title);
+      navigate(`/podcast/${slug}`);
+    }
+  };
+
+  const navigateToNextEpisode = () => {
+    if (!podcastData || foundIndex === -1 || foundIndex >= podcastData.allEpisodes.length - 1) return;
+    
+    const nextEpisode = podcastData.allEpisodes[foundIndex + 1];
+    if (nextEpisode) {
+      const slug = getPodcastSlug(nextEpisode.title);
+      navigate(`/podcast/${slug}`);
+    }
+  };
+
+  const hasPrevious = podcastData && foundIndex > 0;
+  const hasNext = podcastData && foundIndex !== -1 && foundIndex < podcastData.allEpisodes.length - 1;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
       <Helmet>
@@ -138,14 +163,40 @@ const PodcastPlayer = ({
       </div>
       
       <main className="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8 -mt-16 relative z-10">
-        <Button 
-          variant="ghost" 
-          className="text-gray-300 hover:text-white mb-6"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          Retour
-        </Button>
+        <div className="flex items-center justify-between mb-6">
+          <Button 
+            variant="ghost" 
+            className="text-gray-300 hover:text-white"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Retour
+          </Button>
+          
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              disabled={!hasPrevious}
+              onClick={navigateToPreviousEpisode}
+              className={!hasPrevious ? "opacity-50 cursor-not-allowed" : ""}
+            >
+              <ChevronLeft className="w-5 h-5 mr-1" />
+              Précédent
+            </Button>
+            
+            <Button
+              variant="secondary"
+              size="sm"
+              disabled={!hasNext}
+              onClick={navigateToNextEpisode}
+              className={!hasNext ? "opacity-50 cursor-not-allowed" : ""}
+            >
+              Suivant
+              <ChevronRight className="w-5 h-5 ml-1" />
+            </Button>
+          </div>
+        </div>
         
         <div className="bg-secondary/50 rounded-lg overflow-hidden">
           <PodcastDetails 
