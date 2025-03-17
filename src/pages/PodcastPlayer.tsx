@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -28,12 +29,14 @@ const PodcastPlayer = ({
 }: PodcastPlayerProps) => {
   const { episodeId, slug } = useParams<{ episodeId?: string; slug?: string }>();
   const navigate = useNavigate();
-  const { data: episodes, isLoading } = usePodcastFeed();
+  const { data: podcastData, isLoading } = usePodcastFeed();
   
   let foundEpisode = null;
   let foundIndex = -1;
   
-  if (episodes && !isLoading) {
+  if (podcastData && !isLoading) {
+    const episodes = podcastData.allEpisodes;
+    
     if (episodeId && slug) {
       const result = findEpisodeById(episodes, episodeId);
       foundEpisode = result.episode;
@@ -137,11 +140,11 @@ const PodcastPlayer = ({
           />
         </div>
 
-        {episodes && episodes.length > 1 && (
+        {podcastData && podcastData.allEpisodes.length > 1 && (
           <div className="mt-12">
             <SimilarPodcasts 
               currentEpisode={foundEpisode} 
-              episodes={episodes}
+              episodes={podcastData.allEpisodes}
               isPlaying={isPlaying}
               setIsPlaying={setIsPlaying}
               currentAudio={currentAudio}

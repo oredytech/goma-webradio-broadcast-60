@@ -13,7 +13,7 @@ import { getPodcastSlug } from "@/utils/podcastUtils";
 const NotFound = () => {
   const location = useLocation();
   const { data: articles, isLoading: articlesLoading } = useWordpressArticles();
-  const { data: podcasts, isLoading: podcastsLoading } = usePodcastFeed();
+  const { data: podcastData, isLoading: podcastsLoading } = usePodcastFeed();
   const [matchedArticle, setMatchedArticle] = useState<WordPressArticle | null>(null);
   const [matchedPodcastInfo, setMatchedPodcastInfo] = useState<{ index: number; slug: string } | null>(null);
   const [possibleMatches, setPossibleMatches] = useState<{articles: WordPressArticle[], podcasts: {index: number, title: string, slug: string}[]}>({
@@ -64,7 +64,7 @@ const NotFound = () => {
     }
 
     // Check for podcast paths
-    if (podcasts && !podcastsLoading) {
+    if (podcastData && !podcastsLoading) {
       // Match both old format with ID and new format without ID
       const podcastMatch = location.pathname.match(/\/podcast\/(?:(\d+)\/)?(.+)?/);
       if (podcastMatch) {
@@ -72,8 +72,11 @@ const NotFound = () => {
         const slug = podcastMatch[2] || (idStr && !podcastMatch[2] ? idStr : null);
         
         if (slug) {
+          // Get all episodes from all feeds
+          const allEpisodes = podcastData.allEpisodes;
+          
           // Try to find matching podcast by slug
-          const podcastIndex = podcasts.findIndex(episode => {
+          const podcastIndex = allEpisodes.findIndex(episode => {
             const episodeSlug = getPodcastSlug(episode.title);
             return slug === episodeSlug || 
                    slug.includes(episodeSlug) || 
@@ -81,7 +84,7 @@ const NotFound = () => {
           });
           
           if (podcastIndex !== -1) {
-            const episode = podcasts[podcastIndex];
+            const episode = allEpisodes[podcastIndex];
             const generatedSlug = getPodcastSlug(episode.title);
             
             setMatchedPodcastInfo({
@@ -92,7 +95,7 @@ const NotFound = () => {
           }
 
           // If no exact match, collect possible matches for suggestions
-          const possiblePodcastMatches = podcasts
+          const possiblePodcastMatches = allEpisodes
             .map((episode, index) => ({
               index,
               title: episode.title,
@@ -108,7 +111,7 @@ const NotFound = () => {
         }
       }
     }
-  }, [articles, articlesLoading, location.pathname, podcasts, podcastsLoading]);
+  }, [articles, articlesLoading, location.pathname, podcastData, podcastsLoading]);
 
   if (articlesLoading || podcastsLoading) {
     return (
