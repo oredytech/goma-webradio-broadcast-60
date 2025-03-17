@@ -5,6 +5,7 @@ import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import ProgressBar from './radio/ProgressBar';
 import PlayPauseButton from './radio/PlayPauseButton';
 import VolumeControl from './radio/VolumeControl';
+import { useEffect, useState } from 'react';
 
 interface RadioPlayerProps {
   isPlaying: boolean;
@@ -14,6 +15,8 @@ interface RadioPlayerProps {
 }
 
 const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: RadioPlayerProps) => {
+  const [liveTitle, setLiveTitle] = useState<string | null>(null);
+  
   const {
     volume,
     currentTrack,
@@ -50,6 +53,44 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }:
     enabled: true
   });
 
+  // Fetch the current playing title from the radio stream periodically
+  useEffect(() => {
+    if (!currentAudio) {
+      const fetchCurrentTitle = async () => {
+        try {
+          // Zeno.FM API endpoint for the stream metadata
+          const response = await fetch('https://api.zeno.fm/streams/4d61wprrp7zuv/now_playing', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            }
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            if (data && data.now_playing) {
+              setLiveTitle(data.now_playing.title || data.now_playing.song || null);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching current title:', error);
+        }
+      };
+
+      // Initial fetch
+      fetchCurrentTitle();
+      
+      // Setup interval to fetch every 30 seconds
+      const interval = setInterval(fetchCurrentTitle, 30000);
+      
+      return () => clearInterval(interval);
+    } else {
+      // Clear the title if we're not playing the live stream
+      setLiveTitle(null);
+    }
+  }, [currentAudio]);
+
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-secondary/95 backdrop-blur-sm border-t border-primary/20 h-[80px] p-2 z-50">
       <div className="max-w-7xl mx-auto h-full">
@@ -67,6 +108,11 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }:
               {currentAudio && duration > 0 && (
                 <span className="text-xs text-gray-400">
                   {formatTime(duration * (progress / 100))} / {formatTime(duration)}
+                </span>
+              )}
+              {!currentAudio && liveTitle && (
+                <span className="text-xs text-gray-300 truncate">
+                  {liveTitle}
                 </span>
               )}
             </div>
