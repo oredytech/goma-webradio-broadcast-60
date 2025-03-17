@@ -4,10 +4,10 @@ import React, { useEffect } from 'react';
 interface ArticleHeroProps {
   title: string;
   featuredImageUrl: string;
-  description?: string; // Ajout d'une description optionnelle
+  description?: string; // We'll keep the prop in the interface for backward compatibility
 }
 
-const ArticleHero = ({ title, featuredImageUrl, description }: ArticleHeroProps) => {
+const ArticleHero = ({ title, featuredImageUrl }: ArticleHeroProps) => {
   return (
     <div className="pt-16">
       <div className="relative h-[40vh] md:h-[50vh] lg:h-[60vh]">
@@ -25,11 +25,6 @@ const ArticleHero = ({ title, featuredImageUrl, description }: ArticleHeroProps)
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
               {title}
             </h1>
-            {description && (
-              <p className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto">
-                {description}
-              </p>
-            )}
           </div>
         </div>
       </div>
