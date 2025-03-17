@@ -118,7 +118,7 @@ const ContactSection = () => {
                 <span className="text-primary">📞</span>
                 <div>
                   <p className="font-medium">Direction :</p>
-                  <p>+243 975 043 313</p>
+                  <p>+243 996 886 079</p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
