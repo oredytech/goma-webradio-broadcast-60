@@ -115,8 +115,9 @@ const App = () => {
             </Routes>
             <RadioPlayer
               isPlaying={isPlaying}
-              setCurrentAudio={setCurrentAudio}
+              setIsPlaying={setIsPlaying}
               currentAudio={currentAudio}
+              setCurrentAudio={setCurrentAudio}
             />
           </BrowserRouter>
         </TooltipProvider>

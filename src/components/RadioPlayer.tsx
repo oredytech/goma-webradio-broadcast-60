@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button";
 
 interface RadioPlayerProps {
   isPlaying: boolean;
-  setIsPlaying: (isPlaying: boolean) => void;
+  setIsPlaying?: (isPlaying: boolean) => void;
   currentAudio: string | null;
+  setCurrentAudio: (audio: string | null) => void;
 }
 
-const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps) => {
+const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: RadioPlayerProps) => {
   const [volume, setVolume] = useState(80);
   const [currentTrack, setCurrentTrack] = useState("Goma Webradio Live");
   const [currentArtist, setCurrentArtist] = useState("");
@@ -97,8 +98,8 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio }: RadioPlayerProps
       audio.addEventListener('playing', () => {
         setIsLoading(false);
         if ('mediaSession' in navigator) {
-          navigator.mediaSession.setActionHandler('play', () => setIsPlaying(true));
-          navigator.mediaSession.setActionHandler('pause', () => setIsPlaying(false));
+          navigator.mediaSession.setActionHandler('play', () => setIsPlaying?.(true));
+          navigator.mediaSession.setActionHandler('pause', () => setIsPlaying?.(false));
         }
       });
 
