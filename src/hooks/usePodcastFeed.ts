@@ -42,7 +42,7 @@ const PODCAST_FEEDS = [
   },
   {
     id: "feed3",
-    name: "GOMA WEB RADIO",
+    name: "ONDES LIBRES",
     url: "https://podcast.zenomedia.com/api/public/podcasts/4b4e6126-bbcb-4533-926f-a39820a5d11c/rss"
   }
 ];
