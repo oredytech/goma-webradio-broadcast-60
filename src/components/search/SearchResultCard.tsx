@@ -1,0 +1,56 @@
+
+import React from 'react';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { SearchResult } from '@/types/search';
+
+interface SearchResultCardProps {
+  result: SearchResult;
+  searchTerm: string;
+  highlightSearchTerm: (text: string, searchTerm: string) => React.ReactNode;
+}
+
+const SearchResultCard = ({ result, searchTerm, highlightSearchTerm }: SearchResultCardProps) => {
+  return (
+    <Card key={result.id} className="overflow-hidden hover:shadow-md transition-shadow">
+      <CardContent className="p-6">
+        <div className="flex gap-4">
+          {result.imageUrl && (
+            <a href={result.url} className="shrink-0">
+              <img 
+                src={result.imageUrl} 
+                alt={result.title}
+                className="h-20 w-20 object-cover rounded-md"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = '/placeholder.svg'; // Fallback image
+                }}
+              />
+            </a>
+          )}
+          <div className="flex-1">
+            <div className="flex justify-between items-start mb-2">
+              <h3 className="font-semibold text-lg hover:text-primary transition-colors">
+                <a href={result.url}>{highlightSearchTerm(result.title, searchTerm)}</a>
+              </h3>
+              <span className="text-xs px-2 py-1 rounded-full bg-secondary text-white uppercase">
+                {result.type === 'article' ? 'Article' : 'Podcast'}
+              </span>
+            </div>
+            <p className="text-muted-foreground">
+              {typeof result.excerpt === 'string' 
+                ? highlightSearchTerm(result.excerpt, searchTerm)
+                : result.excerpt}
+            </p>
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter className="bg-secondary/10 py-2 px-6">
+        <div className="text-sm text-muted-foreground">
+          Publié le: {new Date(result.date).toLocaleDateString('fr-FR')}
+        </div>
+      </CardFooter>
+    </Card>
+  );
+};
+
+export default SearchResultCard;
