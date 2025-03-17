@@ -1,6 +1,7 @@
 
 import { formatTime } from '@/utils/audioUtils';
 import { useAudioPlayer } from '@/hooks/useAudioPlayer';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import ProgressBar from './radio/ProgressBar';
 import PlayPauseButton from './radio/PlayPauseButton';
 import VolumeControl from './radio/VolumeControl';
@@ -28,6 +29,25 @@ const RadioPlayer = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }:
     setIsPlaying,
     currentAudio,
     setCurrentAudio
+  });
+  
+  // Define volume adjustment handlers
+  const handleVolumeUp = () => {
+    const newVolume = Math.min(volume + 5, 100);
+    handleVolumeChange([newVolume]);
+  };
+  
+  const handleVolumeDown = () => {
+    const newVolume = Math.max(volume - 5, 0);
+    handleVolumeChange([newVolume]);
+  };
+  
+  // Setup keyboard shortcuts
+  useKeyboardShortcuts({
+    onPlayPause: togglePlay,
+    onVolumeUp: handleVolumeUp,
+    onVolumeDown: handleVolumeDown,
+    enabled: true
   });
 
   return (

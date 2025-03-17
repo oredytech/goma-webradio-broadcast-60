@@ -21,3 +21,16 @@ export const setupMediaSession = (
     navigator.mediaSession.setActionHandler('pause', () => setIsPlaying?.(false));
   }
 };
+
+/**
+ * Available keyboard shortcuts for the audio player
+ * 
+ * - Space: Play/Pause toggle
+ * - Arrow Up: Volume up
+ * - Arrow Down: Volume down
+ */
+export const KEYBOARD_SHORTCUTS = {
+  PLAY_PAUSE: 'Space',
+  VOLUME_UP: 'ArrowUp',
+  VOLUME_DOWN: 'ArrowDown'
+};
