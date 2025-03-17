@@ -15,7 +15,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useWordpressArticles } from '@/hooks/useWordpressArticles';
 import { usePodcastFeed } from '@/hooks/usePodcastFeed';
-import { decodeHtmlTitle } from '@/utils/articleUtils';
+import { decodeHtmlTitle, getFeaturedImageUrl } from '@/utils/articleUtils';
 import { stripHtml } from '@/utils/podcastUtils';
 
 const formSchema = z.object({
@@ -31,6 +31,7 @@ interface SearchResult {
   type: 'article' | 'podcast';
   date: string;
   url: string;
+  imageUrl?: string;
 }
 
 const Search = () => {
@@ -65,6 +66,18 @@ const Search = () => {
     }
   }, [queryParam, articles, podcastData]);
 
+  // Highlight search term in text
+  const highlightSearchTerm = (text: string, searchTerm: string) => {
+    if (!searchTerm.trim()) return text;
+    
+    const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'));
+    return parts.map((part, index) => 
+      part.toLowerCase() === searchTerm.toLowerCase() 
+        ? <mark key={index} className="bg-yellow-200 font-medium">{part}</mark> 
+        : part
+    );
+  };
+
   const performSearch = async (query: string) => {
     setIsSearching(true);
     
@@ -89,7 +102,8 @@ const Search = () => {
             excerpt: excerpt.substring(0, 150) + "...",
             type: 'article',
             date: article.date || new Date().toISOString(),
-            url: `/article/${article.id}`
+            url: `/article/${article.id}`,
+            imageUrl: getFeaturedImageUrl(article)
           });
         }
       });
@@ -111,7 +125,8 @@ const Search = () => {
             excerpt: description.substring(0, 150) + "...",
             type: 'podcast',
             date: episode.pubDate,
-            url: `/podcast/${index}`
+            url: `/podcast/${index}`,
+            imageUrl: episode.itunes?.image
           });
         }
       });
@@ -180,9 +195,14 @@ const Search = () => {
               // Loading skeletons
               Array(3).fill(0).map((_, i) => (
                 <div key={i} className="border rounded-md p-4">
-                  <Skeleton className="h-6 w-3/4 mb-2" />
-                  <Skeleton className="h-4 w-full mb-2" />
-                  <Skeleton className="h-4 w-2/3" />
+                  <div className="flex gap-4">
+                    <Skeleton className="h-20 w-20 rounded-md" />
+                    <div className="flex-1">
+                      <Skeleton className="h-6 w-3/4 mb-2" />
+                      <Skeleton className="h-4 w-full mb-2" />
+                      <Skeleton className="h-4 w-2/3" />
+                    </div>
+                  </div>
                 </div>
               ))
             ) : (
@@ -190,15 +210,36 @@ const Search = () => {
               results.map((result) => (
                 <Card key={result.id} className="overflow-hidden hover:shadow-md transition-shadow">
                   <CardContent className="p-6">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-semibold text-lg hover:text-primary transition-colors">
-                        <a href={result.url}>{result.title}</a>
-                      </h3>
-                      <span className="text-xs px-2 py-1 rounded-full bg-secondary text-white uppercase">
-                        {result.type === 'article' ? 'Article' : 'Podcast'}
-                      </span>
+                    <div className="flex gap-4">
+                      {result.imageUrl && (
+                        <a href={result.url} className="shrink-0">
+                          <img 
+                            src={result.imageUrl} 
+                            alt={result.title}
+                            className="h-20 w-20 object-cover rounded-md"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = '/placeholder.svg'; // Fallback image
+                            }}
+                          />
+                        </a>
+                      )}
+                      <div className="flex-1">
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="font-semibold text-lg hover:text-primary transition-colors">
+                            <a href={result.url}>{highlightSearchTerm(result.title, queryParam)}</a>
+                          </h3>
+                          <span className="text-xs px-2 py-1 rounded-full bg-secondary text-white uppercase">
+                            {result.type === 'article' ? 'Article' : 'Podcast'}
+                          </span>
+                        </div>
+                        <p className="text-muted-foreground">
+                          {typeof result.excerpt === 'string' 
+                            ? highlightSearchTerm(result.excerpt, queryParam)
+                            : result.excerpt}
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-muted-foreground">{result.excerpt}</p>
                   </CardContent>
                   <CardFooter className="bg-secondary/10 py-2 px-6">
                     <div className="text-sm text-muted-foreground">
