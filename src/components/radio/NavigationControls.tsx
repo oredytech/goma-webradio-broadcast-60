@@ -1,4 +1,5 @@
 
+import { useState } from 'react';
 import { SkipBack, SkipForward } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -23,11 +24,29 @@ const NavigationControls = ({
   const { data: podcastData } = usePodcastFeed();
   const isPodcastRoute = location.pathname.includes('/podcast/');
   
-  const { isPlaying, isLoading, togglePlay } = useAudioPlayer({
-    isPlaying: false,
+  // Update how we use useAudioPlayer - pass necessary props
+  const { 
+    isLoading, 
+    togglePlay 
+  } = useAudioPlayer({
+    isPlaying: false, // This doesn't matter as we only need togglePlay and isLoading
     currentAudio,
     setCurrentAudio
   });
+
+  // Add local state to track if this component's audio is playing
+  // This is separate from the global isPlaying state managed in App.tsx
+  const [localIsPlaying, setLocalIsPlaying] = useState(false);
+  
+  // Override the togglePlay function to update our local state
+  const handleTogglePlay = () => {
+    const newPlayState = !localIsPlaying;
+    setLocalIsPlaying(newPlayState);
+    // Also update global state if needed
+    setIsPlaying?.(newPlayState);
+    // Call the original toggle function
+    togglePlay();
+  };
 
   // Navigate to previous podcast episode
   const handlePrevEpisode = () => {
@@ -45,6 +64,7 @@ const NavigationControls = ({
       // Start playing the previous episode
       setCurrentAudio?.(prevEpisode.enclosure.url);
       setIsPlaying?.(true);
+      setLocalIsPlaying(true);
     }
   };
 
@@ -64,6 +84,7 @@ const NavigationControls = ({
       // Start playing the next episode
       setCurrentAudio?.(nextEpisode.enclosure.url);
       setIsPlaying?.(true);
+      setLocalIsPlaying(true);
     }
   };
 
@@ -94,9 +115,9 @@ const NavigationControls = ({
       </Button>
       
       <PlayPauseButton 
-        isPlaying={isPlaying} 
+        isPlaying={localIsPlaying} 
         isLoading={isLoading} 
-        togglePlay={togglePlay} 
+        togglePlay={handleTogglePlay} 
       />
       
       <Button

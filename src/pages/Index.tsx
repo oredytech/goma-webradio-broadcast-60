@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import RadioPlayer from "@/components/RadioPlayer";
+import React from "react";
+import RadioPlayer from "@/components/radio/RadioPlayer";
 import Header from "@/components/Header";
 import PodcastSection from "@/components/PodcastSection";
 import VideoSection from "@/components/VideoSection";
