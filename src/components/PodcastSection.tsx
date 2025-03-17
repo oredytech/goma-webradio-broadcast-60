@@ -25,7 +25,7 @@ const PodcastSection = ({
   setCurrentArtist
 }: PodcastSectionProps) => {
   const navigate = useNavigate();
-  const { data: episodes, isLoading } = usePodcastFeed();
+  const { data, isLoading } = usePodcastFeed();
   const { toast } = useToast();
 
   const handleOpenPodcast = (episode: any) => {
@@ -84,6 +84,10 @@ const PodcastSection = ({
     );
   }
 
+  if (!data || !data.feedEpisodes) {
+    return null;
+  }
+
   return (
     <section className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -97,43 +101,48 @@ const PodcastSection = ({
             Voir plus
           </Button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {episodes?.slice(0, 6).map((episode, index) => (
-            <div 
-              key={index} 
-              className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300 cursor-pointer"
-              onClick={() => handleOpenPodcast(episode)}
-            >
-              <img
-                src={episode.itunes?.image || '/placeholder.svg'}
-                alt={episode.title}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-6">
-                {episode.feedSource && (
-                  <Badge variant="outline" className="mb-2 bg-primary/20 text-primary border-primary/30">
-                    {episode.feedSource}
-                  </Badge>
-                )}
-                <h3 className="text-xl font-bold text-white mb-2">{episode.title}</h3>
-                <p className="text-gray-300 line-clamp-2 mb-4">
-                  {episode.description ? stripHtml(episode.description) : ''}
-                </p>
-                <div className="flex justify-end">
-                  <Button
-                    onClick={(e) => handleShare(episode, e)}
-                    variant="secondary"
-                    size="sm"
-                    className="gap-2"
-                  >
-                    <Share2 className="w-4 h-4" />
-                    Partager
-                  </Button>
+
+        {/* Render each feed separately */}
+        {Object.entries(data.feedEpisodes).map(([feedId, { name, episodes }]) => (
+          <div key={feedId} className="mb-12">
+            <h3 className="text-2xl font-bold text-white mb-6 border-l-4 border-primary pl-4">{name}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {episodes.slice(0, 3).map((episode, index) => (
+                <div 
+                  key={`${feedId}-${index}`} 
+                  className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300 cursor-pointer"
+                  onClick={() => handleOpenPodcast(episode)}
+                >
+                  <img
+                    src={episode.itunes?.image || '/placeholder.svg'}
+                    alt={episode.title}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="p-6">
+                    <Badge variant="outline" className="mb-2 bg-primary/20 text-primary border-primary/30">
+                      {episode.feedSource}
+                    </Badge>
+                    <h3 className="text-xl font-bold text-white mb-2">{episode.title}</h3>
+                    <p className="text-gray-300 line-clamp-2 mb-4">
+                      {episode.description ? stripHtml(episode.description) : ''}
+                    </p>
+                    <div className="flex justify-end">
+                      <Button
+                        onClick={(e) => handleShare(episode, e)}
+                        variant="secondary"
+                        size="sm"
+                        className="gap-2"
+                      >
+                        <Share2 className="w-4 h-4" />
+                        Partager
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </section>
   );

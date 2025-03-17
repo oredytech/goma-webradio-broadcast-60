@@ -16,18 +16,28 @@ export interface PodcastEpisode {
   feedSource?: string; // Identify which feed this episode comes from
 }
 
+export interface PodcastFeedResult {
+  allEpisodes: PodcastEpisode[];
+  feedEpisodes: {
+    [key: string]: {
+      name: string;
+      episodes: PodcastEpisode[];
+    }
+  }
+}
+
 const CORS_PROXY = "https://api.allorigins.win/raw?url=";
 
 // Define our podcast feed sources
 const PODCAST_FEEDS = [
   {
     id: "feed1",
-    name: "Feed 1",
+    name: "REPORTAGES",
     url: "https://podcast.zenomedia.com/api/public/podcasts/e422f99f-db57-40c3-a92e-778a15e5c2bb/rss"
   },
   {
     id: "feed2",
-    name: "Feed 2",
+    name: "APPREND LE SWAHILI",
     url: "https://podcast.zenomedia.com/api/public/podcasts/dccffad2-6a72-41f0-b115-499b7a4bf255/rss"
   }
 ];
@@ -74,24 +84,42 @@ const fetchPodcastFeed = async (feedUrl: string, feedName: string): Promise<Podc
   }
 };
 
-const fetchAllPodcastFeeds = async (): Promise<PodcastEpisode[]> => {
+const fetchAllPodcastFeeds = async (): Promise<PodcastFeedResult> => {
   try {
     // Fetch all feeds in parallel
     const feedPromises = PODCAST_FEEDS.map(feed => 
-      fetchPodcastFeed(feed.url, feed.name)
+      fetchPodcastFeed(feed.url, feed.name).then(episodes => ({ 
+        id: feed.id, 
+        name: feed.name, 
+        episodes 
+      }))
     );
     
     const results = await Promise.all(feedPromises);
     
-    // Combine all episodes into a single array
-    const allEpisodes = results.flat();
-    
-    // Sort all episodes by publication date (newest first)
-    return allEpisodes.sort((a, b) => {
-      const dateA = new Date(a.pubDate).getTime();
-      const dateB = new Date(b.pubDate).getTime();
-      return dateB - dateA;
+    // Create feedEpisodes object mapping feed ids to their episodes
+    const feedEpisodes: {[key: string]: {name: string, episodes: PodcastEpisode[]}} = {};
+    results.forEach(result => {
+      feedEpisodes[result.id] = {
+        name: result.name,
+        episodes: result.episodes.sort((a, b) => {
+          const dateA = new Date(a.pubDate).getTime();
+          const dateB = new Date(b.pubDate).getTime();
+          return dateB - dateA;
+        })
+      };
     });
+    
+    // Combine all episodes into a single array for backward compatibility
+    const allEpisodes = results
+      .flatMap(result => result.episodes)
+      .sort((a, b) => {
+        const dateA = new Date(a.pubDate).getTime();
+        const dateB = new Date(b.pubDate).getTime();
+        return dateB - dateA;
+      });
+    
+    return { allEpisodes, feedEpisodes };
   } catch (error) {
     console.error("Error fetching podcast feeds:", error);
     throw error;

@@ -1,6 +1,7 @@
 
 import { PodcastEpisode } from '@/hooks/usePodcastFeed';
 import PodcastActions from './PodcastActions';
+import { Badge } from '@/components/ui/badge';
 
 interface PodcastDetailsProps {
   episode: PodcastEpisode;
@@ -19,6 +20,12 @@ const PodcastDetails = ({
 }: PodcastDetailsProps) => {
   return (
     <div className="p-6 sm:p-8">
+      {episode.feedSource && (
+        <Badge variant="outline" className="mb-4 bg-primary/20 text-primary border-primary/30">
+          {episode.feedSource}
+        </Badge>
+      )}
+      
       <PodcastActions
         episode={episode}
         isPlaying={isPlaying}
