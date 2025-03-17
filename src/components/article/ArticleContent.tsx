@@ -14,6 +14,12 @@ const ArticleContent = ({ article }: ArticleContentProps) => {
   const formattedDate = article.date 
     ? format(new Date(article.date), "dd MMMM yyyy", { locale: fr })
     : "";
+    
+  // Get author avatar URL - use the largest size available or fallback to placeholder
+  const avatarUrl = article._embedded?.author?.[0]?.avatar_urls?.["96"] || 
+                    article._embedded?.author?.[0]?.avatar_urls?.["48"] || 
+                    article._embedded?.author?.[0]?.avatar_urls?.["24"] || 
+                    "/placeholder.svg";
 
   return (
     <div className="lg:col-span-8">
@@ -28,7 +34,7 @@ const ArticleContent = ({ article }: ArticleContentProps) => {
         <h2 className="text-2xl font-bold text-white mb-6">À propos de l'article</h2>
         <div className="flex items-start gap-4">
           <Avatar className="h-16 w-16 rounded-full border-2 border-primary">
-            <AvatarImage src="/placeholder.svg" alt="Avatar de l'auteur" />
+            <AvatarImage src={avatarUrl} alt={`Avatar de ${article._embedded?.author?.[0]?.name || "l'auteur"}`} />
             <AvatarFallback className="bg-primary/20 text-primary text-xl">
               {article._embedded?.author?.[0]?.name?.charAt(0) || "A"}
             </AvatarFallback>
