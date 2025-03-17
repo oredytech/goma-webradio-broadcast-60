@@ -13,6 +13,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { useWordpressArticles } from '@/hooks/useWordpressArticles';
+import { usePodcastFeed } from '@/hooks/usePodcastFeed';
+import { decodeHtmlTitle } from '@/utils/articleUtils';
+import { stripHtml } from '@/utils/podcastUtils';
 
 const formSchema = z.object({
   query: z.string().min(2, {
@@ -20,33 +24,14 @@ const formSchema = z.object({
   }),
 });
 
-// Mock search results for demonstration
-const mockResults = [
-  {
-    id: 1,
-    title: "La situation sécuritaire à Goma",
-    excerpt: "Une analyse détaillée de la situation sécuritaire actuelle dans la ville de Goma et ses environs...",
-    type: "article",
-    date: "2023-11-10",
-    url: "/article/situation-securitaire-goma"
-  },
-  {
-    id: 2,
-    title: "Interview exclusive avec le gouverneur du Nord-Kivu",
-    excerpt: "Le gouverneur s'exprime sur les défis et les perspectives de développement pour la province...",
-    type: "podcast",
-    date: "2023-10-25",
-    url: "/podcast/interview-gouverneur-nord-kivu"
-  },
-  {
-    id: 3,
-    title: "Les enjeux économiques dans l'Est de la RDC",
-    excerpt: "Analyse des opportunités et défis économiques dans la région Est de la République Démocratique du Congo...",
-    type: "article",
-    date: "2023-09-15",
-    url: "/article/enjeux-economiques-est-rdc"
-  },
-];
+interface SearchResult {
+  id: string;
+  title: string;
+  excerpt: string;
+  type: 'article' | 'podcast';
+  date: string;
+  url: string;
+}
 
 const Search = () => {
   const location = useLocation();
@@ -55,7 +40,7 @@ const Search = () => {
   const queryParam = searchParams.get('q') || '';
   
   const [isSearching, setIsSearching] = useState(false);
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<SearchResult[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -63,6 +48,10 @@ const Search = () => {
       query: queryParam,
     },
   });
+
+  // Fetch data from different sources
+  const { data: articles, isLoading: isLoadingArticles } = useWordpressArticles();
+  const { data: podcastData, isLoading: isLoadingPodcasts } = usePodcastFeed();
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     navigate(`/recherche?q=${encodeURIComponent(values.query)}`);
@@ -74,21 +63,65 @@ const Search = () => {
     } else {
       setResults([]);
     }
-  }, [queryParam]);
+  }, [queryParam, articles, podcastData]);
 
   const performSearch = async (query: string) => {
     setIsSearching(true);
-    // Simulate API call
-    setTimeout(() => {
-      // Filter mock results based on query
-      const filteredResults = mockResults.filter(
-        item => item.title.toLowerCase().includes(query.toLowerCase()) || 
-               item.excerpt.toLowerCase().includes(query.toLowerCase())
-      );
-      setResults(filteredResults);
-      setIsSearching(false);
-    }, 800);
+    
+    const searchResults: SearchResult[] = [];
+    const lowerCaseQuery = query.toLowerCase();
+    
+    // Search in WordPress articles
+    if (articles) {
+      articles.forEach(article => {
+        const title = decodeHtmlTitle(article.title.rendered);
+        const content = stripHtml(article.content.rendered);
+        const excerpt = stripHtml(article.excerpt.rendered);
+        
+        if (
+          title.toLowerCase().includes(lowerCaseQuery) || 
+          content.toLowerCase().includes(lowerCaseQuery) ||
+          excerpt.toLowerCase().includes(lowerCaseQuery)
+        ) {
+          searchResults.push({
+            id: `article-${article.id}`,
+            title: title,
+            excerpt: excerpt.substring(0, 150) + "...",
+            type: 'article',
+            date: article.date || new Date().toISOString(),
+            url: `/article/${article.id}`
+          });
+        }
+      });
+    }
+    
+    // Search in podcasts
+    if (podcastData?.allEpisodes) {
+      podcastData.allEpisodes.forEach((episode, index) => {
+        const title = episode.title;
+        const description = stripHtml(episode.description || "");
+        
+        if (
+          title.toLowerCase().includes(lowerCaseQuery) || 
+          description.toLowerCase().includes(lowerCaseQuery)
+        ) {
+          searchResults.push({
+            id: `podcast-${index}`,
+            title: title,
+            excerpt: description.substring(0, 150) + "...",
+            type: 'podcast',
+            date: episode.pubDate,
+            url: `/podcast/${index}`
+          });
+        }
+      });
+    }
+    
+    setResults(searchResults);
+    setIsSearching(false);
   };
+
+  const isLoading = isLoadingArticles || isLoadingPodcasts || isSearching;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -134,7 +167,7 @@ const Search = () => {
           {queryParam.length >= 2 && (
             <div className="mb-6">
               <h2 className="text-xl font-semibold mb-2">
-                {isSearching ? 'Recherche en cours...' : 
+                {isLoading ? 'Recherche en cours...' : 
                   results.length === 0 ? 'Aucun résultat trouvé' : 
                   `Résultats pour "${queryParam}" (${results.length})`}
               </h2>
@@ -143,7 +176,7 @@ const Search = () => {
           )}
 
           <div className="space-y-6">
-            {isSearching ? (
+            {isLoading ? (
               // Loading skeletons
               Array(3).fill(0).map((_, i) => (
                 <div key={i} className="border rounded-md p-4">
@@ -162,14 +195,14 @@ const Search = () => {
                         <a href={result.url}>{result.title}</a>
                       </h3>
                       <span className="text-xs px-2 py-1 rounded-full bg-secondary text-white uppercase">
-                        {result.type}
+                        {result.type === 'article' ? 'Article' : 'Podcast'}
                       </span>
                     </div>
                     <p className="text-muted-foreground">{result.excerpt}</p>
                   </CardContent>
                   <CardFooter className="bg-secondary/10 py-2 px-6">
                     <div className="text-sm text-muted-foreground">
-                      Publié le: {result.date}
+                      Publié le: {new Date(result.date).toLocaleDateString('fr-FR')}
                     </div>
                   </CardFooter>
                 </Card>
