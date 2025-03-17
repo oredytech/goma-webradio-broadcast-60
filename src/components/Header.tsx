@@ -6,10 +6,14 @@ import MobileMenuButton from "./header/MobileMenuButton";
 import DesktopNavigation from "./header/DesktopNavigation";
 import MobileNavigation from "./header/MobileNavigation";
 import HeaderActions from "./header/HeaderActions";
+import { useIsMobile } from "@/hooks/use-mobile";
+import SearchButton from "./header/SearchButton";
+import ThemeToggle from "./header/ThemeToggle";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -32,19 +36,25 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           <Logo />
           
-          <DesktopNavigation />
+          {!isMobile && <DesktopNavigation />}
 
-          <HeaderActions 
-            onSearchClick={handleSearchClick} 
-          />
+          {!isMobile && (
+            <HeaderActions onSearchClick={handleSearchClick} />
+          )}
+          
+          {isMobile && (
+            <div className="flex items-center space-x-2">
+              <SearchButton onClick={handleSearchClick} />
+              <ThemeToggle />
+              <MobileMenuButton onClick={toggleMenu} />
+            </div>
+          )}
 
           <MobileNavigation 
             isOpen={isMenuOpen} 
             onSearchClick={handleSearchClick}
             onClose={closeMenu} 
           />
-
-          <MobileMenuButton onClick={toggleMenu} className="sm:hidden ml-4" />
         </div>
       </div>
     </header>
