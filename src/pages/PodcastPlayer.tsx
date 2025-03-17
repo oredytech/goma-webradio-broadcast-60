@@ -6,13 +6,13 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { updateMetaTags } from '@/utils/metaService';
 import PodcastHeader from '@/components/podcast/PodcastHeader';
 import PodcastDetails from '@/components/podcast/PodcastDetails';
 import PodcastLoading from '@/components/podcast/PodcastLoading';
 import PodcastNotFound from '@/components/podcast/PodcastNotFound';
 import SimilarPodcasts from '@/components/podcast/SimilarPodcasts';
 import { findEpisodeBySlug, findEpisodeById, getPodcastSlug } from '@/utils/podcastUtils';
+import { usePodcastSEO } from '@/hooks/useSEO';
 
 interface PodcastPlayerProps {
   isPlaying: boolean;
@@ -91,27 +91,13 @@ const PodcastPlayer = ({
     }
   }
 
-  useEffect(() => {
-    // Set page title and meta tags
-    if (foundEpisode) {
-      document.title = `${foundEpisode.title} | GOMA WEBRADIO`;
-      
-      // Force l'image de l'épisode pour les balises OG et Twitter
-      const episodeImage = foundEpisode.itunes?.image || '/GOWERA__3_-removebg-preview.png';
-      
-      updateMetaTags({
-        title: foundEpisode.title,
-        description: foundEpisode.description?.substring(0, 160) || "",
-        image: episodeImage,
-        type: 'article',
-        url: window.location.href
-      });
-    }
-    
-    return () => {
-      document.title = 'GOMA WEBRADIO';
-    };
-  }, [foundEpisode]);
+  // Setup SEO for the podcast
+  const seoTitle = foundEpisode ? foundEpisode.title : "Chargement du podcast...";
+  const seoDescription = foundEpisode ? (foundEpisode.description || "").substring(0, 160) : "";
+  const seoImage = foundEpisode ? (foundEpisode.itunes?.image || "/GOWERA__3_-removebg-preview.png") : "/GOWERA__3_-removebg-preview.png";
+  
+  // Use our SEO hook
+  usePodcastSEO(seoTitle, seoDescription, seoImage);
 
   if (isLoading) {
     return <PodcastLoading />;

@@ -99,7 +99,9 @@ export const resetMetaTags = (): void => {
   });
 };
 
-// Assurez-vous que les meta tags sont toujours présents
+/**
+ * Assurez-vous que les meta tags sont toujours présents
+ */
 export const ensureMetaTags = (): void => {
   // Vérifier si les balises OG de base sont présentes
   const ogTitleTag = document.querySelector('meta[property="og:title"]');

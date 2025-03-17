@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import ArticlesSlider from "@/components/ArticlesSlider";
 import { Link } from "react-router-dom";
 import { getArticleSlug } from "@/utils/articleUtils";
+import { usePageSEO } from "@/hooks/useSEO";
 
 interface NewsProps {
   filter?: string;
@@ -13,6 +14,10 @@ interface NewsProps {
 
 const News = ({ filter }: NewsProps) => {
   const results = useMultiSourceArticles();
+  
+  // Setup SEO for the news page
+  const pageTitle = filter ? `Actualités - ${filter}` : "Toutes les actualités";
+  usePageSEO(pageTitle, "Retrouvez toutes les dernières actualités et informations sur GOMA WEBRADIO");
 
   const isLoading = results.some((result) => result.isLoading);
   const isError = results.some((result) => result.isError);

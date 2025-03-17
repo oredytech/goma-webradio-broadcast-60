@@ -1,3 +1,4 @@
+
 import RadioPlayer from "@/components/RadioPlayer";
 import Header from "@/components/Header";
 import PodcastSection from "@/components/PodcastSection";
@@ -7,6 +8,7 @@ import Footer from "@/components/Footer";
 import ArticlesSlider from "@/components/ArticlesSlider";
 import ExtraArticles from "@/components/ExtraArticles";
 import { Play, Pause } from "lucide-react";
+import { usePageSEO } from "@/hooks/useSEO";
 
 interface IndexProps {
   isPlaying: boolean;
@@ -16,6 +18,13 @@ interface IndexProps {
 }
 
 const Index = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: IndexProps) => {
+  // Set up SEO for the homepage
+  usePageSEO(
+    "GOMA WEBRADIO",
+    "La voix de Goma - Actualités, Podcasts et Émissions en direct. Fasi ya Ndule na ma infos za palet",
+    "/GOWERA__3_-removebg-preview.png"
+  );
+  
   const toggleRadioPlay = () => {
     if (currentAudio) {
       setCurrentAudio(null);
