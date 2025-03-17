@@ -39,6 +39,11 @@ const PODCAST_FEEDS = [
     id: "feed2",
     name: "APPREND LE SWAHILI",
     url: "https://podcast.zenomedia.com/api/public/podcasts/dccffad2-6a72-41f0-b115-499b7a4bf255/rss"
+  },
+  {
+    id: "feed3",
+    name: "GOMA WEB RADIO",
+    url: "https://podcast.zenomedia.com/api/public/podcasts/4b4e6126-bbcb-4533-926f-a39820a5d11c/rss"
   }
 ];
 
