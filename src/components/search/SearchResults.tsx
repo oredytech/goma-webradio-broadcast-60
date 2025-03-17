@@ -3,15 +3,38 @@ import React from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import SearchResultCard from './SearchResultCard';
 import { SearchResult } from '@/types/search';
+import SearchFilter, { FilterType } from './SearchFilter';
 
 interface SearchResultsProps {
   isLoading: boolean;
   results: SearchResult[];
   searchTerm: string;
   highlightSearchTerm: (text: string, searchTerm: string) => React.ReactNode;
+  selectedFilter: FilterType;
+  onFilterChange: (filter: FilterType) => void;
 }
 
-const SearchResults = ({ isLoading, results, searchTerm, highlightSearchTerm }: SearchResultsProps) => {
+const SearchResults = ({ 
+  isLoading, 
+  results, 
+  searchTerm, 
+  highlightSearchTerm,
+  selectedFilter,
+  onFilterChange 
+}: SearchResultsProps) => {
+  
+  // Filter results based on the selected filter
+  const filteredResults = selectedFilter === 'all' 
+    ? results 
+    : results.filter(result => result.type === selectedFilter);
+
+  // Calculate counts for each type
+  const resultCounts = {
+    all: results.length,
+    article: results.filter(r => r.type === 'article').length,
+    podcast: results.filter(r => r.type === 'podcast').length
+  };
+
   return (
     <section className="max-w-4xl mx-auto my-10 px-4">
       {searchTerm.length >= 2 && (
@@ -23,6 +46,14 @@ const SearchResults = ({ isLoading, results, searchTerm, highlightSearchTerm }: 
           </h2>
           <div className="h-1 w-20 bg-primary"></div>
         </div>
+      )}
+
+      {!isLoading && results.length > 0 && (
+        <SearchFilter 
+          selectedFilter={selectedFilter}
+          onFilterChange={onFilterChange}
+          resultsCount={resultCounts}
+        />
       )}
 
       <div className="space-y-6">
@@ -42,14 +73,20 @@ const SearchResults = ({ isLoading, results, searchTerm, highlightSearchTerm }: 
           ))
         ) : (
           // Results
-          results.map((result) => (
-            <SearchResultCard 
-              key={result.id}
-              result={result} 
-              searchTerm={searchTerm}
-              highlightSearchTerm={highlightSearchTerm}
-            />
-          ))
+          filteredResults.length > 0 ? (
+            filteredResults.map((result) => (
+              <SearchResultCard 
+                key={result.id}
+                result={result} 
+                searchTerm={searchTerm}
+                highlightSearchTerm={highlightSearchTerm}
+              />
+            ))
+          ) : (
+            <p className="text-center text-muted-foreground py-6">
+              Aucun résultat ne correspond au filtre sélectionné.
+            </p>
+          )
         )}
       </div>
     </section>
