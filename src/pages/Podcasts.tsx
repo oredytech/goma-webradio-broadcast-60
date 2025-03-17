@@ -2,7 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import { usePodcastFeed } from '@/hooks/usePodcastFeed';
 import { Button } from '@/components/ui/button';
-import { Share2, Loader2, ChevronRight } from 'lucide-react';
+import { Share2, Loader2, ChevronRight, Mic } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useToast } from '@/components/ui/use-toast';
@@ -67,8 +67,17 @@ const Podcasts = ({
     return (
       <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
         <Header />
+        <div className="relative w-full h-[40vh] bg-gradient-to-r from-black to-secondary flex items-center justify-center">
+          <div className="absolute inset-0 opacity-20 bg-[url('/placeholder.svg')] bg-center bg-cover mix-blend-overlay"></div>
+          <div className="absolute inset-0 bg-black/50"></div>
+          <div className="container relative z-10 px-4 mx-auto text-center">
+            <h1 className="text-5xl font-bold text-white mb-4">PODCASTS</h1>
+            <div className="flex justify-center">
+              <Loader2 className="h-8 w-8 text-primary animate-spin" />
+            </div>
+          </div>
+        </div>
         <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold text-white mb-12">Tous les épisodes</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[...Array(9)].map((_, index) => (
               <div key={index} className="bg-secondary/50 rounded-lg p-6 animate-pulse">
@@ -91,9 +100,20 @@ const Podcasts = ({
   return (
     <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
       <Header />
+      {/* Hero Section with Microphone Background */}
+      <div className="relative w-full h-[40vh] bg-gradient-to-r from-black to-secondary flex items-center justify-center">
+        <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1589903308904-1010c2294adc?q=80&w=1740&auto=format&fit=crop')] bg-center bg-cover mix-blend-overlay"></div>
+        <div className="absolute inset-0 bg-black/50"></div>
+        <div className="container relative z-10 px-4 mx-auto text-center">
+          <Mic className="h-16 w-16 text-primary mx-auto mb-4" />
+          <h1 className="text-5xl font-bold text-white mb-4">PODCASTS</h1>
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            Découvrez notre collection de podcasts originaux et laissez-vous captiver par des histoires, des analyses et des interviews.
+          </p>
+        </div>
+      </div>
+      
       <main className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold text-white mb-12">Tous les épisodes</h1>
-        
         {/* Render each feed separately */}
         {Object.entries(data.feedEpisodes).map(([feedId, { name, episodes }]) => (
           <div key={feedId} className="mb-16">

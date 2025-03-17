@@ -66,18 +66,22 @@ const PodcastFeedEpisodes = ({
     return (
       <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
         <Header />
-        <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
-          <div className="flex items-center mb-8">
-            <Button 
-              variant="ghost" 
-              className="text-white mr-4" 
-              onClick={() => navigate('/podcasts')}
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Retour
-            </Button>
-            <h1 className="text-4xl font-bold text-white">Chargement...</h1>
+        <div className="relative w-full h-[40vh] bg-gradient-to-r from-black to-secondary flex items-center justify-center">
+          <div className="absolute inset-0 opacity-20 bg-[url('/placeholder.svg')] bg-center bg-cover mix-blend-overlay"></div>
+          <div className="absolute inset-0 bg-black/50"></div>
+          <div className="container relative z-10 px-4 mx-auto text-center">
+            <h1 className="text-5xl font-bold text-white mb-4">Chargement...</h1>
           </div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+          <Button 
+            variant="ghost" 
+            className="text-white mr-4 mb-8" 
+            onClick={() => navigate('/podcasts')}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Retour
+          </Button>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[...Array(9)].map((_, index) => (
               <div key={index} className="bg-secondary/50 rounded-lg p-6 animate-pulse">
@@ -97,30 +101,14 @@ const PodcastFeedEpisodes = ({
     return (
       <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
         <Header />
-        <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
-          <div className="flex items-center mb-8">
-            <Button 
-              variant="ghost" 
-              className="text-white mr-4" 
-              onClick={() => navigate('/podcasts')}
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Retour
-            </Button>
-            <h1 className="text-4xl font-bold text-white">Podcast non trouvé</h1>
+        <div className="relative w-full h-[40vh] bg-gradient-to-r from-black to-secondary flex items-center justify-center">
+          <div className="absolute inset-0 opacity-20 bg-[url('/placeholder.svg')] bg-center bg-cover mix-blend-overlay"></div>
+          <div className="absolute inset-0 bg-black/50"></div>
+          <div className="container relative z-10 px-4 mx-auto text-center">
+            <h1 className="text-5xl font-bold text-white mb-4">Podcast non trouvé</h1>
           </div>
-          <p className="text-white">Ce podcast n'existe pas ou a été supprimé.</p>
         </div>
-        <Footer />
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
-      <Header />
-      <main className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
-        <div className="flex items-center mb-8">
+        <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
           <Button 
             variant="ghost" 
             className="text-white mr-4" 
@@ -129,8 +117,40 @@ const PodcastFeedEpisodes = ({
             <ArrowLeft className="mr-2 h-4 w-4" />
             Retour
           </Button>
-          <h1 className="text-4xl font-bold text-white">{feedData.name}</h1>
+          <p className="text-white mt-4">Ce podcast n'existe pas ou a été supprimé.</p>
         </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Get the first episode image to use as a background
+  const feedImage = feedData.episodes[0]?.itunes?.image || '/placeholder.svg';
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
+      <Header />
+      {/* Hero Section with Feed Background */}
+      <div className="relative w-full h-[40vh] bg-gradient-to-r from-black to-secondary flex items-center justify-center">
+        <div className="absolute inset-0 opacity-20 bg-center bg-cover mix-blend-overlay" style={{backgroundImage: `url(${feedImage})`}}></div>
+        <div className="absolute inset-0 bg-black/50"></div>
+        <div className="container relative z-10 px-4 mx-auto text-center">
+          <h1 className="text-5xl font-bold text-white mb-4">{feedData.name}</h1>
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            Tous les épisodes de notre série de podcasts
+          </p>
+        </div>
+      </div>
+      
+      <main className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+        <Button 
+          variant="ghost" 
+          className="text-white mr-4 mb-8" 
+          onClick={() => navigate('/podcasts')}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Retour aux podcasts
+        </Button>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {feedData.episodes.map((episode, index) => (
