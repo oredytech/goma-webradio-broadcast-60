@@ -1,4 +1,6 @@
 
+import React, { useEffect } from 'react';
+
 interface ArticleHeroProps {
   title: string;
   featuredImageUrl: string;
@@ -7,7 +9,7 @@ interface ArticleHeroProps {
 
 const ArticleHero = ({ title, featuredImageUrl, description }: ArticleHeroProps) => {
   // Mettre à jour les balises meta directement dans le composant
-  React.useEffect(() => {
+  useEffect(() => {
     // Titre de la page
     document.title = `${title} | GOMA WEBRADIO`;
     
