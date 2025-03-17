@@ -113,7 +113,7 @@ const PodcastSection = ({
                 className="bg-primary/10 text-primary border-primary/30 hover:bg-primary/20"
                 onClick={() => navigate(`/podcasts/${feedId}`)}
               >
-                Voir tous les épisodes
+                Les épisodes
                 <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
