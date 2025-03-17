@@ -10,6 +10,7 @@ import Article from "./pages/Article";
 import News from "./pages/News";
 import About from "./pages/About";
 import Podcasts from "./pages/Podcasts";
+import PodcastFeedEpisodes from "./pages/PodcastFeedEpisodes";
 import PodcastPlayer from "./pages/PodcastPlayer";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -25,7 +26,6 @@ const App = () => {
   const [currentTrack, setCurrentTrack] = useState("Goma Webradio Live");
   const [currentArtist, setCurrentArtist] = useState("");
 
-  // Définir les meta tags par défaut pour le site entier
   usePageSEO(
     "GOMA WEBRADIO",
     "La voix de Goma - Actualités, Podcasts et Émissions en direct",
@@ -82,6 +82,17 @@ const App = () => {
                 path="/podcasts" 
                 element={
                   <Podcasts 
+                    isPlaying={isPlaying}
+                    setIsPlaying={setIsPlaying}
+                    currentAudio={currentAudio}
+                    setCurrentAudio={setCurrentAudio}
+                  />
+                } 
+              />
+              <Route 
+                path="/podcasts/:feedId" 
+                element={
+                  <PodcastFeedEpisodes 
                     isPlaying={isPlaying}
                     setIsPlaying={setIsPlaying}
                     currentAudio={currentAudio}

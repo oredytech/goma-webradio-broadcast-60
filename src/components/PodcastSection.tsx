@@ -2,7 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import { usePodcastFeed } from '@/hooks/usePodcastFeed';
 import { Button } from '@/components/ui/button';
-import { Share2 } from 'lucide-react';
+import { Share2, ChevronRight } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { getPodcastSlug } from '@/utils/podcastUtils';
 import { Badge } from '@/components/ui/badge';
@@ -105,7 +105,18 @@ const PodcastSection = ({
         {/* Render each feed separately */}
         {Object.entries(data.feedEpisodes).map(([feedId, { name, episodes }]) => (
           <div key={feedId} className="mb-12">
-            <h3 className="text-2xl font-bold text-white mb-6 border-l-4 border-primary pl-4">{name}</h3>
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-bold text-white border-l-4 border-primary pl-4">{name}</h3>
+              <Button
+                variant="outline"
+                size="sm"
+                className="bg-primary/10 text-primary border-primary/30 hover:bg-primary/20"
+                onClick={() => navigate(`/podcasts/${feedId}`)}
+              >
+                Voir tous les épisodes
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {episodes.slice(0, 3).map((episode, index) => (
                 <div 
