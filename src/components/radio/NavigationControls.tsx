@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { SkipBack, SkipForward } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -5,7 +6,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { usePodcastFeed } from '@/hooks/usePodcastFeed';
 import { findEpisodeBySlug, getPodcastSlug } from '@/utils/podcastUtils';
 import PlayPauseButton from './PlayPauseButton';
-import { useAudioPlayer } from '@/hooks/useAudioPlayer';
 
 interface NavigationControlsProps {
   currentAudio: string | null;
@@ -25,15 +25,7 @@ const NavigationControls = ({
   const { data: podcastData } = usePodcastFeed();
   const isPodcastRoute = location.pathname.includes('/podcast/');
   
-  const { 
-    isLoading, 
-    togglePlay 
-  } = useAudioPlayer({
-    isPlaying: false, 
-    currentAudio,
-    setCurrentAudio
-  });
-
+  const [isLoading, setIsLoading] = useState(false);
   const [localIsPlaying, setLocalIsPlaying] = useState(false);
   const isPlaying = globalIsPlaying !== undefined ? globalIsPlaying : localIsPlaying;
   
@@ -47,7 +39,6 @@ const NavigationControls = ({
     const newPlayState = !isPlaying;
     setLocalIsPlaying(newPlayState);
     setIsPlaying?.(newPlayState);
-    togglePlay();
   };
 
   const handlePrevEpisode = () => {

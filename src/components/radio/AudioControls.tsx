@@ -24,11 +24,6 @@ const AudioControls = ({
   handleVolumeChange,
   togglePlay
 }: AudioControlsProps) => {
-  const handleTogglePlay = () => {
-    // Make sure togglePlay updates the global state
-    togglePlay();
-  };
-
   return (
     <div className="flex items-center gap-2 sm:gap-4">
       {currentAudio && (
@@ -44,7 +39,7 @@ const AudioControls = ({
         <PlayPauseButton 
           isPlaying={isPlaying} 
           isLoading={isLoading} 
-          togglePlay={handleTogglePlay} 
+          togglePlay={togglePlay} 
         />
       )}
       

@@ -85,7 +85,7 @@ export const useAudioPlayer = ({
     }
   };
 
-  // Initialize audio element
+  // Initialize audio element only once
   useEffect(() => {
     if (!audioElementCreated.current) {
       const audio = new Audio();
@@ -93,7 +93,9 @@ export const useAudioPlayer = ({
       audioElementCreated.current = true;
       
       audio.addEventListener('timeupdate', () => {
-        setProgress((audio.currentTime / audio.duration) * 100);
+        if (audio.duration) {
+          setProgress((audio.currentTime / audio.duration) * 100);
+        }
       });
 
       audio.addEventListener('loadedmetadata', () => {
@@ -104,13 +106,10 @@ export const useAudioPlayer = ({
       audio.addEventListener('playing', () => {
         setIsLoading(false);
         setupMediaSession(setIsPlaying);
-        // Ensure global state is updated
-        setIsPlaying?.(true);
       });
 
       audio.addEventListener('pause', () => {
-        // Ensure global state is updated
-        setIsPlaying?.(false);
+        // No need to call setIsPlaying here to avoid duplicate state updates
       });
 
       audio.addEventListener('waiting', () => {

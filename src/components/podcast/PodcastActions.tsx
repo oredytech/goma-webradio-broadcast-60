@@ -23,8 +23,7 @@ const PodcastActions = ({
 }: PodcastActionsProps) => {
   const { toast } = useToast();
   const [loadingAudio, setLoadingAudio] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
+  
   // Check if this specific episode is currently playing
   const isThisEpisodePlaying = currentAudio === episode.enclosure.url && isPlaying;
 
