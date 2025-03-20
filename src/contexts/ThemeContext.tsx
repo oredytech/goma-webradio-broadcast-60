@@ -11,10 +11,10 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  // Initialiser le thème à 'dark' par défaut ou récupérer du localStorage
+  // Initialize theme to 'light' by default or from localStorage
   const [theme, setTheme] = useState<Theme>(() => {
     const savedTheme = localStorage.getItem('theme');
-    return (savedTheme === 'light' ? 'light' : 'dark') as Theme;
+    return (savedTheme === 'dark' ? 'dark' : 'light') as Theme;
   });
 
   const toggleTheme = () => {
@@ -25,13 +25,13 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
-  // Appliquer la classe de thème au document HTML
+  // Apply theme class to document HTML
   useEffect(() => {
     document.documentElement.classList.remove('light', 'dark');
     document.documentElement.classList.add(theme);
   }, [theme]);
 
-  // Appliquer le thème initial au chargement
+  // Apply initial theme on load
   useEffect(() => {
     document.documentElement.classList.add(theme);
   }, []);
