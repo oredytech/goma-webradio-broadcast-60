@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import * as ProgressPrimitive from "@radix-ui/react-progress"
 
@@ -20,7 +21,7 @@ const Progress = React.forwardRef<
     <ProgressPrimitive.Root
       ref={ref}
       className={cn(
-        "relative h-1 w-full overflow-hidden rounded-full bg-secondary cursor-pointer",
+        "relative h-2 w-full overflow-hidden rounded-full bg-gray-700 cursor-pointer",
         className
       )}
       onClick={handleClick}

@@ -14,7 +14,7 @@ const ProgressBar = ({ progress, handleSeek, showProgress }: ProgressBarProps) =
     <Progress 
       value={progress} 
       onSeek={handleSeek}
-      className="mb-2" 
+      className="h-2 bg-gray-600 mb-2" 
     />
   );
 };
