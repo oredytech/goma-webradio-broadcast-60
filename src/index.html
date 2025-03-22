@@ -19,11 +19,19 @@
     <meta property="og:locale" content="fr_FR" />
     
     <!-- Twitter - Ces valeurs seront écrasées par le hook useSEO -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://gomawebradio.com/" />
-    <meta name="twitter:title" content="GOMA WEBRADIO" />
-    <meta name="twitter:description" content="La voix de Goma - Actualités, Podcasts et Émissions en direct" />
-    <meta name="twitter:image" content="https://gomawebradio.com/GOWERA__3_-removebg-preview.png" />
+    <meta property="og:type" content="article" />
+      <meta property="og:url" content={currentUrl} />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={stripHtml(description)} />
+      <meta property="og:image" content={imageUrl} />
+      <meta property="og:site_name" content="GOMA WEBRADIO" />
+      <meta property="og:locale" content="fr_FR" />
+      
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:url" content={currentUrl} />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={stripHtml(description)} />
+      <meta name="twitter:image" content={imageUrl} />
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZJFRKKGTTS"></script>
