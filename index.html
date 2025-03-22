@@ -10,20 +10,22 @@
     <meta name="google-adsense-account" content="ca-pub-9651519664878161">
     
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://gomawebradio.com/" />
-    <meta property="og:title" content="GOMA WEBRADIO" />
-    <meta property="og:description" content="La voix de Goma - Musique, Actualités et Émissions" />
-    <meta property="og:image" content="https://gomawebradio.com/GOWERA__3_-removebg-preview.png" />
-    <meta property="og:site_name" content="GOMA WEBRADIO" />
-    <meta property="og:locale" content="fr_FR" />
-    
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://gomawebradio.com/" />
-    <meta name="twitter:title" content="GOMA WEBRADIO" />
-    <meta name="twitter:description" content="La voix de Goma - Musique, Actualiés et Émissions" />
-    <meta name="twitter:image" content="https://gomawebradio.com/GOWERA__3_-removebg-preview.png" />
+        <meta name="description" content={description} />
+        
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={currentUrl} />
+        <meta property="og:title" content={decodedTitle} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={featuredImageUrl} />
+        <meta property="og:site_name" content="GOMA WEBRADIO" />
+        <meta property="og:locale" content="fr_FR" />
+        {publishedDate && <meta property="article:published_time" content={publishedDate} />}
+        
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={currentUrl} />
+        <meta name="twitter:title" content={decodedTitle} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={featuredImageUrl} />
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZJFRKKGTTS"></script>
