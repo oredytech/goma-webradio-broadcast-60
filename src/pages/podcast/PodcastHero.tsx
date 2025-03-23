@@ -21,12 +21,15 @@ const PodcastHero = ({ title, description, imageUrl, episode, onPlayClick }: Pod
     return tmp.textContent || tmp.innerText || '';
   };
 
+  // Use the episode's image for the background pattern
+  const backgroundImage = episode.itunes?.image || imageUrl;
+
   return (
     <div className="relative w-full bg-[#1f2137] py-12 overflow-hidden">
-      {/* Background pattern with the podcast image */}
+      {/* Background pattern with the episode image */}
       <div className="absolute inset-0 opacity-10 bg-repeat" 
            style={{
-             backgroundImage: `url(${imageUrl})`, 
+             backgroundImage: `url(${backgroundImage})`, 
              backgroundSize: '200px',
              filter: 'blur(1px)'
            }}>
