@@ -3,6 +3,7 @@ import React from 'react';
 import { PodcastEpisode } from '@/hooks/usePodcastFeed';
 import { Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface PodcastHeaderProps {
   episode: PodcastEpisode;
@@ -17,9 +18,21 @@ const PodcastHeader = ({ episode, onPlayClick }: PodcastHeaderProps) => {
   };
 
   return (
-    <div className="bg-secondary/50 rounded-lg p-6 mb-8">
+    <div className="flex flex-col gap-6 mb-8">
+      {/* Image first on mobile, followed by content */}
+      <div className="w-full max-w-xs mx-auto md:hidden">
+        <img 
+          src={episode.itunes?.image || '/placeholder.svg'} 
+          alt={episode.title}
+          className="w-full aspect-square object-cover rounded-lg"
+          onError={handleImageError}
+          loading="lazy"
+        />
+      </div>
+      
       <div className="flex items-start gap-6 flex-col md:flex-row">
-        <div className="w-full md:w-36 lg:w-48 shrink-0">
+        {/* Hide image on mobile (shown above), show on desktop */}
+        <div className="hidden md:block w-full md:w-36 lg:w-48 shrink-0">
           <img 
             src={episode.itunes?.image || '/placeholder.svg'} 
             alt={episode.title}

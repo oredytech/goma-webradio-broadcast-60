@@ -19,7 +19,7 @@ const PodcastDetails = ({
   setCurrentAudio,
 }: PodcastDetailsProps) => {
   return (
-    <div className="bg-secondary/50 rounded-lg p-6 mb-8">
+    <div className="mb-8">
       {episode.feedSource && (
         <Badge variant="outline" className="mb-4 bg-primary/20 text-primary border-primary/30">
           {episode.feedSource}
