@@ -16,6 +16,7 @@ import EpisodeNavigation from './podcast/EpisodeNavigation';
 import PodcastMetaTags from './podcast/PodcastMetaTags';
 import { useEpisodeFinder } from './podcast/useEpisodeFinder';
 import { useEpisodeNavigation } from './podcast/useEpisodeNavigation';
+import PodcastHeader from '@/components/podcast/PodcastHeader';
 
 interface PodcastPlayerProps {
   isPlaying: boolean;
@@ -47,6 +48,17 @@ const PodcastPlayer = ({
     setIsPlaying
   });
 
+  const handlePlayEpisode = () => {
+    if (foundEpisode) {
+      if (currentAudio === foundEpisode.enclosure.url) {
+        setIsPlaying(!isPlaying);
+      } else {
+        setCurrentAudio(foundEpisode.enclosure.url);
+        setIsPlaying(true);
+      }
+    }
+  };
+
   if (isLoading) {
     return <PodcastLoading />;
   }
@@ -75,9 +87,11 @@ const PodcastPlayer = ({
         title={podcastTitle}
         description={podcastDescription}
         imageUrl={podcastImage}
+        episode={foundEpisode}
+        onPlayClick={handlePlayEpisode}
       />
       
-      <main className="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8 -mt-16 relative z-10">
+      <main className="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8 relative z-10">
         <div className="flex items-center justify-between mb-6">
           <Button 
             variant="ghost" 
@@ -98,7 +112,12 @@ const PodcastPlayer = ({
           />
         </div>
         
-        <div className="bg-secondary/50 rounded-lg overflow-hidden">
+        <PodcastHeader 
+          episode={foundEpisode}
+          onPlayClick={handlePlayEpisode}
+        />
+        
+        <div className="mb-12">
           <PodcastDetails 
             episode={foundEpisode}
             isPlaying={isPlaying}
