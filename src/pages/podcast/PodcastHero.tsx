@@ -26,7 +26,7 @@ const PodcastHero = ({ title, description, imageUrl, episode, onPlayClick }: Pod
   const backgroundImage = episode.itunes?.image || imageUrl;
 
   return (
-    <div className="relative w-full bg-[#1f2137] py-12 overflow-hidden">
+    <div className="relative w-full bg-secondary py-12 overflow-hidden">
       {/* Background pattern with the episode image */}
       <div className="absolute inset-0 opacity-10 bg-no-repeat bg-cover" 
            style={{
@@ -58,14 +58,14 @@ const PodcastHero = ({ title, description, imageUrl, episode, onPlayClick }: Pod
               </Button>
               
               {episode.feedSource && (
-                <div className="text-sm text-gray-300">
+                <div className="text-sm text-gray-200">
                   {episode.feedSource}
                 </div>
               )}
             </div>
             
             {episode.pubDate && (
-              <div className="text-sm text-gray-400">
+              <div className="text-sm text-gray-200">
                 {new Date(episode.pubDate).toLocaleDateString('fr-FR', {
                   year: 'numeric',
                   month: 'long',

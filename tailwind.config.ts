@@ -26,11 +26,11 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#3da7f2",
+          DEFAULT: "#9b87f5",
           foreground: "#ffffff",
         },
         secondary: {
-          DEFAULT: "#1A1F2C",
+          DEFAULT: "#6E59A5",
           foreground: "#ffffff",
         },
         destructive: {
@@ -70,7 +70,7 @@ export default {
             h4: { color: 'white' },
             p: { color: 'white' },
             strong: { color: 'white' },
-            a: { color: '#3da7f2' },
+            a: { color: '#9b87f5' },
           },
         },
       },

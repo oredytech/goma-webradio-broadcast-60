@@ -19,7 +19,7 @@ const ArticleHero = ({ title, featuredImageUrl }: ArticleHeroProps) => {
             backgroundPosition: 'center' 
           }}
         />
-        <div className="absolute inset-0 bg-black/50" />
+        <div className="absolute inset-0 bg-secondary/70" />
         <div className="relative container mx-auto px-4 h-full flex items-center justify-center">
           <div className="max-w-3xl text-center mt-8">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
