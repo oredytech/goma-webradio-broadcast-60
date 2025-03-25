@@ -27,29 +27,26 @@ const PodcastHero = ({ title, description, imageUrl, episode, onPlayClick }: Pod
   return (
     <div className="relative w-full bg-[#1f2137] py-12 overflow-hidden">
       {/* Background pattern with the episode image */}
-      <div className="absolute inset-0 opacity-10 bg-repeat" 
+      <div className="absolute inset-0 opacity-10 bg-no-repeat bg-cover" 
            style={{
-             backgroundImage: `url(${backgroundImage})`, 
-             backgroundSize: '200px',
+             backgroundImage: `url(${backgroundImage})`,
+             backgroundSize: 'cover',
+             backgroundPosition: 'center',
              filter: 'blur(1px)'
            }}>
       </div>
       
-      <div className="absolute inset-0 bg-gradient-to-b from-secondary/80 to-secondary/95"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-secondary/60 to-secondary/80"></div>
       
       <div className="relative z-10 container mx-auto px-4">
-        <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-          {/* Left content: Title, description, and action buttons */}
+        <div className="flex flex-col items-center text-center gap-8">
+          {/* Content: Title and action buttons */}
           <div className="flex-1 text-white max-w-3xl">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
               {title}
             </h1>
             
-            <p className="text-gray-300 text-lg mb-6 line-clamp-4">
-              {stripHtml(description)}
-            </p>
-            
-            <div className="flex items-center gap-4 mb-4">
+            <div className="flex items-center justify-center gap-4 mb-4">
               <Button 
                 onClick={onPlayClick}
                 size="lg"
@@ -77,8 +74,8 @@ const PodcastHero = ({ title, description, imageUrl, episode, onPlayClick }: Pod
             )}
           </div>
           
-          {/* Right content: Podcast artwork */}
-          <div className="w-full md:w-64 lg:w-80 shrink-0">
+          {/* Podcast artwork */}
+          <div className="w-full max-w-xs md:w-64 lg:w-80 shrink-0">
             <div className="aspect-square rounded-lg overflow-hidden shadow-xl">
               <img 
                 src={imageUrl} 
