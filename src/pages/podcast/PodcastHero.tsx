@@ -3,6 +3,7 @@ import { Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { PodcastEpisode } from '@/hooks/usePodcastFeed';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface PodcastHeroProps {
   title: string;
@@ -36,17 +37,17 @@ const PodcastHero = ({ title, description, imageUrl, episode, onPlayClick }: Pod
            }}>
       </div>
       
-      <div className="absolute inset-0 bg-gradient-to-b from-secondary/60 to-secondary/80"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-secondary/60 to-secondary/80 pt-20"></div>
       
       <div className="relative z-10 container mx-auto px-4">
-        <div className="flex flex-col items-center text-center gap-8">
+        <div className="flex flex-col md:flex-row md:justify-between items-center text-center md:text-left gap-8">
           {/* Content: Title and action buttons */}
           <div className="flex-1 text-white max-w-3xl">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
               {title}
             </h1>
             
-            <div className="flex items-center justify-center gap-4 mb-4">
+            <div className="flex items-center justify-center md:justify-start gap-4 mb-4">
               <Button 
                 onClick={onPlayClick}
                 size="lg"
