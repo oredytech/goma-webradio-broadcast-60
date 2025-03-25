@@ -1,4 +1,3 @@
-
 import React from "react";
 import RadioPlayer from "@/components/radio/RadioPlayer";
 import Header from "@/components/Header";
@@ -34,7 +33,7 @@ const Index = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Index
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-secondary to-accent">
+    <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
       <Header />
       
       {/* Hero Section with Play Button */}
@@ -45,7 +44,7 @@ const Index = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Index
             <h1 className="text-4xl sm:text-6xl font-bold text-white mb-6">
               Goma Webradio
             </h1>
-            <p className="text-xl text-gray-200 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
              Fasi ya Ndule na ma infos za palet
             </p>
             

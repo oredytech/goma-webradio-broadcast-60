@@ -3,7 +3,7 @@ const ArticleSidebar = () => {
   return (
     <aside className="lg:col-span-4 space-y-8">
       {/* Recent Comments Section */}
-      <div className="bg-accent/50 rounded-lg p-6 backdrop-blur-sm">
+      <div className="bg-secondary/50 rounded-lg p-6 backdrop-blur-sm">
         <h3 className="text-xl font-bold text-white mb-4">Derniers commentaires</h3>
         <div className="space-y-4">
           <div className="border-b border-primary/20 pb-4">
@@ -13,7 +13,7 @@ const ArticleSidebar = () => {
       </div>
 
       {/* Advertisement Section */}
-      <div className="bg-accent/50 rounded-lg p-6 backdrop-blur-sm sticky top-24">
+      <div className="bg-secondary/50 rounded-lg p-6 backdrop-blur-sm sticky top-24">
         <h3 className="text-xl font-bold text-white mb-4">Publicité</h3>
         <div className="rounded-lg flex items-center justify-center">
           <a 
