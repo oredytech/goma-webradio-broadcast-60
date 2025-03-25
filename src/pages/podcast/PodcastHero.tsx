@@ -40,7 +40,7 @@ const PodcastHero = ({ title, description, imageUrl, episode, onPlayClick }: Pod
       <div className="absolute inset-0 bg-gradient-to-b from-secondary/60 to-secondary/80 pt-20"></div>
       
       <div className="relative z-10 container mx-auto px-4">
-        <div className="flex flex-col md:flex-row md:justify-between items-center text-center md:text-left gap-8">
+        <div className="flex flex-col md:flex-row md:justify-between items-center text-center md:text-left gap-8 mt-5">
           {/* Content: Title and action buttons */}
           <div className="flex-1 text-white max-w-3xl">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
