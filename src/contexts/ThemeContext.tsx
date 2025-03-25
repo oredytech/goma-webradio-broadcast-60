@@ -11,11 +11,8 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  // Initialize theme to 'light' by default or from localStorage
-  const [theme, setTheme] = useState<Theme>(() => {
-    const savedTheme = localStorage.getItem('theme');
-    return (savedTheme === 'dark' ? 'dark' : 'light') as Theme;
-  });
+  // Initialize theme to 'light' as default, overriding any stored preference
+  const [theme, setTheme] = useState<Theme>('light');
 
   const toggleTheme = () => {
     setTheme(prevTheme => {
@@ -31,9 +28,12 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     document.documentElement.classList.add(theme);
   }, [theme]);
 
-  // Apply initial theme on load
+  // Apply initial light theme on load
   useEffect(() => {
-    document.documentElement.classList.add(theme);
+    // Force light mode on initial load
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+    localStorage.setItem('theme', 'light');
   }, []);
 
   return (

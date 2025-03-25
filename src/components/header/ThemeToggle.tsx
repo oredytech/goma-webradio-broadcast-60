@@ -6,9 +6,11 @@ const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
   const isDarkMode = theme === 'dark';
 
+  // The toggle is shown but it's mostly for visual consistency
+  // Light mode is enforced by the ThemeProvider
   return (
     <button 
-      className="p-2 rounded-full text-white hover:bg-primary/20 hover:text-primary transition-colors"
+      className="p-2 rounded-full text-secondary hover:bg-primary/20 hover:text-primary transition-colors"
       aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
       onClick={toggleTheme}
     >
