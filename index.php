@@ -5,7 +5,7 @@ define('SITE_BASE_URL', 'https://gomawebradio.com'); // URL de base de VOTRE app
 define('DEFAULT_TITLE', 'GOMA WEBRADIO - La voix de Goma');
 define('DEFAULT_DESCRIPTION', 'La voix de Goma - Musique, Actualités et Émissions');
 // Assurez-vous que cette image par défaut existe et est accessible publiquement
-define('DEFAULT_IMAGE_URL', SITE_BASE_URL . '/images/goma_webradio_og_default.jpg'); // Mettez un chemin VALIDE vers une image par défaut
+define('DEFAULT_IMAGE_URL', SITE_BASE_URL . '/GOWERA__3_-removebg-preview.png'); // Mettez un chemin VALIDE vers une image par défaut
 
 // --- Initialisation des variables Meta ---
 $metaTitle = DEFAULT_TITLE;
