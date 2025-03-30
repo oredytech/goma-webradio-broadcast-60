@@ -6,7 +6,7 @@
 # Handle SPA routing
 [[redirects]]
   from = "/*"
-  to = "/index.php"
+  to = "/index.html"
   status = 200
 
 # Cache control for assets
