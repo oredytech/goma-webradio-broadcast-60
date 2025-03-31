@@ -5,25 +5,25 @@
 
 @layer base {
   :root {
-    /* Light mode variables with purple theme */
-    --background: 260 60% 97%;
-    --foreground: 260 50% 20%;
-    --card: 260 60% 97%;
-    --card-foreground: 260 50% 20%;
-    --popover: 260 60% 97%;
-    --popover-foreground: 260 50% 20%;
+    /* Light mode variables with light blue theme */
+    --background: 202 100% 96%;
+    --foreground: 222 47% 11%;
+    --card: 202 100% 96%;
+    --card-foreground: 222 47% 11%;
+    --popover: 202 100% 96%;
+    --popover-foreground: 222 47% 11%;
     --primary: 260 76% 75%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 260 30% 50%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 260 30% 90%;
-    --muted-foreground: 260 20% 40%;
-    --accent: 260 30% 54%;
-    --accent-foreground: 210 40% 98%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 204 33% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 93%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 40% 90%;
+    --accent-foreground: 222 47% 11%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 260 30% 80%;
-    --input: 260 30% 80%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
     --ring: 260 76% 75%;
     --radius: 0.5rem;
   }
@@ -61,7 +61,7 @@
 
   /* Custom scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
+    width: a8px;
   }
 
   ::-webkit-scrollbar-track {

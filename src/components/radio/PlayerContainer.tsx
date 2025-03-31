@@ -16,7 +16,7 @@ const PlayerContainer = ({
   children 
 }: PlayerContainerProps) => {
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-accent/95 backdrop-blur-sm border-t border-primary/20 h-[80px] p-2 z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-background/95 dark:bg-accent/95 backdrop-blur-sm border-t border-border dark:border-primary/20 h-[80px] p-2 z-50">
       <div className="max-w-7xl mx-auto h-full">
         <ProgressBar 
           progress={progress} 

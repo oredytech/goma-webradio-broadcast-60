@@ -30,8 +30,8 @@ export default {
           foreground: "#ffffff",
         },
         secondary: {
-          DEFAULT: "#6E59A5",
-          foreground: "#ffffff",
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -42,8 +42,12 @@ export default {
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "#7E69AB",
-          foreground: "#ffffff",
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         },
       },
       keyframes: {
@@ -62,6 +66,18 @@ export default {
       },
       typography: {
         DEFAULT: {
+          css: {
+            color: 'hsl(var(--foreground))',
+            h1: { color: 'hsl(var(--foreground))' },
+            h2: { color: 'hsl(var(--foreground))' },
+            h3: { color: 'hsl(var(--foreground))' },
+            h4: { color: 'hsl(var(--foreground))' },
+            p: { color: 'hsl(var(--foreground))' },
+            strong: { color: 'hsl(var(--foreground))' },
+            a: { color: '#9b87f5' },
+          },
+        },
+        dark: {
           css: {
             color: 'white',
             h1: { color: 'white' },

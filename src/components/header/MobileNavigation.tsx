@@ -19,10 +19,10 @@ const MobileNavigation = ({
 }: MobileNavigationProps) => {
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="left" className="max-w-[280px] p-0 bg-secondary/95 backdrop-blur-sm border-r border-primary/20">
+      <SheetContent side="left" className="max-w-[280px] p-0 bg-background/95 dark:bg-secondary/95 backdrop-blur-sm border-r border-border dark:border-primary/20">
         <div className="flex justify-between items-center p-4">
           <Logo />
-          <SheetClose className="text-white p-2" onClick={onClose} aria-label="Close menu">
+          <SheetClose className="text-foreground dark:text-white p-2" onClick={onClose} aria-label="Close menu">
             <X className="h-6 w-6" />
           </SheetClose>
         </div>
