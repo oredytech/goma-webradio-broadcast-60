@@ -31,21 +31,21 @@
   .dark {
     /* Dark mode variables with purple theme */
     --background: 260 30% 15%;
-    --foreground: 210 40% 98%;
+    --foreground: 0 0% 100%;
     --card: 260 30% 15%;
-    --card-foreground: 210 40% 98%;
+    --card-foreground: 0 0% 100%;
     --popover: 260 30% 15%;
-    --popover-foreground: 210 40% 98%;
+    --popover-foreground: 0 0% 100%;
     --primary: 260 76% 75%;
     --primary-foreground: 260 50% 20%;
     --secondary: 260 30% 25%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary-foreground: 0 0% 100%;
     --muted: 260 30% 25%;
-    --muted-foreground: 260 20% 70%;
+    --muted-foreground: 0 0% 80%;
     --accent: 260 30% 35%;
-    --accent-foreground: 210 40% 98%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
     --border: 260 30% 25%;
     --input: 260 30% 25%;
     --ring: 260 76% 75%;

@@ -15,11 +15,11 @@ const ContactDialog = () => {
           Contacts
         </button>
       </DialogTrigger>
-      <DialogContent className="bg-secondary/95 backdrop-blur-sm text-white border border-primary/20">
+      <DialogContent className="bg-card dark:bg-secondary/95 backdrop-blur-sm text-card-foreground dark:text-white border border-border dark:border-primary/20">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-white">Nos coordonnées</DialogTitle>
+          <DialogTitle className="text-xl font-bold text-foreground dark:text-white">Nos coordonnées</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 text-gray-300 mt-4">
+        <div className="space-y-4 text-muted-foreground dark:text-gray-300 mt-4">
           <div className="flex items-start space-x-3">
             <span className="text-primary">📍</span>
             <p>RDCongo, Province du Nord-Kivu<br />
