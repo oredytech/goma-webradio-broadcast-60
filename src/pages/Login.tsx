@@ -1,3 +1,4 @@
+
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import { useState } from "react";
@@ -47,10 +48,10 @@ const Login = () => {
       <div className="container px-4 sm:px-6 lg:px-8 flex items-center justify-center min-h-[calc(100vh-4rem)] py-4 sm:py-8">
         <div className="w-full max-w-md space-y-4 bg-secondary/50 p-4 sm:p-6 rounded-lg border border-primary/20 backdrop-blur-sm animate-fade-in my-4">
           <div className="space-y-2 text-center">
-            <h1 className="text-2xl font-bold text-white">
+            <h1 className="text-2xl font-bold text-foreground dark:text-white">
               {isLogin ? "Connexion" : "Créer un compte"}
             </h1>
-            <p className="text-gray-400">
+            <p className="text-foreground/80 dark:text-gray-400">
               {isLogin
                 ? "Entrez vos identifiants pour accéder à votre compte"
                 : "Remplissez le formulaire pour créer votre compte"}

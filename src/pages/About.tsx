@@ -1,9 +1,10 @@
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 const About = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
+    <div className="min-h-screen bg-gradient-to-b from-secondary to-black dark:from-secondary dark:to-black">
       <Header />
       
       <main className="pt-24 pb-16">
@@ -14,9 +15,9 @@ const About = () => {
             
             {/* Content */}
             <div className="relative bg-secondary/50 backdrop-blur-sm rounded-lg p-8 md:p-12 shadow-xl border border-primary/20">
-              <h1 className="text-4xl font-bold text-white mb-8">À propos de Goma Webradio</h1>
+              <h1 className="text-4xl font-bold text-foreground dark:text-white mb-8">À propos de Goma Webradio</h1>
               
-              <div className="space-y-6 text-gray-300 leading-relaxed">
+              <div className="space-y-6 text-foreground dark:text-gray-300 leading-relaxed">
                 <p className="text-lg">
                   Créée en 2020 par Oredy Musanda, un technicien radio passionné, Goma Webradio est une station en ligne basée à Goma, en République Démocratique du Congo. Véritable vitrine de la richesse et de la diversité de la culture congolaise, notre radio s'engage à promouvoir les traditions, les talents, et les sonorités qui font vibrer le cœur du Congo.
                 </p>

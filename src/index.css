@@ -7,19 +7,19 @@
   :root {
     /* Light mode variables with light blue theme */
     --background: 202 100% 96%;
-    --foreground: 222 47% 11%;
+    --foreground: 220 13% 10%; /* Darker text color for light mode */
     --card: 202 100% 96%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 220 13% 10%; /* Darker text color for light mode */
     --popover: 202 100% 96%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 220 13% 10%; /* Darker text color for light mode */
     --primary: 260 76% 75%;
-    --primary-foreground: 222 47% 11%;
+    --primary-foreground: 220 13% 10%; /* Darker text color for light mode */
     --secondary: 204 33% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary-foreground: 220 13% 10%; /* Darker text color for light mode */
     --muted: 210 40% 93%;
-    --muted-foreground: 215 16% 47%;
+    --muted-foreground: 220 13% 20%; /* Darker muted text for light mode */
     --accent: 210 40% 90%;
-    --accent-foreground: 222 47% 11%;
+    --accent-foreground: 220 13% 10%; /* Darker text color for light mode */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214 32% 91%;
@@ -61,7 +61,7 @@
 
   /* Custom scrollbar */
   ::-webkit-scrollbar {
-    width: a8px;
+    width: 8px;
   }
 
   ::-webkit-scrollbar-track {

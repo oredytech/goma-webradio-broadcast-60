@@ -40,11 +40,11 @@ const ExtraArticles = () => {
                 </div>
                 <div className="p-6">
                   <h3
-                    className="text-xl font-bold text-white group-hover:text-primary transition-colors line-clamp-2"
+                    className="text-xl font-bold text-foreground dark:text-white group-hover:text-primary transition-colors line-clamp-2"
                     dangerouslySetInnerHTML={{ __html: article.title.rendered }}
                   />
                   <div
-                    className="text-gray-300 mt-2 line-clamp-2"
+                    className="text-muted-foreground dark:text-gray-300 mt-2 line-clamp-2"
                     dangerouslySetInnerHTML={{ __html: article.excerpt.rendered }}
                   />
                 </div>

@@ -34,7 +34,7 @@ const Index = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Index
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-secondary to-accent">
+    <div className="min-h-screen bg-gradient-to-b from-secondary to-accent dark:from-secondary dark:to-accent">
       <Header />
       
       {/* Hero Section with Play Button */}
@@ -42,10 +42,10 @@ const Index = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Index
         <div className="absolute inset-0 bg-[url('/lovable-uploads/5ae4e570-d67b-4af1-934b-7e4050e720c9.png')] opacity-20 bg-cover bg-center" />
         <div className="relative max-w-7xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
           <div className="text-center animate-fade-in space-y-8">
-            <h1 className="text-4xl sm:text-6xl font-bold text-white mb-6">
+            <h1 className="text-4xl sm:text-6xl font-bold text-foreground dark:text-white mb-6">
               Goma Webradio
             </h1>
-            <p className="text-xl text-gray-200 max-w-2xl mx-auto">
+            <p className="text-xl text-foreground dark:text-gray-200 max-w-2xl mx-auto">
              Fasi ya Ndule na ma infos za palet
             </p>
             

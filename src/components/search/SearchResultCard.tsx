@@ -46,11 +46,11 @@ const SearchResultCard = ({ result, searchTerm, highlightSearchTerm }: SearchRes
               <h3 className="font-semibold text-lg hover:text-primary transition-colors">
                 <Link to={resultUrl}>{highlightSearchTerm(result.title, searchTerm)}</Link>
               </h3>
-              <span className="text-xs px-2 py-1 rounded-full bg-secondary text-white uppercase">
+              <span className="text-xs px-2 py-1 rounded-full bg-secondary text-foreground dark:text-white uppercase">
                 {result.type === 'article' ? 'Article' : 'Podcast'}
               </span>
             </div>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground dark:text-gray-300">
               {typeof result.excerpt === 'string' 
                 ? highlightSearchTerm(result.excerpt, searchTerm)
                 : result.excerpt}
@@ -59,7 +59,7 @@ const SearchResultCard = ({ result, searchTerm, highlightSearchTerm }: SearchRes
         </div>
       </CardContent>
       <CardFooter className="bg-secondary/10 py-2 px-6">
-        <div className="text-sm text-muted-foreground">
+        <div className="text-sm text-muted-foreground dark:text-gray-300">
           Publié le: {new Date(result.date).toLocaleDateString('fr-FR')}
         </div>
       </CardFooter>
