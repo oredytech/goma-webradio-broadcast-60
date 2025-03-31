@@ -7,7 +7,7 @@ import { getArticleSlug } from "@/utils/articleUtils";
 const ExtraArticles = () => {
   const { data: articles, isLoading, error } = useWordpressArticles();
 
-  if (isLoading) return <div className="text-center py-8">Chargement des articles...</div>;
+  if (isLoading) return <div className="text-center py-8 text-foreground">Chargement des articles...</div>;
   if (error) return null;
   if (!articles?.length) return null;
 
@@ -40,11 +40,11 @@ const ExtraArticles = () => {
                 </div>
                 <div className="p-6">
                   <h3
-                    className="text-xl font-bold text-foreground dark:text-white group-hover:text-primary transition-colors line-clamp-2"
+                    className="text-xl font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2"
                     dangerouslySetInnerHTML={{ __html: article.title.rendered }}
                   />
                   <div
-                    className="text-muted-foreground dark:text-gray-300 mt-2 line-clamp-2"
+                    className="text-muted-foreground mt-2 line-clamp-2"
                     dangerouslySetInnerHTML={{ __html: article.excerpt.rendered }}
                   />
                 </div>

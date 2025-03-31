@@ -31,7 +31,7 @@ const ArticleContent = ({ article }: ArticleContentProps) => {
 
       {/* Author Information */}
       <div className="bg-secondary/50 dark:bg-secondary/50 rounded-lg p-6 backdrop-blur-sm">
-        <h2 className="text-2xl font-bold text-foreground dark:text-white mb-6">À propos de l'article</h2>
+        <h2 className="text-2xl font-bold text-foreground mb-6">À propos de l'article</h2>
         <div className="flex items-start gap-4">
           <Avatar className="h-16 w-16 rounded-full border-2 border-primary">
             <AvatarImage src={avatarUrl} alt={`Avatar de ${article._embedded?.author?.[0]?.name || "l'auteur"}`} />
@@ -40,18 +40,18 @@ const ArticleContent = ({ article }: ArticleContentProps) => {
             </AvatarFallback>
           </Avatar>
           <div className="flex-1">
-            <h3 className="text-xl font-semibold text-foreground dark:text-white">
+            <h3 className="text-xl font-semibold text-foreground">
               {article._embedded?.author?.[0]?.name || "Auteur Inconnu"}
             </h3>
             <div className="mt-1 space-y-2">
-              <p className="text-sm text-muted-foreground dark:text-gray-300">
+              <p className="text-sm text-muted-foreground">
                 Publié le {formattedDate}
               </p>
-              <p className="text-sm text-muted-foreground dark:text-gray-300">
+              <p className="text-sm text-muted-foreground">
                 Source: <span className="text-primary">Totalement Actus</span>
               </p>
               {article._embedded?.author?.[0]?.description && (
-                <p className="text-sm text-muted-foreground dark:text-gray-300 mt-2">
+                <p className="text-sm text-muted-foreground mt-2">
                   {article._embedded?.author?.[0]?.description}
                 </p>
               )}

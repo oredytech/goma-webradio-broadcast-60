@@ -5,50 +5,50 @@
 
 @layer base {
   :root {
-    /* Light mode variables with light blue theme */
-    --background: 202 100% 96%;
-    --foreground: 220 13% 10%; /* Darker text color for light mode */
+    /* Light mode variables */
+    --background: 202 100% 96%; /* #eef5ff */
+    --foreground: 222 27% 14%; /* #1a1f2c - text color */
     --card: 202 100% 96%;
-    --card-foreground: 220 13% 10%; /* Darker text color for light mode */
+    --card-foreground: 222 27% 14%;
     --popover: 202 100% 96%;
-    --popover-foreground: 220 13% 10%; /* Darker text color for light mode */
-    --primary: 260 76% 75%;
-    --primary-foreground: 220 13% 10%; /* Darker text color for light mode */
+    --popover-foreground: 222 27% 14%;
+    --primary: 210 76% 41%; /* #1a6fb9 - keep original buttons/logo color */
+    --primary-foreground: 0 0% 100%;
     --secondary: 204 33% 96%;
-    --secondary-foreground: 220 13% 10%; /* Darker text color for light mode */
+    --secondary-foreground: 222 27% 14%;
     --muted: 210 40% 93%;
-    --muted-foreground: 220 13% 20%; /* Darker muted text for light mode */
+    --muted-foreground: 222 27% 14%;
     --accent: 210 40% 90%;
-    --accent-foreground: 220 13% 10%; /* Darker text color for light mode */
+    --accent-foreground: 222 27% 14%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 260 76% 75%;
+    --ring: 210 76% 41%;
     --radius: 0.5rem;
   }
  
   .dark {
-    /* Dark mode variables with purple theme */
-    --background: 260 30% 15%;
-    --foreground: 0 0% 100%;
-    --card: 260 30% 15%;
-    --card-foreground: 0 0% 100%;
-    --popover: 260 30% 15%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 260 76% 75%;
-    --primary-foreground: 260 50% 20%;
-    --secondary: 260 30% 25%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 260 30% 25%;
-    --muted-foreground: 0 0% 80%;
-    --accent: 260 30% 35%;
-    --accent-foreground: 0 0% 100%;
+    /* Dark mode variables */
+    --background: 222 27% 14%; /* #1a1f2c */
+    --foreground: 202 100% 96%; /* #eef5ff - text color */
+    --card: 222 27% 14%;
+    --card-foreground: 202 100% 96%;
+    --popover: 222 27% 14%;
+    --popover-foreground: 202 100% 96%;
+    --primary: 210 76% 41%; /* #1a6fb9 - keep original buttons/logo color */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 222 27% 18%;
+    --secondary-foreground: 202 100% 96%;
+    --muted: 222 27% 18%;
+    --muted-foreground: 202 100% 90%;
+    --accent: 222 27% 24%;
+    --accent-foreground: 202 100% 96%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 260 30% 25%;
-    --input: 260 30% 25%;
-    --ring: 260 76% 75%;
+    --destructive-foreground: 202 100% 96%;
+    --border: 222 27% 18%;
+    --input: 222 27% 18%;
+    --ring: 210 76% 41%;
   }
 
   * {

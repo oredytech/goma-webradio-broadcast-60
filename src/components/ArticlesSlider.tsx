@@ -20,7 +20,7 @@ const ArticlesSlider = () => {
     return () => clearInterval(interval);
   }, [articles]);
 
-  if (isLoading) return <div className="text-center py-8">Chargement des articles...</div>;
+  if (isLoading) return <div className="text-center py-8 text-foreground">Chargement des articles...</div>;
   if (error) return <div className="text-center py-8 text-red-500">Erreur de chargement des articles</div>;
   if (!articles?.length) return null;
 
