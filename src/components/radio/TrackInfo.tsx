@@ -19,15 +19,15 @@ const TrackInfo = ({
   progress 
 }: TrackInfoProps) => {
   return (
-    <div className="text-white flex-1 min-w-0">
+    <div className="text-foreground flex-1 min-w-0">
       <div className="flex items-center gap-2">
         {currentAudio && duration > 0 && (
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-foreground/70">
             {formatTime(duration * (progress / 100))} / {formatTime(duration)}
           </span>
         )}
         {!currentAudio && liveTitle && (
-          <span className="text-xs text-gray-300 truncate">
+          <span className="text-xs text-foreground/70 truncate">
             {liveTitle}
           </span>
         )}
@@ -36,7 +36,7 @@ const TrackInfo = ({
         {currentAudio ? currentTrack : "Goma Webradio Live"}
       </h3>
       {currentArtist && (
-        <p className="text-xs sm:text-sm text-gray-300 truncate">{currentArtist}</p>
+        <p className="text-xs sm:text-sm text-foreground/70 truncate">{currentArtist}</p>
       )}
     </div>
   );

@@ -24,9 +24,9 @@ const VolumeControl = ({ volume, handleVolumeChange }: VolumeControlProps) => {
         className="hover:bg-primary/20"
       >
         {isMuted ? (
-          <VolumeX className="w-5 h-5 text-white" />
+          <VolumeX className="w-5 h-5 text-foreground" />
         ) : (
-          <Volume2 className="w-5 h-5 text-white" />
+          <Volume2 className="w-5 h-5 text-foreground" />
         )}
       </Button>
       <Slider

@@ -27,9 +27,9 @@ const PlayPauseButton = ({ isPlaying, isLoading, togglePlay }: PlayPauseButtonPr
         aria-label={isPlaying ? "Pause" : "Play"}
       >
         {isPlaying ? (
-          <Pause className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+          <Pause className="h-5 w-5 sm:h-6 sm:w-6 text-foreground" />
         ) : (
-          <Play className="h-5 w-5 sm:h-6 sm:w-6 text-white ml-0.5" />
+          <Play className="h-5 w-5 sm:h-6 sm:w-6 text-foreground ml-0.5" />
         )}
       </Button>
     </div>

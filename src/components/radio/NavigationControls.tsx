@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { SkipBack, SkipForward } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -97,9 +96,9 @@ const NavigationControls = ({
         size="icon"
         onClick={handlePrevEpisode}
         disabled={!hasPrevious}
-        className="hover:bg-primary/20 text-white"
+        className="hover:bg-primary/20 text-foreground"
       >
-        <SkipBack className="h-5 w-5 text-white" />
+        <SkipBack className="h-5 w-5 text-foreground" />
       </Button>
       
       <PlayPauseButton 
@@ -113,9 +112,9 @@ const NavigationControls = ({
         size="icon"
         onClick={handleNextEpisode}
         disabled={!hasNext}
-        className="hover:bg-primary/20 text-white"
+        className="hover:bg-primary/20 text-foreground"
       >
-        <SkipForward className="h-5 w-5 text-white" />
+        <SkipForward className="h-5 w-5 text-foreground" />
       </Button>
     </div>
   );
