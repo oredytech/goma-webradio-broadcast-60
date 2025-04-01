@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -51,7 +52,7 @@ const ContactSection = () => {
   };
 
   return (
-    <section className="py-16">
+    <section className="py-16 bg-secondary text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-white mb-8">Contact</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

@@ -22,7 +22,7 @@ const NewsSection = () => {
             <div key={index} className="bg-accent/50 rounded-lg p-6 hover:bg-accent/70 transition-all duration-300">
               <span className="text-primary text-sm">{item.date}</span>
               <h3 className="text-xl font-bold text-foreground mt-2">{item.title}</h3>
-              <p className="text-muted-foreground mt-2">{item.description}</p>
+              <p className="text-foreground mt-2">{item.description}</p>
             </div>
           ))}
         </div>

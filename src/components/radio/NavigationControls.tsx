@@ -97,7 +97,7 @@ const NavigationControls = ({
         size="icon"
         onClick={handlePrevEpisode}
         disabled={!hasPrevious}
-        className="hover:bg-primary/20"
+        className="hover:bg-primary/20 text-white"
       >
         <SkipBack className="h-5 w-5 text-white" />
       </Button>
@@ -113,7 +113,7 @@ const NavigationControls = ({
         size="icon"
         onClick={handleNextEpisode}
         disabled={!hasNext}
-        className="hover:bg-primary/20"
+        className="hover:bg-primary/20 text-white"
       >
         <SkipForward className="h-5 w-5 text-white" />
       </Button>

@@ -25,7 +25,7 @@ const AudioControls = ({
   togglePlay
 }: AudioControlsProps) => {
   return (
-    <div className="flex items-center gap-2 sm:gap-4">
+    <div className="flex items-center gap-2 sm:gap-4 text-white">
       {currentAudio && (
         <NavigationControls 
           currentAudio={currentAudio}

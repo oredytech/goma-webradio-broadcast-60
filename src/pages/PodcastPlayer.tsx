@@ -73,7 +73,7 @@ const PodcastPlayer = ({
   const currentUrl = window.location.href;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-secondary to-black">
+    <div className="min-h-screen bg-gradient-to-b from-secondary to-black text-white">
       <PodcastMetaTags 
         title={podcastTitle}
         description={podcastDescription}
