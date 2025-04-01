@@ -11,10 +11,10 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  // Get stored theme or default to 'light'
+  // Get stored theme or default to 'dark'
   const [theme, setTheme] = useState<Theme>(() => {
     const storedTheme = localStorage.getItem('theme');
-    return (storedTheme === 'dark' || storedTheme === 'light') ? storedTheme : 'light';
+    return (storedTheme === 'dark' || storedTheme === 'light') ? storedTheme : 'dark';
   });
 
   const toggleTheme = () => {
