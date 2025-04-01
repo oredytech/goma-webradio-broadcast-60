@@ -23,7 +23,7 @@ const PlayerContainer = ({
           handleSeek={handleSeek} 
           showProgress={Boolean(currentAudio)}
         />
-        <div className="flex items-center justify-between h-full px-4 sm:px-6 text-white">
+        <div className="flex items-center justify-between h-full px-4 sm:px-6 text-foreground">
           {children}
         </div>
       </div>

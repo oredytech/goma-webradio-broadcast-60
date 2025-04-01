@@ -69,7 +69,7 @@ const PodcastSection = ({
     return (
       <section className="py-16 bg-secondary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-white mb-8">Podcasts</h2>
+          <h2 className="text-3xl font-bold text-foreground mb-8">Podcasts</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[...Array(6)].map((_, index) => (
               <div key={index} className="bg-secondary/50 rounded-lg p-6 animate-pulse">
@@ -92,7 +92,7 @@ const PodcastSection = ({
     <section className="py-16 bg-secondary">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-white">Podcasts</h2>
+          <h2 className="text-3xl font-bold text-foreground">Podcasts</h2>
           <Button
             variant="outline"
             onClick={() => navigate('/podcasts')}
@@ -106,7 +106,7 @@ const PodcastSection = ({
         {Object.entries(data.feedEpisodes).map(([feedId, { name, episodes }]) => (
           <div key={feedId} className="mb-12">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-white border-l-4 border-primary pl-4">{name}</h3>
+              <h3 className="text-2xl font-bold text-foreground border-l-4 border-primary pl-4">{name}</h3>
               <Button
                 variant="outline"
                 size="sm"
@@ -133,8 +133,8 @@ const PodcastSection = ({
                     <Badge variant="outline" className="mb-2 bg-primary/20 text-primary border-primary/30">
                       {episode.feedSource}
                     </Badge>
-                    <h3 className="text-xl font-bold text-white mb-2">{episode.title}</h3>
-                    <p className="text-gray-300 line-clamp-2 mb-4">
+                    <h3 className="text-xl font-bold text-foreground mb-2">{episode.title}</h3>
+                    <p className="text-foreground line-clamp-2 mb-4">
                       {episode.description ? stripHtml(episode.description) : ''}
                     </p>
                     <div className="flex justify-end">
@@ -142,7 +142,7 @@ const PodcastSection = ({
                         onClick={(e) => handleShare(episode, e)}
                         variant="secondary"
                         size="sm"
-                        className="gap-2"
+                        className="gap-2 text-foreground"
                       >
                         <Share2 className="w-4 h-4" />
                         Partager
