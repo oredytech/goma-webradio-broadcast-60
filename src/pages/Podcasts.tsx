@@ -71,7 +71,7 @@ const Podcasts = ({
           <div className="absolute inset-0 opacity-20 bg-[url('/placeholder.svg')] bg-center bg-cover mix-blend-overlay"></div>
           <div className="absolute inset-0 bg-black/50"></div>
           <div className="container relative z-10 px-4 mx-auto text-center">
-            <h1 className="text-5xl font-bold text-white mb-4">PODCASTS</h1>
+            <h1 className="text-5xl font-bold text-foreground mb-4">PODCASTS</h1>
             <div className="flex justify-center">
               <Loader2 className="h-8 w-8 text-primary animate-spin" />
             </div>
@@ -106,8 +106,8 @@ const Podcasts = ({
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="container relative z-10 px-4 mx-auto text-center">
           <Mic className="h-16 w-16 text-primary mx-auto mb-4" />
-          <h1 className="text-5xl font-bold text-white mb-4">PODCASTS</h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <h1 className="text-5xl font-bold text-foreground mb-4">PODCASTS</h1>
+          <p className="text-xl text-foreground/70 max-w-3xl mx-auto">
             Découvrez notre collection de podcasts originaux.
           </p>
         </div>
@@ -118,7 +118,7 @@ const Podcasts = ({
         {Object.entries(data.feedEpisodes).map(([feedId, { name, episodes }]) => (
           <div key={feedId} className="mb-16">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-white border-l-4 border-primary pl-4">{name}</h2>
+              <h2 className="text-2xl font-bold text-foreground border-l-4 border-primary pl-4">{name}</h2>
               <Button
                 variant="outline"
                 className="bg-primary/10 text-primary border-primary/30 hover:bg-primary/20"
@@ -146,8 +146,8 @@ const Podcasts = ({
                     <Badge variant="outline" className="mb-2 bg-primary/20 text-primary border-primary/30">
                       {episode.feedSource}
                     </Badge>
-                    <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">{episode.title}</h3>
-                    <p className="text-gray-300 line-clamp-3 mb-4">
+                    <h3 className="text-xl font-bold text-foreground mb-2 line-clamp-2">{episode.title}</h3>
+                    <p className="text-foreground/70 line-clamp-3 mb-4">
                       {episode.description ? stripHtml(episode.description) : ''}
                     </p>
                     <div className="flex justify-end">

@@ -70,13 +70,13 @@ const PodcastFeedEpisodes = ({
           <div className="absolute inset-0 opacity-20 bg-[url('/placeholder.svg')] bg-center bg-cover mix-blend-overlay"></div>
           <div className="absolute inset-0 bg-black/50"></div>
           <div className="container relative z-10 px-4 mx-auto text-center">
-            <h1 className="text-5xl font-bold text-white mb-4">Chargement...</h1>
+            <h1 className="text-5xl font-bold text-foreground mb-4">Chargement...</h1>
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
           <Button 
             variant="ghost" 
-            className="text-white mr-4 mb-8" 
+            className="text-foreground mr-4 mb-8" 
             onClick={() => navigate('/podcasts')}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -105,19 +105,19 @@ const PodcastFeedEpisodes = ({
           <div className="absolute inset-0 opacity-20 bg-[url('/placeholder.svg')] bg-center bg-cover mix-blend-overlay"></div>
           <div className="absolute inset-0 bg-black/50"></div>
           <div className="container relative z-10 px-4 mx-auto text-center">
-            <h1 className="text-5xl font-bold text-white mb-4">Podcast non trouvé</h1>
+            <h1 className="text-5xl font-bold text-foreground mb-4">Podcast non trouvé</h1>
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
           <Button 
             variant="ghost" 
-            className="text-white mr-4" 
+            className="text-foreground mr-4" 
             onClick={() => navigate('/podcasts')}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Retour
           </Button>
-          <p className="text-white mt-4">Ce podcast n'existe pas ou a été supprimé.</p>
+          <p className="text-foreground mt-4">Ce podcast n'existe pas ou a été supprimé.</p>
         </div>
         <Footer />
       </div>
@@ -135,8 +135,8 @@ const PodcastFeedEpisodes = ({
         <div className="absolute inset-0 opacity-20 bg-center bg-cover mix-blend-overlay" style={{backgroundImage: `url(${feedImage})`}}></div>
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="container relative z-10 px-4 mx-auto text-center">
-          <h1 className="text-5xl font-bold text-white mb-4">{feedData.name}</h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <h1 className="text-5xl font-bold text-foreground mb-4">{feedData.name}</h1>
+          <p className="text-xl text-foreground/70 max-w-3xl mx-auto">
             Tous les épisodes de notre série de podcasts
           </p>
         </div>
@@ -145,7 +145,7 @@ const PodcastFeedEpisodes = ({
       <main className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
         <Button 
           variant="ghost" 
-          className="text-white mr-4 mb-8" 
+          className="text-foreground mr-4 mb-8" 
           onClick={() => navigate('/podcasts')}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -170,8 +170,8 @@ const PodcastFeedEpisodes = ({
                 <Badge variant="outline" className="mb-2 bg-primary/20 text-primary border-primary/30">
                   {episode.feedSource}
                 </Badge>
-                <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">{episode.title}</h3>
-                <p className="text-gray-300 line-clamp-3 mb-4">
+                <h3 className="text-xl font-bold text-foreground mb-2 line-clamp-2">{episode.title}</h3>
+                <p className="text-foreground/70 line-clamp-3 mb-4">
                   {episode.description ? stripHtml(episode.description) : ''}
                 </p>
                 <div className="flex justify-end">

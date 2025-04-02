@@ -134,7 +134,7 @@ const PodcastSection = ({
                       {episode.feedSource}
                     </Badge>
                     <h3 className="text-xl font-bold text-foreground mb-2">{episode.title}</h3>
-                    <p className="text-foreground line-clamp-2 mb-4">
+                    <p className="text-foreground/70 line-clamp-2 mb-4">
                       {episode.description ? stripHtml(episode.description) : ''}
                     </p>
                     <div className="flex justify-end">

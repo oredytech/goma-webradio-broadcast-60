@@ -26,10 +26,10 @@ const PodcastDetails = ({
         </Badge>
       )}
       
-      <div className="prose prose-lg prose-invert max-w-none">
-        <h2 className="text-xl font-bold text-white mb-4">Description</h2>
+      <div className="prose prose-lg max-w-none">
+        <h2 className="text-xl font-bold text-foreground mb-4">Description</h2>
         <div 
-          className="text-gray-300"
+          className="text-foreground/70"
           dangerouslySetInnerHTML={{ __html: episode.description || '' }}
         />
       </div>

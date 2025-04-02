@@ -61,8 +61,8 @@ const PodcastList = ({ episodes, onOpenPodcast }: PodcastListProps) => {
               </div>
             </div>
             <div className="sm:w-3/4 w-full p-4">
-              <h3 className="text-white text-lg font-semibold mb-2 line-clamp-2">{episode.title}</h3>
-              <p className="text-gray-300 text-sm line-clamp-3 mb-4">
+              <h3 className="text-foreground text-lg font-semibold mb-2 line-clamp-2">{episode.title}</h3>
+              <p className="text-foreground/70 text-sm line-clamp-3 mb-4">
                 {episode.description ? stripHtml(episode.description) : ''}
               </p>
               <div className="flex justify-end">
