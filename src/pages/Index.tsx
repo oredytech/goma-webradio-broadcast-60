@@ -1,4 +1,3 @@
-
 import React from "react";
 import RadioPlayer from "@/components/radio/RadioPlayer";
 import Header from "@/components/Header";
@@ -19,7 +18,6 @@ interface IndexProps {
 }
 
 const Index = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: IndexProps) => {
-  // Configurer le SEO pour la page d'accueil
   usePageSEO(
     "GOMA WEBRADIO", 
     "La voix de Goma - Actualités, Podcasts et Émissions en direct. Fasi ya Ndule na ma infos za palet",
@@ -39,10 +37,10 @@ const Index = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Index
       
       {/* Hero Section with Play Button */}
       <div className="relative overflow-hidden pt-16">
-        <div className="absolute inset-0 bg-[url('/lovable-uploads/5ae4e570-d67b-4af1-934b-7e4050e720c9.png')] opacity-20 bg-cover bg-center" />
+        <div className="absolute inset-0 bg-[url('/lovable-uploads/5ae4e570-d67b-4af1-934b-7e4050e720c9.png')] opacity-40 bg-cover bg-center" />
         
-        {/* Dark overlay for better contrast */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 to-secondary/90"></div>
+        {/* Dark overlay for better contrast - with reduced opacity */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-secondary/70"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
           <div className="text-center animate-fade-in space-y-8">
