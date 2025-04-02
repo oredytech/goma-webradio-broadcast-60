@@ -37,7 +37,8 @@ const PodcastHero = ({ title, description, imageUrl, episode, onPlayClick }: Pod
            }}>
       </div>
       
-      <div className="absolute inset-0 bg-gradient-to-b from-secondary/60 to-secondary/80 pt-20"></div>
+      {/* Dark overlay with stronger opacity for better contrast */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/80 to-secondary/90 pt-20"></div>
       
       <div className="relative z-10 container mx-auto px-4">
         <div className="flex flex-col md:flex-row md:justify-between items-center text-center md:text-left gap-8 mt-5">
