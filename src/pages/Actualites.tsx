@@ -55,7 +55,7 @@ const Actualites = () => {
                       dangerouslySetInnerHTML={{ __html: article.title.rendered }}
                     />
                     <div 
-                      className="text-foreground text-sm line-clamp-3"
+                      className="text-foreground/70 text-sm line-clamp-3"
                       dangerouslySetInnerHTML={{ __html: article.excerpt.rendered }}
                     />
                   </div>

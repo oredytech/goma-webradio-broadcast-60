@@ -58,14 +58,14 @@ const News = ({ filter }: NewsProps) => {
         <ArticlesSlider />
       </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex-grow">
-        <h1 className="text-3xl font-bold text-white mb-12">
+        <h1 className="text-3xl font-bold text-foreground mb-12">
           {filter ? `Actualités - ${filter}` : "Toutes les actualités"}
         </h1>
         
         <div className="space-y-16">
           {sources.map((source, sourceIndex) => (
             <div key={source.id} className="space-y-8">
-              <h2 className="text-2xl font-semibold text-white">{source.name}</h2>
+              <h2 className="text-2xl font-semibold text-foreground">{source.name}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {results[sourceIndex].data?.map((article: WordPressArticle) => (
                   <Link
@@ -84,11 +84,11 @@ const News = ({ filter }: NewsProps) => {
                     )}
                     <div className="p-6">
                       <h3
-                        className="text-xl font-bold text-white mb-4 group-hover:text-primary transition-colors"
+                        className="text-xl font-bold text-foreground mb-4 group-hover:text-primary transition-colors"
                         dangerouslySetInnerHTML={{ __html: article.title.rendered }}
                       />
                       <div
-                        className="text-gray-300 line-clamp-3"
+                        className="text-foreground/70 line-clamp-3"
                         dangerouslySetInnerHTML={{ __html: article.excerpt.rendered }}
                       />
                     </div>
