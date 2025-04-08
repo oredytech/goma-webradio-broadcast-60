@@ -25,7 +25,7 @@ const SearchResultCard = ({ result, searchTerm, highlightSearchTerm }: SearchRes
   const resultUrl = getResultUrl();
 
   return (
-    <Card key={result.id} className="overflow-hidden hover:shadow-md transition-shadow">
+    <Card key={result.id} className="overflow-hidden hover:shadow-md transition-shadow shadow-md hover:shadow-lg dark:shadow-primary/10">
       <CardContent className="p-6">
         <div className="flex gap-4">
           {result.imageUrl && (

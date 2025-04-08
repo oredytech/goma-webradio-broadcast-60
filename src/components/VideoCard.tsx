@@ -17,7 +17,7 @@ const VideoCard = ({ video, onClick }: VideoCardProps) => {
 
   return (
     <div
-      className="group relative overflow-hidden rounded-lg bg-secondary/50 transition-transform hover:scale-105"
+      className="group relative overflow-hidden rounded-lg bg-secondary/50 transition-transform hover:scale-105 shadow-md hover:shadow-xl dark:shadow-primary/20"
     >
       <div className="aspect-video overflow-hidden relative">
         <img

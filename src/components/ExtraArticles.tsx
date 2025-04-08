@@ -23,7 +23,7 @@ const ExtraArticles = () => {
           {randomArticles.map((article) => (
             <div
               key={article.id}
-              className="group relative overflow-hidden rounded-lg bg-secondary/50 hover:bg-secondary/70 transition-all duration-300"
+              className="group relative overflow-hidden rounded-lg bg-secondary/50 hover:bg-secondary/70 transition-all duration-300 shadow-lg hover:shadow-xl dark:shadow-primary/10"
             >
               <Link
                 to={`/article/${getArticleSlug(article)}`}

@@ -29,7 +29,7 @@ const ProgramCard = ({ title, description, image, time }: ProgramCardProps) => {
   };
 
   return (
-    <div className="group relative overflow-hidden rounded-lg bg-secondary/50 hover:bg-secondary/70 transition-all duration-300">
+    <div className="group relative overflow-hidden rounded-lg bg-secondary/50 hover:bg-secondary/70 transition-all duration-300 shadow-md hover:shadow-xl dark:shadow-primary/20">
       <div className="aspect-video overflow-hidden">
         <img
           src={image}

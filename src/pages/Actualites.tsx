@@ -39,7 +39,7 @@ const Actualites = () => {
                 <Link
                   key={article.id}
                   to={`/article/${getArticleSlug(article)}`}
-                  className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300"
+                  className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300 shadow-md hover:shadow-xl dark:shadow-primary/10"
                 >
                   {article._embedded?.["wp:featuredmedia"]?.[0]?.source_url && (
                     <div 

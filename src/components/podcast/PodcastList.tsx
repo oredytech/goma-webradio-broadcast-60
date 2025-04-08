@@ -45,7 +45,7 @@ const PodcastList = ({ episodes, onOpenPodcast }: PodcastListProps) => {
       {episodes.map((episode, index) => (
         <div 
           key={index}
-          className="bg-secondary/50 border-0 rounded-lg hover:bg-secondary/70 transition-all cursor-pointer"
+          className="bg-secondary/50 border-0 rounded-lg hover:bg-secondary/70 transition-all cursor-pointer shadow-md hover:shadow-lg dark:shadow-primary/20"
           onClick={() => onOpenPodcast(episode)}
         >
           <div className="flex flex-col sm:flex-row items-start">

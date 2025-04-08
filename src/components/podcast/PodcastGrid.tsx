@@ -66,7 +66,7 @@ const PodcastGrid = ({ episodes, onOpenPodcast }: PodcastGridProps) => {
               className="p-1 cursor-pointer"
               onClick={() => onOpenPodcast(episode)}
             >
-              <Card className="bg-secondary/50 border-0 h-full hover:bg-secondary/70 transition-all">
+              <Card className="bg-secondary/50 border-0 h-full hover:bg-secondary/70 transition-all shadow-md hover:shadow-lg dark:shadow-primary/20">
                 <div className="aspect-square overflow-hidden">
                   <img 
                     src={episode.itunes?.image || '/placeholder.svg'} 
