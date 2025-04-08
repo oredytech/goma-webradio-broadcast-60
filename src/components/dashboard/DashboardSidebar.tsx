@@ -5,7 +5,8 @@ import {
   Plus, 
   Settings, 
   LogOut, 
-  Home 
+  Home,
+  UserCircle
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { 
@@ -21,6 +22,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator
 } from "@/components/ui/sidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DashboardTabType } from "@/components/dashboard/DashboardTabs";
 
 interface DashboardSidebarProps {
@@ -37,13 +39,17 @@ const DashboardSidebar = ({
   return (
     <Sidebar>
       <SidebarHeader className="py-4">
-        <div className="flex items-center pl-2 gap-2">
-          <img 
-            src="/GOWERA__3_-removebg-preview.png" 
-            alt="Goma Webradio" 
-            className="h-8 w-auto"
-          />
-          <span className="font-bold text-lg">Admin</span>
+        <div className="flex flex-col items-center gap-2 px-2">
+          <Avatar className="h-16 w-16 border-2 border-primary">
+            <AvatarImage src="" alt="User Avatar" />
+            <AvatarFallback>
+              <UserCircle className="h-full w-full text-muted-foreground" />
+            </AvatarFallback>
+          </Avatar>
+          <div className="text-center">
+            <div className="font-bold text-lg">Admin User</div>
+            <div className="text-xs text-muted-foreground">admin@gomawebradio.com</div>
+          </div>
         </div>
       </SidebarHeader>
       
