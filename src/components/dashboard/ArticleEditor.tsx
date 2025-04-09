@@ -1,9 +1,9 @@
 
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useFormContext } from "react-hook-form";
 import { ArticleFormValues } from "./ArticleFormTypes";
+import MarkdownEditor from "./MarkdownEditor";
 
 const ArticleEditor = () => {
   const { control } = useFormContext<ArticleFormValues>();
@@ -31,9 +31,10 @@ const ArticleEditor = () => {
           <FormItem>
             <FormLabel>Contenu</FormLabel>
             <FormControl>
-              <Textarea
+              <MarkdownEditor
+                value={field.value}
+                onChange={field.onChange}
                 placeholder="Contenu de l'article..."
-                {...field}
                 className="min-h-[400px] resize-y"
               />
             </FormControl>

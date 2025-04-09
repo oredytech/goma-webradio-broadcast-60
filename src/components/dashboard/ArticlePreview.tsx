@@ -4,6 +4,33 @@ import { useFormContext } from "react-hook-form";
 import { FileImage } from "lucide-react";
 import { ArticleFormValues } from "./ArticleFormTypes";
 
+const renderMarkdown = (markdown: string) => {
+  // Basic markdown parser
+  let html = markdown;
+  
+  // Bold
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  
+  // Italic
+  html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  
+  // Ordered lists
+  html = html.replace(/^(\d+\.\s+.*?)(?:\n|$)/gm, '<li>$1</li>');
+  html = html.replace(/(<li>\d+\.\s+.*?<\/li>)+/g, '<ol>$&</ol>');
+  
+  // Unordered lists
+  html = html.replace(/^(-\s+.*?)(?:\n|$)/gm, '<li>$1</li>');
+  html = html.replace(/(<li>-\s+.*?<\/li>)+/g, '<ul>$&</ul>');
+  
+  // Replace remaining newlines with paragraphs
+  html = html.replace(/^((?!<[ou]l>|<\/[ou]l>|<li>|<\/li>).*?)(?:\n|$)/gm, '<p>$1</p>');
+  
+  // Clean up empty paragraphs
+  html = html.replace(/<p><\/p>/g, '');
+  
+  return html;
+};
+
 const ArticlePreview = () => {
   const { watch } = useFormContext<ArticleFormValues>();
   
@@ -29,11 +56,10 @@ const ArticlePreview = () => {
               </div>
             )}
             
-            <div className="prose prose-lg max-w-none dark:prose-invert">
-              {watch("content").split('\n').map((paragraph, idx) => (
-                <p key={idx}>{paragraph}</p>
-              ))}
-            </div>
+            <div 
+              className="prose prose-lg max-w-none dark:prose-invert"
+              dangerouslySetInnerHTML={{ __html: renderMarkdown(watch("content")) }}
+            />
           </>
         ) : (
           <div className="text-center py-12 text-muted-foreground">
