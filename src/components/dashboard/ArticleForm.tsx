@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -14,6 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Image, Save, FileImage, Link, ListChecks, Type } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { publishArticleViaTelegram } from "@/services/telegramService";
 
 // Schéma de validation pour le formulaire
 const articleSchema = z.object({
@@ -48,30 +48,39 @@ const ArticleForm = () => {
   // Mutation pour publier/enregistrer l'article
   const publishMutation = useMutation({
     mutationFn: async (article: ArticleFormValues) => {
-      // Simulation d'un appel API
-      console.log("Publier l'article:", article);
+      // Publier sur Telegram
+      const telegramPublished = await publishArticleViaTelegram(
+        article.title,
+        article.content,
+        article.featuredImage || undefined
+      );
       
-      // Dans une application réelle, nous ferions un appel à l'API WordPress
-      return new Promise<{id: number}>(resolve => {
-        setTimeout(() => {
-          resolve({ id: Math.floor(Math.random() * 10000) });
-        }, 1000);
-      });
+      if (!telegramPublished) {
+        throw new Error("Échec de la publication sur Telegram");
+      }
+      
+      // Simulation d'un appel API pour la compatibilité avec le code existant
+      console.log("Article publié sur Telegram:", article);
+      
+      return { id: Math.floor(Math.random() * 10000) };
     },
     onSuccess: () => {
       toast({
         title: "Article enregistré avec succès",
         description: form.getValues("status") === "publish" 
-          ? "L'article a été publié" 
-          : "L'article a été enregistré comme brouillon",
+          ? "L'article a été publié sur Telegram" 
+          : "L'article a été enregistré comme brouillon sur Telegram",
       });
       form.reset();
+      // Invalidate telegram-articles query to refresh the articles list
+      queryClient.invalidateQueries({ queryKey: ["telegram-articles"] });
+      // Keep compatibility with existing code
       queryClient.invalidateQueries({ queryKey: ["wordpress-articles"] });
     },
-    onError: () => {
+    onError: (error) => {
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue lors de l'enregistrement de l'article",
+        description: `Une erreur est survenue: ${error.message}`,
         variant: "destructive",
       });
     }
