@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -11,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Image, Save, FileImage, Link, ListChecks, Type } from "lucide-react";
+import { Image, Save, FileImage, Link, ListChecks, Type, Send } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { publishArticleViaTelegram } from "@/services/telegramService";
 
@@ -59,7 +60,6 @@ const ArticleForm = () => {
         throw new Error("Échec de la publication sur Telegram");
       }
       
-      // Simulation d'un appel API pour la compatibilité avec le code existant
       console.log("Article publié sur Telegram:", article);
       
       return { id: Math.floor(Math.random() * 10000) };
@@ -222,9 +222,9 @@ const ArticleForm = () => {
                     {publishMutation.isPending ? (
                       <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
                     ) : (
-                      <Save size={16} />
+                      <Send size={16} />
                     )}
-                    {form.watch("status") === "publish" ? "Publier" : "Enregistrer"}
+                    {form.watch("status") === "publish" ? "Publier sur Telegram" : "Enregistrer sur Telegram"}
                   </Button>
                 </div>
               </div>
