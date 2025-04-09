@@ -1,10 +1,9 @@
-
 import { useMultiSourceArticles, sources, WordPressArticle } from "@/hooks/useMultiSourceArticles";
 import { useTelegramArticles } from "@/hooks/useTelegramArticles";
 import { TelegramArticle } from "@/services/telegramService";
 import { Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { getArticleSlug } from "@/utils/articleUtils";
+import { getArticleSlug, getTelegramArticleSlug } from "@/utils/articleUtils";
 
 const Actualites = () => {
   const results = useMultiSourceArticles();
@@ -28,14 +27,6 @@ const Actualites = () => {
       </div>
     );
   }
-
-  // Function to get slug for Telegram articles
-  const getTelegramArticleSlug = (article: TelegramArticle): string => {
-    return article.title
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-');
-  };
 
   return (
     <div className="min-h-screen pt-24 pb-16 bg-background text-foreground">

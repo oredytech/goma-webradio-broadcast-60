@@ -1,8 +1,9 @@
 
 import { WordPressArticle as SingleSourceArticle } from "@/hooks/useWordpressArticles";
 import { WordPressArticle as MultiSourceArticle } from "@/hooks/useMultiSourceArticles";
+import { TelegramArticle } from "@/services/telegramService";
 
-// Type that accepts both article types
+// Type that accepts WordPress article types
 type AnyWordPressArticle = {
   id: number;
   title: {
@@ -13,7 +14,7 @@ type AnyWordPressArticle = {
       source_url: string;
     }>;
   };
-  date?: string; // Added date as optional property
+  date?: string;
 };
 
 export const getArticleSlug = (article: AnyWordPressArticle): string => {
@@ -22,6 +23,13 @@ export const getArticleSlug = (article: AnyWordPressArticle): string => {
   ).body.textContent || article.title.rendered;
   
   return decodedTitle
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-');
+};
+
+export const getTelegramArticleSlug = (article: TelegramArticle): string => {
+  return article.title
     .toLowerCase()
     .replace(/[^\w\s-]/g, '')
     .replace(/\s+/g, '-');

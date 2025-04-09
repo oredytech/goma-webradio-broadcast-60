@@ -1,4 +1,3 @@
-
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
@@ -14,7 +13,12 @@ import ArticleContent from "@/components/article/ArticleContent";
 import ArticleSidebar from "@/components/article/ArticleSidebar";
 import ArticleLoading from "@/components/article/ArticleLoading";
 import ArticleNotFound from "@/components/article/ArticleNotFound";
-import { decodeHtmlTitle, getArticleSlug, getFeaturedImageUrl } from "@/utils/articleUtils";
+import { 
+  decodeHtmlTitle, 
+  getArticleSlug, 
+  getFeaturedImageUrl, 
+  getTelegramArticleSlug 
+} from "@/utils/articleUtils";
 
 interface ArticleProps {
   isPlaying: boolean;
@@ -32,40 +36,38 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
   const [articleId, setArticleId] = useState<number | null>(null);
   const [articleSource, setArticleSource] = useState<"wordpress" | "telegram" | null>(null);
 
-  // Combine articles from both sources
+  // Transform Telegram articles to include source property
+  const transformedTelegramArticles = telegramArticles?.map(article => ({
+    ...article,
+    source: "telegram" as const
+  })) || [];
+
+  // Keep WordPress articles separate 
   const allArticles = [
     ...(wpArticles || []), 
-    ...(telegramArticles?.map(article => {
-      return {
-        ...article,
-        source: "telegram" as const
-      };
-    }) || [])
+    ...transformedTelegramArticles
   ];
 
   useEffect(() => {
     if (!id && slug && allArticles) {
       // Try to find article by slug
       const foundArticle = allArticles.find(article => {
-        let articleTitle = "";
-        let articleSlug = "";
-        
-        if ('title' in article && typeof article.title === 'object' && article.title.rendered) {
-          // WordPress article
-          articleTitle = decodeHtmlTitle(article.title.rendered);
-          articleSlug = getArticleSlug(article);
-        } else if ('title' in article && typeof article.title === 'string') {
+        if ('source' in article && article.source === "telegram") {
           // Telegram article
-          articleTitle = article.title;
-          articleSlug = articleTitle
-            .toLowerCase()
-            .replace(/[^\w\s-]/g, '')
-            .replace(/\s+/g, '-');
+          const telegramArticle = article as (TelegramArticle & { source: "telegram" });
+          const articleSlug = getTelegramArticleSlug(telegramArticle);
+          return slug === articleSlug || 
+                 slug.includes(articleSlug) || 
+                 articleSlug.includes(slug);
+        } else {
+          // WordPress article
+          const wpArticle = article as WordPressArticle;
+          const articleTitle = decodeHtmlTitle(wpArticle.title.rendered);
+          const articleSlug = getArticleSlug(wpArticle);
+          return slug === articleSlug || 
+                 slug.includes(articleSlug) || 
+                 articleSlug.includes(slug);
         }
-        
-        return slug === articleSlug || 
-               slug.includes(articleSlug) || 
-               articleSlug.includes(slug);
       });
       
       if (foundArticle) {
