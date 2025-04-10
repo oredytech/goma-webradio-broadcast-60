@@ -2,6 +2,41 @@
 const TELEGRAM_BOT_TOKEN = "7296852683:AAGg_NXW_JCh-B_P3miM-8zYqtyG8Nb1ZUE";
 const API_BASE_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
 
+// Stockage local du chat ID
+let DEFAULT_CHAT_ID = "5591733599"; // Valeur par défaut
+
+// Fonction pour définir le chat ID par défaut
+export const setDefaultChatId = (chatId: string): void => {
+  if (!chatId || chatId.trim() === "") {
+    console.error("Chat ID invalide, impossible de définir comme valeur par défaut");
+    return;
+  }
+  console.log("Définition du chat ID par défaut:", chatId);
+  DEFAULT_CHAT_ID = chatId.trim();
+  
+  // Stocker dans localStorage pour persistance
+  try {
+    localStorage.setItem("telegram_default_chat_id", DEFAULT_CHAT_ID);
+  } catch (e) {
+    console.warn("Impossible de sauvegarder le chat ID dans localStorage:", e);
+  }
+};
+
+// Fonction pour récupérer le chat ID par défaut
+export const getDefaultChatId = (): string => {
+  // Essayer de récupérer depuis localStorage
+  try {
+    const storedChatId = localStorage.getItem("telegram_default_chat_id");
+    if (storedChatId) {
+      DEFAULT_CHAT_ID = storedChatId;
+    }
+  } catch (e) {
+    console.warn("Impossible de récupérer le chat ID depuis localStorage:", e);
+  }
+  
+  return DEFAULT_CHAT_ID;
+};
+
 // Type pour les mises à jour reçues de Telegram
 export interface TelegramUpdate {
   update_id: number;
@@ -35,9 +70,12 @@ export interface TelegramArticle {
 }
 
 // Envoyer un message texte au bot
-export const sendTextMessage = async (text: string, chatId: string = "5591733599"): Promise<boolean> => {
+export const sendTextMessage = async (text: string, chatId?: string): Promise<boolean> => {
   try {
-    console.log("Envoi de message texte à Telegram:", { chatId, textLength: text.length });
+    // Utiliser le chat ID fourni ou la valeur par défaut
+    const targetChatId = chatId || getDefaultChatId();
+    
+    console.log("Envoi de message texte à Telegram:", { chatId: targetChatId, textLength: text.length });
     
     const response = await fetch(`${API_BASE_URL}/sendMessage`, {
       method: "POST",
@@ -45,7 +83,7 @@ export const sendTextMessage = async (text: string, chatId: string = "5591733599
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        chat_id: chatId,
+        chat_id: targetChatId,
         text: text,
         parse_mode: "HTML",
       }),
@@ -69,10 +107,13 @@ export const sendTextMessage = async (text: string, chatId: string = "5591733599
 export const sendImage = async (
   imageUrl: string,
   caption: string = "",
-  chatId: string = "5591733599"
+  chatId?: string
 ): Promise<boolean> => {
   try {
-    console.log("Envoi d'image à Telegram:", { chatId, imageUrl, captionLength: caption.length });
+    // Utiliser le chat ID fourni ou la valeur par défaut
+    const targetChatId = chatId || getDefaultChatId();
+    
+    console.log("Envoi d'image à Telegram:", { chatId: targetChatId, imageUrl, captionLength: caption.length });
     
     // Vérification de l'URL de l'image
     if (!imageUrl || !imageUrl.startsWith('http')) {
@@ -86,7 +127,7 @@ export const sendImage = async (
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        chat_id: chatId,
+        chat_id: targetChatId,
         photo: imageUrl,
         caption: caption,
         parse_mode: "HTML",
@@ -203,10 +244,19 @@ export const parseUpdatesToArticles = async (updates: TelegramUpdate[]): Promise
 export const publishArticleViaTelegram = async (
   title: string,
   content: string,
-  imageUrl?: string
+  imageUrl?: string,
+  chatId?: string
 ): Promise<boolean> => {
   try {
-    console.log("Tentative de publication d'article sur Telegram:", { title, contentLength: content.length, imageUrl });
+    // Utiliser le chat ID fourni ou la valeur par défaut
+    const targetChatId = chatId || getDefaultChatId();
+    
+    console.log("Tentative de publication d'article sur Telegram:", { 
+      title, 
+      contentLength: content.length, 
+      imageUrl,
+      chatId: targetChatId
+    });
     
     // Vérifier que nous avons au moins un titre
     if (!title || title.trim() === "") {
@@ -219,11 +269,11 @@ export const publishArticleViaTelegram = async (
     if (imageUrl && imageUrl.trim() !== "") {
       // Si on a une image, on l'envoie avec la légende contenant titre + contenu
       console.log("Publication avec image");
-      success = await sendImage(imageUrl, `<b>${title}</b>\n\n${content}`);
+      success = await sendImage(imageUrl, `<b>${title}</b>\n\n${content}`, targetChatId);
     } else {
       // Sinon on envoie juste le texte
       console.log("Publication texte uniquement");
-      success = await sendTextMessage(`<b>${title}</b>\n\n${content}`);
+      success = await sendTextMessage(`<b>${title}</b>\n\n${content}`, targetChatId);
     }
     
     console.log("Résultat de la publication:", success ? "Réussi" : "Échec");
