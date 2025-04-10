@@ -57,6 +57,7 @@ const AppLayout = () => {
             />
           } 
         />
+        {/* Routes for articles - support both formats */}
         <Route 
           path="/article/:id/:slug" 
           element={
@@ -79,6 +80,7 @@ const AppLayout = () => {
             />
           } 
         />
+        {/* News routes */}
         <Route path="/actualites/*" element={<News />} />
         <Route path="/actualites/politique" element={<News filter="politique" />} />
         <Route path="/a-propos" element={<About />} />
