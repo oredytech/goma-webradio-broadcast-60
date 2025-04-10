@@ -1,9 +1,39 @@
 
-const TELEGRAM_BOT_TOKEN = "7296852683:AAGg_NXW_JCh-B_P3miM-8zYqtyG8Nb1ZUE";
-const API_BASE_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
-
-// Stockage local du chat ID
+// Stockage local du token et du chat ID
+let TELEGRAM_BOT_TOKEN = "7296852683:AAGg_NXW_JCh-B_P3miM-8zYqtyG8Nb1ZUE";
 let DEFAULT_CHAT_ID = "5591733599"; // Valeur par défaut
+
+// Fonction pour définir le token du bot
+export const setTelegramBotToken = (token: string): void => {
+  if (!token || token.trim() === "") {
+    console.error("Token invalide, impossible de définir comme valeur par défaut");
+    return;
+  }
+  console.log("Définition du token du bot:", token);
+  TELEGRAM_BOT_TOKEN = token.trim();
+  
+  // Stocker dans localStorage pour persistance
+  try {
+    localStorage.setItem("telegram_bot_token", TELEGRAM_BOT_TOKEN);
+  } catch (e) {
+    console.warn("Impossible de sauvegarder le token dans localStorage:", e);
+  }
+};
+
+// Fonction pour récupérer le token du bot
+export const getTelegramBotToken = (): string => {
+  // Essayer de récupérer depuis localStorage
+  try {
+    const storedToken = localStorage.getItem("telegram_bot_token");
+    if (storedToken) {
+      TELEGRAM_BOT_TOKEN = storedToken;
+    }
+  } catch (e) {
+    console.warn("Impossible de récupérer le token depuis localStorage:", e);
+  }
+  
+  return TELEGRAM_BOT_TOKEN;
+};
 
 // Fonction pour définir le chat ID par défaut
 export const setDefaultChatId = (chatId: string): void => {
@@ -69,15 +99,26 @@ export interface TelegramArticle {
   date: string;
 }
 
+// Fonction utilitaire pour obtenir l'URL de base de l'API Telegram avec le token actuel
+const getTelegramApiBaseUrl = (): string => {
+  const token = getTelegramBotToken();
+  return `https://api.telegram.org/bot${token}`;
+};
+
 // Envoyer un message texte au bot
 export const sendTextMessage = async (text: string, chatId?: string): Promise<boolean> => {
   try {
     // Utiliser le chat ID fourni ou la valeur par défaut
     const targetChatId = chatId || getDefaultChatId();
+    const apiBaseUrl = getTelegramApiBaseUrl();
     
-    console.log("Envoi de message texte à Telegram:", { chatId: targetChatId, textLength: text.length });
+    console.log("Envoi de message texte à Telegram:", { 
+      chatId: targetChatId, 
+      textLength: text.length,
+      apiBaseUrl
+    });
     
-    const response = await fetch(`${API_BASE_URL}/sendMessage`, {
+    const response = await fetch(`${apiBaseUrl}/sendMessage`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -112,8 +153,14 @@ export const sendImage = async (
   try {
     // Utiliser le chat ID fourni ou la valeur par défaut
     const targetChatId = chatId || getDefaultChatId();
+    const apiBaseUrl = getTelegramApiBaseUrl();
     
-    console.log("Envoi d'image à Telegram:", { chatId: targetChatId, imageUrl, captionLength: caption.length });
+    console.log("Envoi d'image à Telegram:", { 
+      chatId: targetChatId, 
+      imageUrl, 
+      captionLength: caption.length,
+      apiBaseUrl
+    });
     
     // Vérification de l'URL de l'image
     if (!imageUrl || !imageUrl.startsWith('http')) {
@@ -121,7 +168,7 @@ export const sendImage = async (
       return false;
     }
     
-    const response = await fetch(`${API_BASE_URL}/sendPhoto`, {
+    const response = await fetch(`${apiBaseUrl}/sendPhoto`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -151,12 +198,13 @@ export const sendImage = async (
 // Récupérer les mises à jour du bot
 export const getUpdates = async (offset?: number): Promise<TelegramUpdate[]> => {
   try {
+    const apiBaseUrl = getTelegramApiBaseUrl();
     const params = new URLSearchParams();
     if (offset) {
       params.append("offset", offset.toString());
     }
 
-    const response = await fetch(`${API_BASE_URL}/getUpdates?${params.toString()}`);
+    const response = await fetch(`${apiBaseUrl}/getUpdates?${params.toString()}`);
     const data = await response.json();
 
     if (data.ok) {
@@ -173,11 +221,14 @@ export const getUpdates = async (offset?: number): Promise<TelegramUpdate[]> => 
 // Récupérer l'URL d'une image Telegram par son file_id
 export const getFileUrl = async (fileId: string): Promise<string> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/getFile?file_id=${fileId}`);
+    const apiBaseUrl = getTelegramApiBaseUrl();
+    const token = getTelegramBotToken();
+    
+    const response = await fetch(`${apiBaseUrl}/getFile?file_id=${fileId}`);
     const data = await response.json();
 
     if (data.ok) {
-      return `https://api.telegram.org/file/bot${TELEGRAM_BOT_TOKEN}/${data.result.file_path}`;
+      return `https://api.telegram.org/file/bot${token}/${data.result.file_path}`;
     }
     console.error("Erreur lors de la récupération de l'URL du fichier:", data.description);
     return "";

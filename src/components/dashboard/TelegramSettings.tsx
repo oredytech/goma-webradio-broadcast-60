@@ -12,43 +12,74 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from "@/components/ui/use-toast";
-import { InfoIcon, AlertCircle, CheckCircle2, Send } from "lucide-react";
-import { getDefaultChatId, setDefaultChatId, sendTextMessage } from "@/services/telegramService";
+import { InfoIcon, AlertCircle, CheckCircle2, Send, Key, Lock } from "lucide-react";
+import { 
+  getDefaultChatId, 
+  setDefaultChatId, 
+  sendTextMessage,
+  getTelegramBotToken,
+  setTelegramBotToken
+} from "@/services/telegramService";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const telegramFormSchema = z.object({
+  botToken: z.string().min(1, "Le token du bot est requis"),
+  chatId: z.string().min(1, "L'ID de chat est requis"),
+});
+
+type TelegramFormValues = z.infer<typeof telegramFormSchema>;
 
 const TelegramSettings = () => {
-  const [chatId, setChatId] = useState("");
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
   const { toast } = useToast();
 
-  // Charger le chat ID actuel au chargement du composant
+  const form = useForm<TelegramFormValues>({
+    resolver: zodResolver(telegramFormSchema),
+    defaultValues: {
+      botToken: "",
+      chatId: "",
+    },
+  });
+
+  // Charger les valeurs actuelles au chargement du composant
   useEffect(() => {
-    setChatId(getDefaultChatId());
-  }, []);
+    form.setValue("botToken", getTelegramBotToken());
+    form.setValue("chatId", getDefaultChatId());
+  }, [form]);
 
-  const handleSaveChatId = () => {
-    if (!chatId || chatId.trim() === "") {
-      toast({
-        title: "Erreur",
-        description: "Veuillez entrer un Chat ID valide",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setDefaultChatId(chatId.trim());
+  const onSubmit = (values: TelegramFormValues) => {
+    setTelegramBotToken(values.botToken);
+    setDefaultChatId(values.chatId);
+    
     toast({
-      title: "Chat ID sauvegardé",
-      description: "Le Chat ID par défaut a été mis à jour",
+      title: "Configuration sauvegardée",
+      description: "Les paramètres Telegram ont été mis à jour",
     });
   };
 
   const handleTestConnection = async () => {
+    const values = form.getValues();
     setIsTesting(true);
     setTestResult(null);
     
     try {
-      const success = await sendTextMessage("Test de connexion au bot Telegram depuis l'application", chatId);
+      // Sauvegarde temporaire des valeurs pour le test
+      setTelegramBotToken(values.botToken);
+      setDefaultChatId(values.chatId);
+      
+      const success = await sendTextMessage("Test de connexion au bot Telegram depuis l'application", values.chatId);
       
       if (success) {
         setTestResult({
@@ -58,7 +89,7 @@ const TelegramSettings = () => {
       } else {
         setTestResult({
           success: false,
-          message: "Échec de l'envoi du message test. Vérifiez le Chat ID et assurez-vous que vous avez démarré une conversation avec le bot."
+          message: "Échec de l'envoi du message test. Vérifiez le Token du bot et le Chat ID."
         });
       }
     } catch (error) {
@@ -80,71 +111,103 @@ const TelegramSettings = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <Alert>
-            <InfoIcon className="h-4 w-4" />
-            <AlertTitle>Comment trouver votre Chat ID</AlertTitle>
-            <AlertDescription>
-              1. Recherchez "@userinfobot" sur Telegram et démarrez une conversation <br />
-              2. Le bot vous répondra avec votre Chat ID personnel <br />
-              3. Assurez-vous également de démarrer une conversation avec le bot utilisé par cette application
-            </AlertDescription>
-          </Alert>
-        </div>
+        <Alert>
+          <InfoIcon className="h-4 w-4" />
+          <AlertTitle>Comment configurer votre bot Telegram</AlertTitle>
+          <AlertDescription>
+            1. Créez un bot Telegram via @BotFather et obtenez le token<br />
+            2. Démarrez une conversation avec votre bot<br />
+            3. Trouvez votre Chat ID en cherchant "@userinfobot" sur Telegram et en démarrant une conversation
+          </AlertDescription>
+        </Alert>
         
-        <div className="grid gap-4">
-          <div className="grid gap-2">
-            <label htmlFor="chat-id" className="text-sm font-medium">
-              Chat ID Telegram
-            </label>
-            <Input
-              id="chat-id"
-              placeholder="Entrez votre Chat ID"
-              value={chatId}
-              onChange={(e) => setChatId(e.target.value)}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="botToken"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Token du Bot Telegram</FormLabel>
+                  <FormControl>
+                    <div className="flex items-center">
+                      <Key className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                        placeholder="Exemple: 123456789:ABCDefGhIJKlmNoPQRsTUVwxyZ" 
+                        {...field} 
+                        type="password"
+                      />
+                    </div>
+                  </FormControl>
+                  <FormDescription>
+                    Le token unique fourni par BotFather lors de la création de votre bot
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <p className="text-sm text-muted-foreground">
-              Il s'agit de l'identifiant du chat où les articles seront publiés
-            </p>
-          </div>
-        </div>
-        
-        {testResult && (
-          <Alert variant={testResult.success ? "default" : "destructive"}>
-            {testResult.success ? (
-              <CheckCircle2 className="h-4 w-4" />
-            ) : (
-              <AlertCircle className="h-4 w-4" />
+            
+            <FormField
+              control={form.control}
+              name="chatId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Chat ID Telegram</FormLabel>
+                  <FormControl>
+                    <div className="flex items-center">
+                      <Lock className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                        placeholder="Exemple: 123456789" 
+                        {...field}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormDescription>
+                    L'identifiant du chat où les articles seront publiés
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            {testResult && (
+              <Alert variant={testResult.success ? "default" : "destructive"}>
+                {testResult.success ? (
+                  <CheckCircle2 className="h-4 w-4" />
+                ) : (
+                  <AlertCircle className="h-4 w-4" />
+                )}
+                <AlertTitle>
+                  {testResult.success ? "Test réussi" : "Échec du test"}
+                </AlertTitle>
+                <AlertDescription>{testResult.message}</AlertDescription>
+              </Alert>
             )}
-            <AlertTitle>
-              {testResult.success ? "Test réussi" : "Échec du test"}
-            </AlertTitle>
-            <AlertDescription>{testResult.message}</AlertDescription>
-          </Alert>
-        )}
+            
+            <div className="flex justify-between pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleTestConnection}
+                disabled={isTesting || !form.getValues().botToken || !form.getValues().chatId}
+              >
+                {isTesting ? (
+                  <>
+                    <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    Test en cours...
+                  </>
+                ) : (
+                  <>
+                    <Send className="mr-2 h-4 w-4" />
+                    Tester la connexion
+                  </>
+                )}
+              </Button>
+              <Button type="submit">Sauvegarder</Button>
+            </div>
+          </form>
+        </Form>
       </CardContent>
-      <CardFooter className="flex justify-between">
-        <Button
-          variant="outline"
-          onClick={handleTestConnection}
-          disabled={isTesting || !chatId}
-        >
-          {isTesting ? (
-            <>
-              <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-              Test en cours...
-            </>
-          ) : (
-            <>
-              <Send className="mr-2 h-4 w-4" />
-              Tester la connexion
-            </>
-          )}
-        </Button>
-        <Button onClick={handleSaveChatId} disabled={isTesting || !chatId}>
-          Sauvegarder
-        </Button>
-      </CardFooter>
     </Card>
   );
 };
