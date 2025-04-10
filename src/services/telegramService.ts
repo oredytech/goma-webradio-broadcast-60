@@ -37,6 +37,8 @@ export interface TelegramArticle {
 // Envoyer un message texte au bot
 export const sendTextMessage = async (text: string, chatId: string = "5591733599"): Promise<boolean> => {
   try {
+    console.log("Envoi de message texte à Telegram:", { chatId, textLength: text.length });
+    
     const response = await fetch(`${API_BASE_URL}/sendMessage`, {
       method: "POST",
       headers: {
@@ -50,9 +52,15 @@ export const sendTextMessage = async (text: string, chatId: string = "5591733599
     });
 
     const data = await response.json();
+    console.log("Réponse de l'API Telegram (message):", data);
+    
+    if (!data.ok) {
+      console.error("Erreur API Telegram:", data.description);
+    }
+    
     return data.ok;
   } catch (error) {
-    console.error("Error sending message to Telegram:", error);
+    console.error("Erreur lors de l'envoi du message à Telegram:", error);
     return false;
   }
 };
@@ -64,6 +72,14 @@ export const sendImage = async (
   chatId: string = "5591733599"
 ): Promise<boolean> => {
   try {
+    console.log("Envoi d'image à Telegram:", { chatId, imageUrl, captionLength: caption.length });
+    
+    // Vérification de l'URL de l'image
+    if (!imageUrl || !imageUrl.startsWith('http')) {
+      console.error("URL d'image invalide:", imageUrl);
+      return false;
+    }
+    
     const response = await fetch(`${API_BASE_URL}/sendPhoto`, {
       method: "POST",
       headers: {
@@ -78,9 +94,15 @@ export const sendImage = async (
     });
 
     const data = await response.json();
+    console.log("Réponse de l'API Telegram (image):", data);
+    
+    if (!data.ok) {
+      console.error("Erreur API Telegram:", data.description);
+    }
+    
     return data.ok;
   } catch (error) {
-    console.error("Error sending image to Telegram:", error);
+    console.error("Erreur lors de l'envoi de l'image à Telegram:", error);
     return false;
   }
 };
@@ -99,9 +121,10 @@ export const getUpdates = async (offset?: number): Promise<TelegramUpdate[]> => 
     if (data.ok) {
       return data.result;
     }
+    console.error("Erreur lors de la récupération des mises à jour:", data.description);
     return [];
   } catch (error) {
-    console.error("Error fetching updates from Telegram:", error);
+    console.error("Erreur lors de la récupération des mises à jour de Telegram:", error);
     return [];
   }
 };
@@ -115,9 +138,10 @@ export const getFileUrl = async (fileId: string): Promise<string> => {
     if (data.ok) {
       return `https://api.telegram.org/file/bot${TELEGRAM_BOT_TOKEN}/${data.result.file_path}`;
     }
+    console.error("Erreur lors de la récupération de l'URL du fichier:", data.description);
     return "";
   } catch (error) {
-    console.error("Error getting file URL from Telegram:", error);
+    console.error("Erreur lors de la récupération de l'URL du fichier Telegram:", error);
     return "";
   }
 };
@@ -182,16 +206,30 @@ export const publishArticleViaTelegram = async (
   imageUrl?: string
 ): Promise<boolean> => {
   try {
-    if (imageUrl) {
+    console.log("Tentative de publication d'article sur Telegram:", { title, contentLength: content.length, imageUrl });
+    
+    // Vérifier que nous avons au moins un titre
+    if (!title || title.trim() === "") {
+      console.error("Erreur de publication: Titre manquant");
+      return false;
+    }
+    
+    let success = false;
+    
+    if (imageUrl && imageUrl.trim() !== "") {
       // Si on a une image, on l'envoie avec la légende contenant titre + contenu
-      return await sendImage(imageUrl, `<b>${title}</b>\n\n${content}`);
+      console.log("Publication avec image");
+      success = await sendImage(imageUrl, `<b>${title}</b>\n\n${content}`);
     } else {
       // Sinon on envoie juste le texte
-      return await sendTextMessage(`<b>${title}</b>\n\n${content}`);
+      console.log("Publication texte uniquement");
+      success = await sendTextMessage(`<b>${title}</b>\n\n${content}`);
     }
+    
+    console.log("Résultat de la publication:", success ? "Réussi" : "Échec");
+    return success;
   } catch (error) {
-    console.error("Error publishing article via Telegram:", error);
+    console.error("Erreur lors de la publication d'article via Telegram:", error);
     return false;
   }
 };
-
