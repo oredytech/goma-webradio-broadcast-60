@@ -1,10 +1,10 @@
+
 import React from "react";
 import RadioPlayer from "@/components/radio/RadioPlayer";
 import Header from "@/components/Header";
 import PodcastSection from "@/components/PodcastSection";
 import VideoSection from "@/components/VideoSection";
 import ContactSection from "@/components/ContactSection";
-import Footer from "@/components/Footer";
 import ArticlesSlider from "@/components/ArticlesSlider";
 import ExtraArticles from "@/components/ExtraArticles";
 import { Play, Pause } from "lucide-react";
@@ -103,8 +103,7 @@ const Index = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Index
       {/* Contact Section */}
       <ContactSection />
 
-      {/* Footer */}
-      <Footer />
+      {/* Removed Footer from here as it's already included in App.tsx */}
     </div>
   );
 };
