@@ -59,7 +59,7 @@ export const sendImage = async (
     });
     
     // Vérification de l'URL de l'image
-    if (!imageUrl || !imageUrl.startsWith('http')) {
+    if (!imageUrl || !imageUrl.trim() || !(imageUrl.startsWith('http://') || imageUrl.startsWith('https://'))) {
       console.error("URL d'image invalide:", imageUrl);
       return false;
     }
@@ -98,6 +98,18 @@ export const uploadImage = async (
   chatId?: string
 ): Promise<boolean> => {
   try {
+    // Vérifier que le fichier est valide
+    if (!imageFile || !(imageFile instanceof File) || imageFile.size === 0) {
+      console.error("Fichier image invalide:", imageFile);
+      return false;
+    }
+    
+    // Vérifier si c'est une image
+    if (!imageFile.type.startsWith('image/')) {
+      console.error("Le fichier n'est pas une image:", imageFile.type);
+      return false;
+    }
+    
     // Utiliser le chat ID fourni ou la valeur par défaut
     const targetChatId = chatId || getDefaultChatId();
     const apiBaseUrl = getTelegramApiBaseUrl();
@@ -105,6 +117,7 @@ export const uploadImage = async (
     console.log("Téléversement d'image à Telegram:", { 
       chatId: targetChatId, 
       imageFileName: imageFile.name,
+      imageFileType: imageFile.type,
       imageFileSize: `${(imageFile.size / 1024).toFixed(2)}KB`, 
       captionLength: caption.length,
     });

@@ -5,7 +5,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Form } from "@/components/ui/form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Type, FileImage } from "lucide-react";
+import { Type, Image } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { publishArticleViaTelegram } from "@/services/telegramService";
 import { articleSchema, ArticleFormValues } from "./ArticleFormTypes";
@@ -35,20 +35,26 @@ const ArticleForm = () => {
   // Mutation pour publier/enregistrer l'article
   const publishMutation = useMutation({
     mutationFn: async (article: ArticleFormValues) => {
-      let imageToSend = article.featuredImage;
+      // Utiliser l'URL de l'image si aucune image n'a été téléversée
+      let imageUrl = article.featuredImage || undefined;
+      const uploadedImage = article.uploadedImage as File || undefined;
       
-      // Si une image a été téléversée, utiliser l'objet File
-      if (article.uploadedImage) {
-        // L'image téléversée est prioritaire sur l'URL
-        console.log("Une image a été téléversée:", article.uploadedImage);
+      // Si une image a été téléversée, nous allons l'utiliser en priorité
+      if (uploadedImage) {
+        console.log("Une image a été téléversée:", uploadedImage.name, "taille:", uploadedImage.size);
+      } else if (imageUrl) {
+        console.log("Une URL d'image a été fournie:", imageUrl);
+      } else {
+        console.log("Aucune image fournie pour l'article");
       }
       
-      // Publier sur Telegram
+      // Publier sur Telegram en passant à la fois l'URL et l'image téléversée
+      // La fonction publishArticleViaTelegram décidera quelle approche utiliser
       const telegramPublished = await publishArticleViaTelegram(
         article.title,
         article.content,
-        imageToSend || undefined,
-        article.uploadedImage as File || undefined
+        imageUrl,
+        uploadedImage
       );
       
       if (!telegramPublished) {
@@ -102,7 +108,7 @@ const ArticleForm = () => {
                         Éditeur
                       </TabsTrigger>
                       <TabsTrigger value="preview" className="flex items-center gap-1">
-                        <FileImage size={16} />
+                        <Image size={16} />
                         Aperçu
                       </TabsTrigger>
                     </TabsList>

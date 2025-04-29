@@ -19,6 +19,8 @@ export const publishArticleViaTelegram = async (
       contentLength: content.length, 
       imageUrl,
       hasUploadedImage: !!uploadedImage,
+      uploadedImageName: uploadedImage?.name,
+      uploadedImageSize: uploadedImage ? `${(uploadedImage.size / 1024).toFixed(2)} KB` : null,
       chatId: targetChatId
     });
     
@@ -31,13 +33,13 @@ export const publishArticleViaTelegram = async (
     let success = false;
     const formattedContent = `<b>${title}</b>\n\n${content}`;
     
-    if (uploadedImage) {
-      // Si on a une image téléversée, priorité à cette image
-      console.log("Publication avec image téléversée");
+    if (uploadedImage instanceof File && uploadedImage.size > 0) {
+      // Si on a une image téléversée valide, priorité à cette image
+      console.log("Publication avec image téléversée:", uploadedImage.name);
       success = await uploadImage(uploadedImage, formattedContent, targetChatId);
     } else if (imageUrl && imageUrl.trim() !== "") {
-      // Sinon, si on a une URL d'image, on l'envoie
-      console.log("Publication avec image URL");
+      // Sinon, si on a une URL d'image valide, on l'envoie
+      console.log("Publication avec image URL:", imageUrl);
       success = await sendImage(imageUrl, formattedContent, targetChatId);
     } else {
       // Sinon on envoie juste le texte
