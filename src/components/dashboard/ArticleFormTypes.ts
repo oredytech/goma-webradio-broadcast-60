@@ -8,7 +8,8 @@ export const articleSchema = z.object({
   excerpt: z.string().min(10, { message: "L'extrait doit contenir au moins 10 caractères" }),
   category: z.string().min(1, { message: "Veuillez sélectionner une catégorie" }),
   featuredImage: z.string().url({ message: "L'URL de l'image doit être valide" }).optional().or(z.literal("")),
-  status: z.enum(["draft", "publish"], { message: "Le statut doit être brouillon ou publié" })
+  status: z.enum(["draft", "publish"], { message: "Le statut doit être brouillon ou publié" }),
+  uploadedImage: z.any().optional() // Stocke l'objet File de l'image téléversée
 });
 
 export type ArticleFormValues = z.infer<typeof articleSchema>;

@@ -195,6 +195,53 @@ export const sendImage = async (
   }
 };
 
+// Téléversement d'une image locale à Telegram
+export const uploadImage = async (
+  imageFile: File,
+  caption: string = "",
+  chatId?: string
+): Promise<boolean> => {
+  try {
+    // Utiliser le chat ID fourni ou la valeur par défaut
+    const targetChatId = chatId || getDefaultChatId();
+    const apiBaseUrl = getTelegramApiBaseUrl();
+    
+    console.log("Téléversement d'image à Telegram:", { 
+      chatId: targetChatId, 
+      imageFileName: imageFile.name,
+      imageFileSize: `${(imageFile.size / 1024).toFixed(2)}KB`, 
+      captionLength: caption.length,
+    });
+    
+    // Créer un FormData pour envoyer le fichier
+    const formData = new FormData();
+    formData.append("chat_id", targetChatId);
+    formData.append("photo", imageFile);
+    
+    if (caption) {
+      formData.append("caption", caption);
+      formData.append("parse_mode", "HTML");
+    }
+    
+    const response = await fetch(`${apiBaseUrl}/sendPhoto`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+    console.log("Réponse de l'API Telegram (téléversement d'image):", data);
+    
+    if (!data.ok) {
+      console.error("Erreur API Telegram:", data.description);
+    }
+    
+    return data.ok;
+  } catch (error) {
+    console.error("Erreur lors du téléversement de l'image à Telegram:", error);
+    return false;
+  }
+};
+
 // Récupérer les mises à jour du bot
 export const getUpdates = async (offset?: number): Promise<TelegramUpdate[]> => {
   try {
@@ -296,6 +343,7 @@ export const publishArticleViaTelegram = async (
   title: string,
   content: string,
   imageUrl?: string,
+  uploadedImage?: File,
   chatId?: string
 ): Promise<boolean> => {
   try {
@@ -306,6 +354,7 @@ export const publishArticleViaTelegram = async (
       title, 
       contentLength: content.length, 
       imageUrl,
+      hasUploadedImage: !!uploadedImage,
       chatId: targetChatId
     });
     
@@ -316,15 +365,20 @@ export const publishArticleViaTelegram = async (
     }
     
     let success = false;
+    const formattedContent = `<b>${title}</b>\n\n${content}`;
     
-    if (imageUrl && imageUrl.trim() !== "") {
-      // Si on a une image, on l'envoie avec la légende contenant titre + contenu
-      console.log("Publication avec image");
-      success = await sendImage(imageUrl, `<b>${title}</b>\n\n${content}`, targetChatId);
+    if (uploadedImage) {
+      // Si on a une image téléversée, priorité à cette image
+      console.log("Publication avec image téléversée");
+      success = await uploadImage(uploadedImage, formattedContent, targetChatId);
+    } else if (imageUrl && imageUrl.trim() !== "") {
+      // Sinon, si on a une URL d'image, on l'envoie
+      console.log("Publication avec image URL");
+      success = await sendImage(imageUrl, formattedContent, targetChatId);
     } else {
       // Sinon on envoie juste le texte
       console.log("Publication texte uniquement");
-      success = await sendTextMessage(`<b>${title}</b>\n\n${content}`, targetChatId);
+      success = await sendTextMessage(formattedContent, targetChatId);
     }
     
     console.log("Résultat de la publication:", success ? "Réussi" : "Échec");

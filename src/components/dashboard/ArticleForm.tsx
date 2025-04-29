@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FormProvider } from "react-hook-form";
@@ -26,18 +27,28 @@ const ArticleForm = () => {
       excerpt: "",
       category: "",
       featuredImage: "",
-      status: "draft"
+      status: "draft",
+      uploadedImage: undefined
     }
   });
 
   // Mutation pour publier/enregistrer l'article
   const publishMutation = useMutation({
     mutationFn: async (article: ArticleFormValues) => {
+      let imageToSend = article.featuredImage;
+      
+      // Si une image a été téléversée, utiliser l'objet File
+      if (article.uploadedImage) {
+        // L'image téléversée est prioritaire sur l'URL
+        console.log("Une image a été téléversée:", article.uploadedImage);
+      }
+      
       // Publier sur Telegram
       const telegramPublished = await publishArticleViaTelegram(
         article.title,
         article.content,
-        article.featuredImage || undefined
+        imageToSend || undefined,
+        article.uploadedImage as File || undefined
       );
       
       if (!telegramPublished) {

@@ -2,19 +2,66 @@
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Send } from "lucide-react";
+import { Send, Upload, FileImage } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useFormContext } from "react-hook-form";
 import { ArticleFormValues } from "./ArticleFormTypes";
+import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ArticlePublishSidebarProps {
   isSubmitting: boolean;
 }
 
 const ArticlePublishSidebar = ({ isSubmitting }: ArticlePublishSidebarProps) => {
-  const { control, watch } = useFormContext<ArticleFormValues>();
+  const { control, watch, setValue } = useFormContext<ArticleFormValues>();
+  const [imageUploading, setImageUploading] = useState(false);
+  const { toast } = useToast();
+  
+  // Fonction pour gérer le téléversement d'image
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Vérifier le type de fichier
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Type de fichier non supporté",
+        description: "Veuillez sélectionner une image (JPG, PNG, etc.)",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Vérifier la taille du fichier (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      toast({
+        title: "Image trop volumineuse",
+        description: "L'image ne doit pas dépasser 5MB",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setImageUploading(true);
+    
+    // Créer une URL locale pour l'image (preview)
+    const localImageUrl = URL.createObjectURL(file);
+    
+    // Mise à jour du champ featuredImage avec l'URL locale
+    setValue("featuredImage", localImageUrl);
+    setValue("uploadedImage", file); // Stocker le fichier pour l'envoi ultérieur
+    
+    setImageUploading(false);
+    
+    toast({
+      title: "Image ajoutée",
+      description: "L'image a été sélectionnée pour l'article",
+    });
+  };
   
   return (
     <div className="lg:w-64 space-y-4">
@@ -96,11 +143,40 @@ const ArticlePublishSidebar = ({ isSubmitting }: ArticlePublishSidebarProps) => 
             <FormItem>
               <FormLabel>Image à la une</FormLabel>
               <FormControl>
-                <div className="flex gap-2">
-                  <Input 
-                    placeholder="URL de l'image"
-                    {...field}
-                  />
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Input 
+                      placeholder="URL de l'image"
+                      {...field}
+                      className="flex-1"
+                    />
+                    <div className="relative">
+                      <Button 
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="aspect-square"
+                        disabled={imageUploading}
+                      >
+                        {imageUploading ? (
+                          <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+                        ) : (
+                          <Upload size={16} />
+                        )}
+                        <span className="sr-only">Téléverser une image</span>
+                      </Button>
+                      <Input 
+                        type="file" 
+                        accept="image/*"
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
+                        onChange={handleImageUpload}
+                        disabled={imageUploading}
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Entrez une URL ou téléversez une image locale (max 5MB)
+                  </p>
                 </div>
               </FormControl>
               <FormMessage />
