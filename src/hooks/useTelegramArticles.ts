@@ -5,7 +5,7 @@ import {
   getUpdates, 
   parseUpdatesToArticles, 
   TelegramArticle 
-} from "@/services/telegramService";
+} from "@/services/telegram";
 
 export const useTelegramArticles = () => {
   return useQuery<TelegramArticle[]>({
@@ -17,4 +17,3 @@ export const useTelegramArticles = () => {
     staleTime: 60 * 1000, // 1 minute
   });
 };
-
