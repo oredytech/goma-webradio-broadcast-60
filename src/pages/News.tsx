@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useMultiSourceArticles, sources, WordPressArticle } from "@/hooks/useMultiSourceArticles";
 import { Loader2 } from "lucide-react";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import ArticlesSlider from "@/components/ArticlesSlider";
 import { Link } from "react-router-dom";
 import { getArticleSlug } from "@/utils/articleUtils";
@@ -34,7 +33,7 @@ const News = ({ filter }: NewsProps) => {
         <div className="pt-24 flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
-        <Footer />
+        {/* Footer est déjà inclus globalement dans App.tsx */}
       </div>
     );
   }
@@ -46,7 +45,7 @@ const News = ({ filter }: NewsProps) => {
         <div className="pt-24 flex items-center justify-center">
           <p className="text-red-500">Une erreur est survenue lors du chargement des articles.</p>
         </div>
-        <Footer />
+        {/* Footer est déjà inclus globalement dans App.tsx */}
       </div>
     );
   }
@@ -99,7 +98,7 @@ const News = ({ filter }: NewsProps) => {
           ))}
         </div>
       </div>
-      <Footer />
+      {/* Footer est déjà inclus globalement dans App.tsx */}
     </div>
   );
 };

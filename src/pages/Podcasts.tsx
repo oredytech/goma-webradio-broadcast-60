@@ -4,7 +4,6 @@ import { usePodcastFeed } from '@/hooks/usePodcastFeed';
 import { Button } from '@/components/ui/button';
 import { Share2, Loader2, ChevronRight, Mic } from 'lucide-react';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { useToast } from '@/components/ui/use-toast';
 import { getPodcastSlug } from '@/utils/podcastUtils';
 import { Badge } from '@/components/ui/badge';
@@ -88,7 +87,7 @@ const Podcasts = ({
             ))}
           </div>
         </div>
-        <Footer />
+        {/* Footer est déjà inclus globalement dans App.tsx */}
       </div>
     );
   }
@@ -168,7 +167,7 @@ const Podcasts = ({
           </div>
         ))}
       </main>
-      <Footer />
+      {/* Footer est déjà inclus globalement dans App.tsx */}
     </div>
   );
 };

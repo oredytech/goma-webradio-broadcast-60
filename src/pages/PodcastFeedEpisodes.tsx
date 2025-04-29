@@ -4,7 +4,6 @@ import { usePodcastFeed } from '@/hooks/usePodcastFeed';
 import { Button } from '@/components/ui/button';
 import { Share2, ArrowLeft } from 'lucide-react';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { useToast } from '@/components/ui/use-toast';
 import { getPodcastSlug } from '@/utils/podcastUtils';
 import { Badge } from '@/components/ui/badge';
@@ -92,7 +91,7 @@ const PodcastFeedEpisodes = ({
             ))}
           </div>
         </div>
-        <Footer />
+        {/* Footer est déjà inclus globalement dans App.tsx */}
       </div>
     );
   }
@@ -119,7 +118,7 @@ const PodcastFeedEpisodes = ({
           </Button>
           <p className="text-foreground mt-4">Ce podcast n'existe pas ou a été supprimé.</p>
         </div>
-        <Footer />
+        {/* Footer est déjà inclus globalement dans App.tsx */}
       </div>
     );
   }
@@ -190,7 +189,7 @@ const PodcastFeedEpisodes = ({
           ))}
         </div>
       </main>
-      <Footer />
+      {/* Footer est déjà inclus globalement dans App.tsx */}
     </div>
   );
 };
