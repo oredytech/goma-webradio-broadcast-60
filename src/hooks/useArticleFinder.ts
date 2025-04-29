@@ -1,9 +1,10 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useWordpressArticles, WordPressArticle } from "@/hooks/useWordpressArticles";
 import { useTelegramArticles } from "@/hooks/useTelegramArticles";
-import { TelegramArticle } from "@/services/telegramService";
+import { TelegramArticle } from "@/services/telegram";
 import { 
   decodeHtmlTitle, 
   getArticleSlug, 
@@ -32,7 +33,7 @@ export function useArticleFinder() {
     source: "telegram" as const
   })) || [];
 
-  // Keep WordPress articles separate 
+  // Combine all articles
   const allArticles = [
     ...(wpArticles || []), 
     ...transformedTelegramArticles

@@ -1,6 +1,6 @@
 
 import { WordPressArticle } from "@/hooks/useWordpressArticles";
-import { TelegramArticle } from "@/services/telegramService";
+import { TelegramArticle } from "@/services/telegram";
 import { ArticleSource } from "@/hooks/useArticleFinder";
 import { decodeHtmlTitle, getFeaturedImageUrl } from "@/utils/articleUtils";
 
@@ -33,7 +33,7 @@ export const extractArticleData = (
   } else {
     const telegramArticle = article as TelegramArticle;
     return {
-      title: telegramArticle.title,
+      title: telegramArticle.title || "Sans titre",
       content: telegramArticle.content,
       featuredImageUrl: telegramArticle.featuredImage || '/GOWERA__3_-removebg-preview.png',
       description: telegramArticle.excerpt,

@@ -1,13 +1,22 @@
+
 import { useMultiSourceArticles, sources, WordPressArticle } from "@/hooks/useMultiSourceArticles";
 import { useTelegramArticles } from "@/hooks/useTelegramArticles";
-import { TelegramArticle } from "@/services/telegramService";
+import { TelegramArticle } from "@/services/telegram";
 import { Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getArticleSlug, getTelegramArticleSlug } from "@/utils/articleUtils";
+import { usePageSEO } from "@/hooks/useSEO";
 
 const Actualites = () => {
   const results = useMultiSourceArticles();
   const { data: telegramArticles, isLoading: isLoadingTelegram } = useTelegramArticles();
+
+  // Setup SEO for the page
+  usePageSEO(
+    "Actualités - GOMA WEBRADIO",
+    "Toutes les dernières actualités de GOMA WEBRADIO, y compris les mises à jour de Telegram",
+    "/GOWERA__3_-removebg-preview.png"
+  );
 
   const isLoading = results.some((result) => result.isLoading) || isLoadingTelegram;
   const isError = results.some((result) => result.isError);
@@ -54,7 +63,7 @@ const Actualites = () => {
                   )}
                   <div className="p-4">
                     <h3 className="text-lg font-semibold text-foreground mb-2">
-                      {article.title}
+                      {article.title || "Sans titre"}
                     </h3>
                     <div className="text-foreground/70 text-sm line-clamp-3">
                       {article.excerpt}

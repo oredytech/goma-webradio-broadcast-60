@@ -1,4 +1,3 @@
-
 import { WordPressArticle as SingleSourceArticle } from "@/hooks/useWordpressArticles";
 import { WordPressArticle as MultiSourceArticle } from "@/hooks/useMultiSourceArticles";
 import { TelegramArticle } from "@/services/telegramService";
@@ -35,36 +34,51 @@ export const getArticleSlug = (article: AnyWordPressArticle): string => {
 /**
  * Generates a slug from a Telegram article title
  */
-export const getTelegramArticleSlug = (article: TelegramArticle): string => {
-  return article.title
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .trim();
+export const getTelegramArticleSlug = (article: any): string => {
+  const id = article.id;
+  const title = article.title || "sans-titre";
+  return `${id}-${normalizeSlug(title)}`;
 };
 
 /**
  * Normalizes a slug for comparison purposes
  * This helps with URL-unfriendly characters that might be in one slug but not the other
  */
-export const normalizeSlug = (slug: string): string => {
-  return slug
+export const normalizeSlug = (text: string): string => {
+  return text
+    .toString()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
-    .replace(/[^\w\s]/g, '') // Remove all non-alphanumeric characters
-    .replace(/\s+/g, '')     // Remove all whitespace
-    .trim();
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
 };
 
 /**
  * Checks if two slugs are similar (for fuzzy matching)
  */
 export const areSlugsRelated = (slug1: string, slug2: string): boolean => {
-  const normalized1 = normalizeSlug(slug1);
-  const normalized2 = normalizeSlug(slug2);
+  // Extraire l'ID si présent
+  const idMatch1 = slug1.match(/^(\d+)-/);
+  const idMatch2 = slug2.match(/^(\d+)-/);
   
-  return normalized1.includes(normalized2) || 
-         normalized2.includes(normalized1) || 
-         normalized1 === normalized2;
+  // Si les deux slugs ont des IDs et qu'ils correspondent
+  if (idMatch1 && idMatch2 && idMatch1[1] === idMatch2[1]) {
+    return true;
+  }
+  
+  // Normaliser les slugs pour une comparaison plus souple
+  const normalizedSlug1 = normalizeSlug(slug1);
+  const normalizedSlug2 = normalizeSlug(slug2);
+  
+  // Vérifier si l'un contient l'autre ou s'ils sont similaires
+  return normalizedSlug1.includes(normalizedSlug2) || 
+         normalizedSlug2.includes(normalizedSlug1) ||
+         normalizedSlug1 === normalizedSlug2;
 };
 
 /**

@@ -55,7 +55,7 @@ export const parseUpdatesToArticles = async (updates: TelegramUpdate[]): Promise
       if (update.message.text && !update.message.photo) {
         const parts = update.message.text.split("\n\n");
         if (parts.length >= 2) {
-          const title = parts[0];
+          const title = parts[0].replace(/^<b>(.*)<\/b>$/i, '$1'); // Supprimer les balises HTML
           const content = parts.slice(1).join("\n\n");
           
           articles.push({
@@ -79,7 +79,7 @@ export const parseUpdatesToArticles = async (updates: TelegramUpdate[]): Promise
         
         if (update.message.caption) {
           const parts = update.message.caption.split("\n\n");
-          title = parts[0];
+          title = parts[0].replace(/^<b>(.*)<\/b>$/i, '$1'); // Supprimer les balises HTML
           content = parts.length > 1 ? parts.slice(1).join("\n\n") : "";
         }
         
@@ -95,5 +95,6 @@ export const parseUpdatesToArticles = async (updates: TelegramUpdate[]): Promise
     }
   }
   
-  return articles;
+  // Trier les articles par date (plus récent d'abord)
+  return articles.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 };

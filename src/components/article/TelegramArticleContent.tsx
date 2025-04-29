@@ -1,5 +1,5 @@
 
-import { TelegramArticle } from "@/services/telegramService";
+import { TelegramArticle } from "@/services/telegram";
 
 interface TelegramArticleContentProps {
   article: TelegramArticle;
