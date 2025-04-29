@@ -30,20 +30,29 @@ export const publishArticleViaTelegram = async (
       return false;
     }
     
-    let success = false;
+    // Préparer le contenu formaté
     const formattedContent = `<b>${title}</b>\n\n${content}`;
+    let success = false;
     
     if (uploadedImage instanceof File && uploadedImage.size > 0) {
       // Si on a une image téléversée valide, priorité à cette image
       console.log("Publication avec image téléversée:", uploadedImage.name);
       success = await uploadImage(uploadedImage, formattedContent, targetChatId);
+      
+      // Si l'envoi avec image téléversée échoue mais qu'il y a une URL d'image, essayer avec l'URL
+      if (!success && imageUrl && imageUrl.trim() !== "") {
+        console.log("Échec avec l'image téléversée, tentative avec l'URL d'image:", imageUrl);
+        success = await sendImage(imageUrl, formattedContent, targetChatId);
+      }
     } else if (imageUrl && imageUrl.trim() !== "") {
       // Sinon, si on a une URL d'image valide, on l'envoie
       console.log("Publication avec image URL:", imageUrl);
       success = await sendImage(imageUrl, formattedContent, targetChatId);
-    } else {
-      // Sinon on envoie juste le texte
-      console.log("Publication texte uniquement");
+    }
+    
+    // Si l'envoi avec image a échoué ou s'il n'y a pas d'image, envoyer juste le texte
+    if (!success) {
+      console.log("Publication texte uniquement (après échec avec image ou pas d'image)");
       success = await sendTextMessage(formattedContent, targetChatId);
     }
     
