@@ -128,7 +128,7 @@ const NotFound = () => {
   // If we matched an article, redirect to the proper article URL
   if (matchedArticle) {
     const articleSlug = getArticleSlug(matchedArticle);
-    return <Navigate to={`/article/${articleSlug}`} replace />;
+    return <Navigate to={`/news/${articleSlug}`} replace />;
   }
 
   // If we matched a podcast, redirect to the proper podcast URL
@@ -158,7 +158,7 @@ const NotFound = () => {
                     {possibleMatches.articles.map(article => (
                       <Link 
                         key={article.id}
-                        to={`/article/${getArticleSlug(article)}`}
+                        to={`/news/${getArticleSlug(article)}`}
                         className="text-primary hover:underline"
                         dangerouslySetInnerHTML={{ __html: article.title.rendered }}
                       />

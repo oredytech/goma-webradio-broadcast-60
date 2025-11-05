@@ -128,24 +128,24 @@ export function useArticleFinder() {
       const articleSlug = getArticleSlug(article as WordPressArticle);
       
       if (id && !location.pathname.includes(articleSlug)) {
-        navigate(`/article/${articleSlug}`, { replace: true });
+        navigate(`/news/${articleSlug}`, { replace: true });
         return;
       }
       
       if (id && slug && slug !== articleSlug) {
-        navigate(`/article/${articleSlug}`, { replace: true });
+        navigate(`/news/${articleSlug}`, { replace: true });
         return;
       }
     } else if (!isLoading && article && articleSource === "telegram") {
       const telegramSlug = getTelegramArticleSlug(article as TelegramArticle);
       
       if (id && !location.pathname.includes(telegramSlug)) {
-        navigate(`/article/${telegramSlug}`, { replace: true });
+        navigate(`/news/${telegramSlug}`, { replace: true });
         return;
       }
       
       if (id && slug && slug !== telegramSlug) {
-        navigate(`/article/${telegramSlug}`, { replace: true });
+        navigate(`/news/${telegramSlug}`, { replace: true });
         return;
       }
     }

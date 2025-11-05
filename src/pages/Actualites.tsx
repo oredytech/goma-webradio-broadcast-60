@@ -50,7 +50,7 @@ const Actualites = () => {
               {telegramArticles.map((article) => (
                 <Link
                   key={`telegram-${article.id}`}
-                  to={`/article/${getTelegramArticleSlug(article)}`}
+                  to={`/news/${getTelegramArticleSlug(article)}`}
                   className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300 shadow-md hover:shadow-xl dark:shadow-primary/10"
                 >
                   {article.featuredImage && (
@@ -91,7 +91,7 @@ const Actualites = () => {
               {(results[sourceIndex].data as WordPressArticle[])?.map((article) => (
                 <Link
                   key={article.id}
-                  to={`/article/${getArticleSlug(article)}`}
+                  to={`/news/${getArticleSlug(article)}`}
                   className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300 shadow-md hover:shadow-xl dark:shadow-primary/10"
                 >
                   {article._embedded?.["wp:featuredmedia"]?.[0]?.source_url && (

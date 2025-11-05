@@ -69,7 +69,7 @@ const News = ({ filter }: NewsProps) => {
                 {results[sourceIndex].data?.map((article: WordPressArticle) => (
                   <Link
                     key={article.id}
-                    to={`/article/${getArticleSlug(article)}`}
+                    to={`/news/${getArticleSlug(article)}`}
                     className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300 group animate-fade-in"
                   >
                     {article._embedded?.["wp:featuredmedia"]?.[0]?.source_url && (

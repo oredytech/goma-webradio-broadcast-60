@@ -80,7 +80,7 @@ const ArticlesSlider = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent transition-opacity duration-700">
                 <div className="absolute bottom-0 left-0 right-0 p-6 transform transition-all duration-500 ease-out">
                   <Link
-                    to={`/article/${getArticleSlug(currentArticle)}`}
+                    to={`/news/${getArticleSlug(currentArticle)}`}
                     className="text-2xl font-bold text-white hover:text-primary transition-colors inline-block"
                     dangerouslySetInnerHTML={{ __html: currentArticle.title.rendered }}
                   />
@@ -88,7 +88,7 @@ const ArticlesSlider = () => {
                     className="text-gray-300 mt-2 line-clamp-2 transform transition-all duration-500"
                     dangerouslySetInnerHTML={{ __html: currentArticle.excerpt.rendered }}
                   />
-                  <Link to={`/article/${getArticleSlug(currentArticle)}`}>
+                  <Link to={`/news/${getArticleSlug(currentArticle)}`}>
                     <Button className="mt-4 transform hover:scale-105 transition-transform">Lire Plus</Button>
                   </Link>
                 </div>

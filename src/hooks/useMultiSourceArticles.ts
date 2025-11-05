@@ -28,6 +28,11 @@ const sources = [
     id: "totalementactus",
     url: "https://totalementactus.net/wp-json/wp/v2/posts",
     name: "Totalement Actus"
+  },
+  {
+    id: "gomawebradio",
+    url: "https://gomawebradio.com/news/wp-json/wp/v2/posts",
+    name: "Goma Webradio News"
   }
 ];
 

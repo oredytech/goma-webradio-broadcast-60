@@ -57,7 +57,30 @@ const AppLayout = () => {
             />
           } 
         />
-        {/* Routes for articles - support both formats */}
+        {/* Routes for articles - new format with /news/ prefix */}
+        <Route 
+          path="/news/:id/:slug" 
+          element={
+            <Article 
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+              currentAudio={currentAudio}
+              setCurrentAudio={setCurrentAudio}
+            />
+          } 
+        />
+        <Route 
+          path="/news/:slug" 
+          element={
+            <Article 
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+              currentAudio={currentAudio}
+              setCurrentAudio={setCurrentAudio}
+            />
+          } 
+        />
+        {/* Legacy routes for backward compatibility */}
         <Route 
           path="/article/:id/:slug" 
           element={
