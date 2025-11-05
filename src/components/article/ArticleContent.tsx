@@ -29,6 +29,11 @@ const ArticleContent = ({ article }: ArticleContentProps) => {
         dangerouslySetInnerHTML={{ __html: article.content.rendered }}
       />
 
+      {/* Social Share Buttons */}
+      <div className="mb-8">
+        <ArticleSocialActions articleId={article.id} />
+      </div>
+
       {/* Author Information */}
       <div className="bg-secondary/50 dark:bg-secondary/50 rounded-lg p-6 backdrop-blur-sm">
         <h2 className="text-2xl font-bold text-foreground mb-6">À propos de l'article</h2>

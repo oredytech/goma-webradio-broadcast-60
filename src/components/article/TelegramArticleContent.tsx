@@ -1,5 +1,6 @@
 
 import { TelegramArticle } from "@/services/telegram";
+import ArticleSocialActions from "@/components/ArticleSocialActions";
 
 interface TelegramArticleContentProps {
   article: TelegramArticle;
@@ -13,6 +14,15 @@ const TelegramArticleContent = ({ article, publishedDate }: TelegramArticleConte
         {article.content.split('\n').map((paragraph, idx) => (
           <p key={idx}>{paragraph}</p>
         ))}
+      </div>
+      
+      {/* Social Share Buttons */}
+      <div className="mb-8">
+        <ArticleSocialActions 
+          articleId={article.id} 
+          articleTitle={article.title}
+          isTelegram={true}
+        />
       </div>
       
       <div className="bg-secondary/50 dark:bg-secondary/50 rounded-lg p-6 backdrop-blur-sm">
