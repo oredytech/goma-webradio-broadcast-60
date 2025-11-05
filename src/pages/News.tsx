@@ -1,6 +1,6 @@
 
 import { useEffect } from 'react';
-import { useMultiSourceArticles, sources, WordPressArticle } from "@/hooks/useMultiSourceArticles";
+import { useAllArticles } from "@/hooks/useAllArticles";
 import { Loader2 } from "lucide-react";
 import Header from "@/components/Header";
 import ArticlesSlider from "@/components/ArticlesSlider";
@@ -13,7 +13,7 @@ interface NewsProps {
 }
 
 const News = ({ filter }: NewsProps) => {
-  const results = useMultiSourceArticles();
+  const { articles, isLoading, isError } = useAllArticles();
   
   // Setup SEO for the news page
   const pageTitle = filter ? `Actualités - ${filter}` : "Toutes les actualités";
@@ -22,9 +22,6 @@ const News = ({ filter }: NewsProps) => {
     "Retrouvez toutes les dernières actualités et informations sur GOMA WEBRADIO",
     "/GOWERA__3_-removebg-preview.png"
   );
-
-  const isLoading = results.some((result) => result.isLoading);
-  const isError = results.some((result) => result.isError);
 
   if (isLoading) {
     return (
@@ -61,40 +58,43 @@ const News = ({ filter }: NewsProps) => {
           {filter ? `Actualités - ${filter}` : "Toutes les actualités"}
         </h1>
         
-        <div className="space-y-16">
-          {sources.map((source, sourceIndex) => (
-            <div key={source.id} className="space-y-8">
-              <h2 className="text-2xl font-semibold text-foreground">{source.name}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {results[sourceIndex].data?.map((article: WordPressArticle) => (
-                  <Link
-                    key={article.id}
-                    to={`/news/${getArticleSlug(article)}`}
-                    className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300 group animate-fade-in"
-                  >
-                    {article._embedded?.["wp:featuredmedia"]?.[0]?.source_url && (
-                      <div className="aspect-video overflow-hidden">
-                        <img
-                          src={article._embedded["wp:featuredmedia"][0].source_url}
-                          alt={article.title.rendered}
-                          className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                    )}
-                    <div className="p-6">
-                      <h3
-                        className="text-xl font-bold text-foreground mb-4 group-hover:text-primary transition-colors"
-                        dangerouslySetInnerHTML={{ __html: article.title.rendered }}
-                      />
-                      <div
-                        className="text-foreground/70 line-clamp-3"
-                        dangerouslySetInnerHTML={{ __html: article.excerpt.rendered }}
-                      />
-                    </div>
-                  </Link>
-                ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {articles.map((article) => (
+            <Link
+              key={article.id}
+              to={article.source === 'telegram' 
+                ? `/news/telegram-${article.sourceId}` 
+                : `/news/${getArticleSlug({ 
+                    id: article.sourceId as number, 
+                    title: { rendered: article.title },
+                    _embedded: article._embedded 
+                  })}`
+              }
+              className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300 group animate-fade-in"
+            >
+              {article.featuredImage && (
+                <div className="aspect-video overflow-hidden">
+                  <img
+                    src={article.featuredImage}
+                    alt={article.title}
+                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+              )}
+              <div className="p-6">
+                <h3
+                  className="text-xl font-bold text-foreground mb-4 group-hover:text-primary transition-colors"
+                  dangerouslySetInnerHTML={{ __html: article.title }}
+                />
+                <div
+                  className="text-foreground/70 line-clamp-3"
+                  dangerouslySetInnerHTML={{ __html: article.excerpt }}
+                />
+                <div className="mt-4 text-xs text-muted-foreground">
+                  {new Date(article.date).toLocaleDateString('fr-FR')}
+                </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

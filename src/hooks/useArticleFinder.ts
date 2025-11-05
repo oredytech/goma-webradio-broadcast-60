@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useWordpressArticles, WordPressArticle } from "@/hooks/useWordpressArticles";
+import { useMultiSourceArticles, WordPressArticle } from "@/hooks/useMultiSourceArticles";
 import { useTelegramArticles } from "@/hooks/useTelegramArticles";
 import { TelegramArticle } from "@/services/telegram";
 import { 
@@ -22,10 +22,22 @@ export function useArticleFinder() {
   const { id, slug } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { data: wpArticles, isLoading: wpArticlesLoading } = useWordpressArticles();
+  const wpResults = useMultiSourceArticles();
   const { data: telegramArticles, isLoading: telegramArticlesLoading } = useTelegramArticles();
   const [articleId, setArticleId] = useState<number | null>(null);
   const [articleSource, setArticleSource] = useState<ArticleSource>(null);
+  const [wpSourceUrl, setWpSourceUrl] = useState<string>("");
+
+  // Check if any WordPress source is loading
+  const wpArticlesLoading = wpResults.some(result => result.isLoading);
+
+  // Combine all WordPress articles from all sources
+  const wpArticles: WordPressArticle[] = [];
+  wpResults.forEach((result, index) => {
+    if (result.data) {
+      wpArticles.push(...(result.data as WordPressArticle[]));
+    }
+  });
 
   // Transform Telegram articles to include source property
   const transformedTelegramArticles = telegramArticles?.map(article => ({
@@ -35,7 +47,7 @@ export function useArticleFinder() {
 
   // Combine all articles
   const allArticles = [
-    ...(wpArticles || []), 
+    ...wpArticles, 
     ...transformedTelegramArticles
   ];
 
@@ -44,30 +56,63 @@ export function useArticleFinder() {
     if (!id && slug && allArticles.length > 0 && !wpArticlesLoading && !telegramArticlesLoading) {
       console.log("Searching for article by slug:", slug);
       
-      // Try to find article by slug with more flexible matching
+      // Check for Telegram article format: telegram-ID
+      if (slug.startsWith('telegram-')) {
+        const telegramId = parseInt(slug.replace('telegram-', ''));
+        const telegramArticle = telegramArticles?.find(article => article.id === telegramId);
+        
+        if (telegramArticle) {
+          console.log("Found Telegram article by ID:", telegramArticle);
+          setArticleId(telegramId);
+          setArticleSource("telegram");
+          return;
+        }
+      }
+      
+      // Extract ID from slug for WordPress articles (format: title-123)
+      const slugParts = slug.split('-');
+      const lastPart = slugParts[slugParts.length - 1];
+      const possibleId = parseInt(lastPart);
+      
+      if (!isNaN(possibleId)) {
+        // Try to find WordPress article by ID (most reliable)
+        const wpArticle = wpArticles.find(article => article.id === possibleId);
+        
+        if (wpArticle) {
+          console.log("Found WordPress article by ID:", wpArticle);
+          setArticleId(possibleId);
+          setArticleSource("wordpress");
+          
+          // Store the source URL for fetching
+          wpResults.forEach((result, index) => {
+            if (result.data && (result.data as WordPressArticle[]).some(a => a.id === possibleId)) {
+              const sources = [
+                { id: "totalementactus", url: "https://totalementactus.net/wp-json/wp/v2/posts" },
+                { id: "gomawebradio", url: "https://gomawebradio.com/news/wp-json/wp/v2/posts" }
+              ];
+              setWpSourceUrl(sources[index].url);
+            }
+          });
+          return;
+        }
+      }
+      
+      // Fallback: Try to find article by slug matching
       const foundArticle = allArticles.find(article => {
         if ('source' in article && article.source === "telegram") {
-          // Telegram article
           const telegramArticle = article as (TelegramArticle & { source: "telegram" });
           const articleSlug = getTelegramArticleSlug(telegramArticle);
-          
           return areSlugsRelated(slug, articleSlug);
         } else {
-          // WordPress article
           const wpArticle = article as WordPressArticle;
-          const articleTitle = decodeHtmlTitle(wpArticle.title.rendered).toLowerCase();
           const articleSlug = getArticleSlug(wpArticle);
-          
-          // Check if the passed slug includes the article title words
-          return areSlugsRelated(slug, articleSlug) || 
-                 articleTitle.includes(normalizeSlug(slug).replace(/[^a-zA-Z0-9]/g, ' '));
+          return areSlugsRelated(slug, articleSlug);
         }
       });
       
       if (foundArticle) {
-        console.log("Found article by slug:", foundArticle);
+        console.log("Found article by slug matching:", foundArticle);
         setArticleId(foundArticle.id);
-        // Determine source
         if ('source' in foundArticle && foundArticle.source === 'telegram') {
           setArticleSource("telegram");
         } else {
@@ -78,7 +123,6 @@ export function useArticleFinder() {
       }
     } else if (id) {
       setArticleId(parseInt(id));
-      // Try to determine source from ID
       const telegramArticle = telegramArticles?.find(article => article.id === parseInt(id));
       if (telegramArticle) {
         setArticleSource("telegram");
@@ -93,18 +137,30 @@ export function useArticleFinder() {
     data: wpArticle, 
     isLoading: isLoadingWP 
   } = useQuery({
-    queryKey: ["article", articleId, "wordpress"],
+    queryKey: ["article", articleId, "wordpress", wpSourceUrl],
     queryFn: async () => {
       if (!articleId || articleSource !== "wordpress") throw new Error("No WordPress article ID found");
       
-      console.log("Fetching WordPress article with ID:", articleId);
-      const response = await fetch(
-        `https://totalementactus.net/wp-json/wp/v2/posts/${articleId}?_embed`
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+      // Try to fetch from the correct source
+      const sources = [
+        { id: "totalementactus", url: "https://totalementactus.net/wp-json/wp/v2/posts" },
+        { id: "gomawebradio", url: "https://gomawebradio.com/news/wp-json/wp/v2/posts" }
+      ];
+      
+      // Try each source
+      for (const source of sources) {
+        try {
+          console.log(`Fetching WordPress article ${articleId} from ${source.id}`);
+          const response = await fetch(`${source.url}/${articleId}?_embed`);
+          if (response.ok) {
+            return response.json();
+          }
+        } catch (error) {
+          console.log(`Failed to fetch from ${source.id}:`, error);
+        }
       }
-      return response.json();
+      
+      throw new Error("Article not found in any source");
     },
     enabled: !!articleId && articleSource === "wordpress",
   });
