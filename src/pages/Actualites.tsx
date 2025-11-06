@@ -42,8 +42,8 @@ const Actualites = () => {
             <Link
               key={article.id}
               to={article.source === 'telegram' 
-                ? `/news/telegram-${article.sourceId}` 
-                : `/news/${getArticleSlug({ 
+                ? `/telegram-${article.sourceId}` 
+                : `/${getArticleSlug({ 
                     id: article.sourceId as number, 
                     title: { rendered: article.title },
                     _embedded: article._embedded 

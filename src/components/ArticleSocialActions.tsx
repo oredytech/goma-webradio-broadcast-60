@@ -19,16 +19,15 @@ const ArticleSocialActions = ({ articleId, articleTitle, isTelegram = false }: A
     const baseUrl = "https://gomawebradio.com";
     
     if (isTelegram) {
-      // For Telegram articles, use the ID and title
-      const slug = `${articleId}-${articleTitle?.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-') || 'article'}`;
-      return `${baseUrl}/news/${slug}`;
+      // For Telegram articles
+      return `${baseUrl}/telegram-${articleId}`;
     } else {
       // For WordPress articles
       const article = articles?.find(a => a.id === articleId);
       if (!article) return baseUrl;
       
       const slug = getArticleSlug(article);
-      return `${baseUrl}/news/${slug}`;
+      return `${baseUrl}/${slug}`;
     }
   };
 

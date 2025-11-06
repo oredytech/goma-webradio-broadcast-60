@@ -57,53 +57,7 @@ const AppLayout = () => {
             />
           } 
         />
-        {/* Routes for articles - new format with /news/ prefix */}
-        <Route 
-          path="/news/:id/:slug" 
-          element={
-            <Article 
-              isPlaying={isPlaying}
-              setIsPlaying={setIsPlaying}
-              currentAudio={currentAudio}
-              setCurrentAudio={setCurrentAudio}
-            />
-          } 
-        />
-        <Route 
-          path="/news/:slug" 
-          element={
-            <Article 
-              isPlaying={isPlaying}
-              setIsPlaying={setIsPlaying}
-              currentAudio={currentAudio}
-              setCurrentAudio={setCurrentAudio}
-            />
-          } 
-        />
-        {/* Legacy routes for backward compatibility */}
-        <Route 
-          path="/article/:id/:slug" 
-          element={
-            <Article 
-              isPlaying={isPlaying}
-              setIsPlaying={setIsPlaying}
-              currentAudio={currentAudio}
-              setCurrentAudio={setCurrentAudio}
-            />
-          } 
-        />
-        <Route 
-          path="/article/:slug" 
-          element={
-            <Article 
-              isPlaying={isPlaying}
-              setIsPlaying={setIsPlaying}
-              currentAudio={currentAudio}
-              setCurrentAudio={setCurrentAudio}
-            />
-          } 
-        />
-        {/* News routes */}
+        {/* News routes - must be before article routes */}
         <Route path="/actualites/*" element={<News />} />
         <Route path="/actualites/politique" element={<News filter="politique" />} />
         <Route path="/a-propos" element={<About />} />
@@ -154,6 +108,74 @@ const AppLayout = () => {
           } 
         />
         <Route path="/recherche" element={<Search />} />
+        {/* Routes for articles - direct slug format, must be last */}
+        <Route 
+          path="/:id/:slug" 
+          element={
+            <Article 
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+              currentAudio={currentAudio}
+              setCurrentAudio={setCurrentAudio}
+            />
+          } 
+        />
+        <Route 
+          path="/:slug" 
+          element={
+            <Article 
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+              currentAudio={currentAudio}
+              setCurrentAudio={setCurrentAudio}
+            />
+          } 
+        />
+        {/* Legacy routes for backward compatibility */}
+        <Route 
+          path="/news/:id/:slug" 
+          element={
+            <Article 
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+              currentAudio={currentAudio}
+              setCurrentAudio={setCurrentAudio}
+            />
+          } 
+        />
+        <Route 
+          path="/news/:slug" 
+          element={
+            <Article 
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+              currentAudio={currentAudio}
+              setCurrentAudio={setCurrentAudio}
+            />
+          } 
+        />
+        <Route 
+          path="/article/:id/:slug" 
+          element={
+            <Article 
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+              currentAudio={currentAudio}
+              setCurrentAudio={setCurrentAudio}
+            />
+          } 
+        />
+        <Route 
+          path="/article/:slug" 
+          element={
+            <Article 
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+              currentAudio={currentAudio}
+              setCurrentAudio={setCurrentAudio}
+            />
+          } 
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
       {!isDashboard && <Footer />}
