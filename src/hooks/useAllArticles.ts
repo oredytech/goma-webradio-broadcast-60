@@ -20,7 +20,9 @@ export const useAllArticles = () => {
   const { data: telegramArticles, isLoading: isLoadingTelegram } = useTelegramArticles();
 
   const isLoading = wordpressResults.some((result) => result.isLoading) || isLoadingTelegram;
-  const isError = wordpressResults.some((result) => result.isError);
+  // Only show error if ALL sources fail (not just one)
+  const allFailed = wordpressResults.every((result) => result.isError) && !telegramArticles;
+  const isError = allFailed && !isLoading;
 
   // Combine and normalize all articles
   const allArticles: UnifiedArticle[] = [];

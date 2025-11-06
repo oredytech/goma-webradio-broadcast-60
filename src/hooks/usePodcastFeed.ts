@@ -91,13 +91,18 @@ const fetchPodcastFeed = async (feedUrl: string, feedName: string): Promise<Podc
 
 const fetchAllPodcastFeeds = async (): Promise<PodcastFeedResult> => {
   try {
-    // Fetch all feeds in parallel
+    // Fetch all feeds in parallel with error handling for individual feeds
     const feedPromises = PODCAST_FEEDS.map(feed => 
-      fetchPodcastFeed(feed.url, feed.name).then(episodes => ({ 
-        id: feed.id, 
-        name: feed.name, 
-        episodes 
-      }))
+      fetchPodcastFeed(feed.url, feed.name)
+        .then(episodes => ({ 
+          id: feed.id, 
+          name: feed.name, 
+          episodes 
+        }))
+        .catch(error => {
+          console.error(`Failed to fetch ${feed.name}:`, error);
+          return { id: feed.id, name: feed.name, episodes: [] };
+        })
     );
     
     const results = await Promise.all(feedPromises);

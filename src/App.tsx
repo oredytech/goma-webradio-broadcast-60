@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import ScrollToTop from "./components/ScrollToTop";
 import Index from "./pages/Index";
 import Article from "./pages/Article";
 import News from "./pages/News";
@@ -44,6 +45,7 @@ const AppLayout = () => {
 
   return (
     <>
+      <ScrollToTop />
       {!isDashboard && <Header />}
       <Routes>
         <Route 
