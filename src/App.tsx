@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -15,8 +15,7 @@ import About from "./pages/About";
 import Podcasts from "./pages/Podcasts";
 import PodcastFeedEpisodes from "./pages/PodcastFeedEpisodes";
 import PodcastPlayer from "./pages/PodcastPlayer";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
+import NotFound from "./pages/NotFound";
 import NotFound from "./pages/NotFound";
 import Search from "./pages/Search";
 import Install from "./pages/Install";
@@ -25,6 +24,7 @@ import { usePageSEO } from "./hooks/useSEO";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import PWAInstallPrompt from "./components/PWAInstallPrompt";
+import { useArticleNotifications } from "./hooks/useArticleNotifications";
 
 const queryClient = new QueryClient();
 
@@ -34,10 +34,6 @@ const AppLayout = () => {
   const [currentAudio, setCurrentAudio] = useState<string | null>(null);
   const [currentTrack, setCurrentTrack] = useState("Goma Webradio Live");
   const [currentArtist, setCurrentArtist] = useState("");
-  const location = useLocation();
-  
-  // Don't show header, footer, or player on dashboard
-  const isDashboard = location.pathname.includes('/dashboard');
 
   usePageSEO(
     "GOMA WEBRADIO",
@@ -48,7 +44,7 @@ const AppLayout = () => {
   return (
     <>
       <ScrollToTop />
-      {!isDashboard && <Header />}
+      <Header />
       <Routes>
         <Route 
           path="/" 
@@ -65,8 +61,6 @@ const AppLayout = () => {
         <Route path="/actualites/*" element={<News />} />
         <Route path="/actualites/politique" element={<News filter="politique" />} />
         <Route path="/a-propos" element={<About />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
         <Route 
           path="/podcasts" 
           element={
@@ -183,21 +177,21 @@ const AppLayout = () => {
         />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      {!isDashboard && <Footer />}
-      {!isDashboard && <PWAInstallPrompt />}
-      {!isDashboard && (
-        <RadioPlayer
-          isPlaying={isPlaying}
-          setIsPlaying={setIsPlaying}
-          currentAudio={currentAudio}
-          setCurrentAudio={setCurrentAudio}
-        />
-      )}
+      <Footer />
+      <PWAInstallPrompt />
+      <RadioPlayer
+        isPlaying={isPlaying}
+        setIsPlaying={setIsPlaying}
+        currentAudio={currentAudio}
+        setCurrentAudio={setCurrentAudio}
+      />
     </>
   );
 };
 
 const App = () => {
+  // Activer les notifications d'articles (client-side)
+  useArticleNotifications();
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>

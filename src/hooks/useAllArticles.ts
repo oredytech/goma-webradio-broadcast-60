@@ -1,6 +1,4 @@
 import { useMultiSourceArticles, WordPressArticle } from "@/hooks/useMultiSourceArticles";
-import { useTelegramArticles } from "@/hooks/useTelegramArticles";
-import { TelegramArticle } from "@/services/telegram";
 
 export interface UnifiedArticle {
   id: string;
@@ -9,7 +7,7 @@ export interface UnifiedArticle {
   content: string;
   date: string;
   featuredImage: string | null;
-  source: 'wordpress' | 'telegram';
+  source: 'wordpress';
   sourceId: number | string;
   link?: string;
   _embedded?: WordPressArticle['_embedded'];
@@ -17,17 +15,13 @@ export interface UnifiedArticle {
 
 export const useAllArticles = () => {
   const wordpressResults = useMultiSourceArticles();
-  const { data: telegramArticles, isLoading: isLoadingTelegram } = useTelegramArticles();
 
-  const isLoading = wordpressResults.some((result) => result.isLoading) || isLoadingTelegram;
-  // Only show error if ALL sources fail (not just one)
-  const allFailed = wordpressResults.every((result) => result.isError) && !telegramArticles;
+  const isLoading = wordpressResults.some((result) => result.isLoading);
+  const allFailed = wordpressResults.every((result) => result.isError);
   const isError = allFailed && !isLoading;
 
-  // Combine and normalize all articles
   const allArticles: UnifiedArticle[] = [];
 
-  // Add WordPress articles
   wordpressResults.forEach((result) => {
     if (result.data) {
       (result.data as WordPressArticle[]).forEach((article) => {
@@ -47,23 +41,6 @@ export const useAllArticles = () => {
     }
   });
 
-  // Add Telegram articles
-  if (telegramArticles) {
-    telegramArticles.forEach((article) => {
-      allArticles.push({
-        id: `tg-${article.id}`,
-        title: article.title || "Sans titre",
-        excerpt: article.excerpt,
-        content: article.content,
-        date: article.date,
-        featuredImage: article.featuredImage || null,
-        source: 'telegram',
-        sourceId: article.id,
-      });
-    });
-  }
-
-  // Sort by date (newest first)
   allArticles.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return {

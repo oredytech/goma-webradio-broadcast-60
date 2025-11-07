@@ -1,50 +1,39 @@
-
 import { useQueries } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
 
 interface WordPressArticle {
   id: number;
-  title: {
-    rendered: string;
-  };
-  excerpt: {
-    rendered: string;
-  };
-  content: {
-    rendered: string;
-  };
+  title: { rendered: string };
+  excerpt: { rendered: string };
+  content: { rendered: string };
   link: string;
-  date: string; // Adding the missing date property
-  _embedded?: {
-    "wp:featuredmedia"?: Array<{
-      source_url: string;
-    }>;
-  };
-  // Optional featured_media for compatibility with useWordpressArticles type
+  date: string;
+  _embedded?: { "wp:featuredmedia"?: Array<{ source_url: string }> };
   featured_media?: number;
 }
 
 const sources = [
   {
     id: "gomawebradio",
-    url: "https://gomawebradio.com/news/wp-json/wp/v2/posts",
-    name: "Goma Webradio News"
-  }
+    url: "wp-proxy", // via cloud function
+    name: "Goma Webradio News",
+  },
 ];
 
-const fetchArticles = async (source: string) => {
-  const response = await fetch(`${source}?_embed&per_page=30`);
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
-  }
-  return response.json();
+const fetchArticles = async (): Promise<WordPressArticle[]> => {
+  const { data, error } = await supabase.functions.invoke<WordPressArticle[]>("wp-proxy", {
+    body: { type: "list", perPage: 30 },
+  });
+  if (error) throw error;
+  return data as WordPressArticle[];
 };
 
 export const useMultiSourceArticles = () => {
   return useQueries({
     queries: sources.map((source) => ({
       queryKey: ["articles", source.id],
-      queryFn: () => fetchArticles(source.url),
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      queryFn: () => fetchArticles(),
+      staleTime: 5 * 60 * 1000,
     })),
   });
 };
