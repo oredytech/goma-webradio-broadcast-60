@@ -19,10 +19,12 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Search from "./pages/Search";
+import Install from "./pages/Install";
 import RadioPlayer from "./components/radio/RadioPlayer";
 import { usePageSEO } from "./hooks/useSEO";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import PWAInstallPrompt from "./components/PWAInstallPrompt";
 
 const queryClient = new QueryClient();
 
@@ -110,6 +112,7 @@ const AppLayout = () => {
           } 
         />
         <Route path="/recherche" element={<Search />} />
+        <Route path="/install" element={<Install />} />
         {/* Routes for articles - direct slug format, must be last */}
         <Route 
           path="/:id/:slug" 
@@ -181,6 +184,7 @@ const AppLayout = () => {
         <Route path="*" element={<NotFound />} />
       </Routes>
       {!isDashboard && <Footer />}
+      {!isDashboard && <PWAInstallPrompt />}
       {!isDashboard && (
         <RadioPlayer
           isPlaying={isPlaying}

@@ -32,7 +32,7 @@ interface WordPressArticle {
 
 const fetchArticles = async () => {
   const response = await fetch(
-    "https://totalementactus.net/wp-json/wp/v2/posts?_embed&per_page=30"
+    "https://gomawebradio.com/news/wp-json/wp/v2/posts?_embed&per_page=30"
   );
   if (!response.ok) {
     throw new Error("Network response was not ok");
