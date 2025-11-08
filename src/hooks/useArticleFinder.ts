@@ -63,7 +63,12 @@ export function useArticleFinder() {
       if (!articleId) throw new Error("No WordPress article ID found");
       
       console.log(`Fetching WordPress article ${articleId}`);
-      const response = await fetch(`https://gomawebradio.com/news/wp-json/wp/v2/posts/${articleId}?_embed`);
+      const response = await fetch(`https://gomawebradio.com/news/wp-json/wp/v2/posts/${articleId}?_embed`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       if (!response.ok) throw new Error("Failed to fetch article");
       return response.json();
     },
