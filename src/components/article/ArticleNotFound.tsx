@@ -13,7 +13,7 @@ const ArticleNotFound = () => {
         <div className="max-w-lg text-center">
           <h1 className="text-3xl font-bold text-foreground mb-4">Article non trouvé</h1>
           <p className="text-foreground/80 mb-8">
-            Nous n'avons pas trouvé l'article que vous recherchez. Il est possible qu'il ait été déplacé ou supprimé.
+            Oh la la ! Il paraît qu'il y ait un problème.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/">
