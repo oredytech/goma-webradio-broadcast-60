@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
 
 interface WordPressArticle {
   id: number;
@@ -21,11 +20,9 @@ interface WordPressArticle {
 }
 
 const fetchArticles = async (): Promise<WordPressArticle[]> => {
-  const { data, error } = await supabase.functions.invoke<WordPressArticle[]>("wp-proxy", {
-    body: { type: "list", perPage: 30 },
-  });
-  if (error) throw error;
-  return data as WordPressArticle[];
+  const response = await fetch("https://gomawebradio.com/news/wp-json/wp/v2/posts?_embed&per_page=30");
+  if (!response.ok) throw new Error("Failed to fetch articles");
+  return response.json();
 };
 
 export const useWordpressArticles = () => {

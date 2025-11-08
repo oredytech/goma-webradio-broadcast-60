@@ -6,7 +6,6 @@ import {
   getArticleSlug, 
   areSlugsRelated,
 } from "@/utils/articleUtils";
-import { supabase } from "@/lib/supabase";
 
 export type ArticleSource = "wordpress";
 
@@ -64,12 +63,9 @@ export function useArticleFinder() {
       if (!articleId) throw new Error("No WordPress article ID found");
       
       console.log(`Fetching WordPress article ${articleId}`);
-      const { data, error } = await supabase.functions.invoke<WordPressArticle>("wp-proxy", {
-        body: { type: "single", id: articleId },
-      });
-      
-      if (error) throw error;
-      return data;
+      const response = await fetch(`https://gomawebradio.com/news/wp-json/wp/v2/posts/${articleId}?_embed`);
+      if (!response.ok) throw new Error("Failed to fetch article");
+      return response.json();
     },
     enabled: !!articleId,
   });
