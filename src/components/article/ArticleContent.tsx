@@ -36,7 +36,7 @@ const ArticleContent = ({ article }: ArticleContentProps) => {
 
       {/* Author Information */}
       <div className="bg-secondary/50 dark:bg-secondary/50 rounded-lg p-6 backdrop-blur-sm">
-        <h2 className="text-2xl font-bold text-foreground mb-6">À propos de l'article</h2>
+        <h2 className="text-2xl font-bold text-foreground mb-6">À propos de l'auteur</h2>
         <div className="flex items-start gap-4">
           <Avatar className="h-16 w-16 rounded-full border-2 border-primary">
             <AvatarImage src={avatarUrl} alt={`Avatar de ${article._embedded?.author?.[0]?.name || "l'auteur"}`} />
@@ -53,7 +53,7 @@ const ArticleContent = ({ article }: ArticleContentProps) => {
                 Publié le {formattedDate}
               </p>
               <p className="text-sm text-muted-foreground">
-                Source: <span className="text-primary">Totalement Actus</span>
+                Source: <span className="text-primary">Goma Webradio</span>
               </p>
               {article._embedded?.author?.[0]?.description && (
                 <p className="text-sm text-muted-foreground mt-2">
