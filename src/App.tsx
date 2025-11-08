@@ -16,7 +16,6 @@ import Podcasts from "./pages/Podcasts";
 import PodcastFeedEpisodes from "./pages/PodcastFeedEpisodes";
 import PodcastPlayer from "./pages/PodcastPlayer";
 import NotFound from "./pages/NotFound";
-import NotFound from "./pages/NotFound";
 import Search from "./pages/Search";
 import Install from "./pages/Install";
 import RadioPlayer from "./components/radio/RadioPlayer";
@@ -24,7 +23,6 @@ import { usePageSEO } from "./hooks/useSEO";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import PWAInstallPrompt from "./components/PWAInstallPrompt";
-import { useArticleNotifications } from "./hooks/useArticleNotifications";
 
 const queryClient = new QueryClient();
 
@@ -190,8 +188,6 @@ const AppLayout = () => {
 };
 
 const App = () => {
-  // Activer les notifications d'articles (client-side)
-  useArticleNotifications();
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>

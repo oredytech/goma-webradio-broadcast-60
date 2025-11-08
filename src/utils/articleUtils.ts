@@ -1,6 +1,4 @@
-import { WordPressArticle as SingleSourceArticle } from "@/hooks/useWordpressArticles";
-import { WordPressArticle as MultiSourceArticle } from "@/hooks/useMultiSourceArticles";
-import { TelegramArticle } from "@/services/telegramService";
+import { WordPressArticle } from "@/hooks/useWordpressArticles";
 
 // Type that accepts WordPress article types
 type AnyWordPressArticle = {

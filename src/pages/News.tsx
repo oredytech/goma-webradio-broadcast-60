@@ -62,14 +62,11 @@ const News = ({ filter }: NewsProps) => {
           {articles.map((article) => (
             <Link
               key={article.id}
-              to={article.source === 'telegram' 
-                ? `/telegram-${article.sourceId}` 
-                : `/${getArticleSlug({ 
-                    id: article.sourceId as number, 
-                    title: { rendered: article.title },
-                    _embedded: article._embedded 
-                  })}`
-              }
+              to={`/${getArticleSlug({ 
+                id: article.sourceId, 
+                title: { rendered: article.title },
+                _embedded: article._embedded 
+              })}`}
               className="bg-secondary/50 rounded-lg overflow-hidden hover:bg-secondary/70 transition-all duration-300 group animate-fade-in"
             >
               {article.featuredImage && (

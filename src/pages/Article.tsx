@@ -3,7 +3,6 @@ import { useArticleFinder } from "@/hooks/useArticleFinder";
 import { extractArticleData } from "@/utils/articleDataUtils";
 import ArticleHero from "@/components/article/ArticleHero";
 import ArticleContent from "@/components/article/ArticleContent";
-import TelegramArticleContent from "@/components/article/TelegramArticleContent";
 import ArticleSidebar from "@/components/article/ArticleSidebar";
 import ArticleLoading from "@/components/article/ArticleLoading";
 import ArticleNotFound from "@/components/article/ArticleNotFound";
@@ -54,14 +53,7 @@ const Article = ({ isPlaying, setIsPlaying, currentAudio, setCurrentAudio }: Art
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {articleSource === "wordpress" ? (
-            <ArticleContent article={article as WordPressArticle} />
-          ) : (
-            <TelegramArticleContent 
-              article={article} 
-              publishedDate={publishedDate} 
-            />
-          )}
+          <ArticleContent article={article as WordPressArticle} />
           <ArticleSidebar />
         </div>
       </div>
