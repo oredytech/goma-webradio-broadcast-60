@@ -9,6 +9,7 @@ import HeaderActions from "./header/HeaderActions";
 import { useIsMobile } from "@/hooks/use-mobile";
 import SearchButton from "./header/SearchButton";
 import ThemeToggle from "./header/ThemeToggle";
+import BreakingNews from "./BreakingNews";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -57,6 +58,7 @@ const Header = () => {
           />
         </div>
       </div>
+      <BreakingNews />
     </header>
   );
 };

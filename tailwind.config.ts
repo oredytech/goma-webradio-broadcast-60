@@ -59,10 +59,15 @@ export default {
           "0%": { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        "scroll-left": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         wave: "wave 15s linear infinite",
         "fade-in": "fade-in 0.5s ease-out",
+        "scroll-left": "scroll-left 30s linear infinite",
       },
       typography: {
         DEFAULT: {
