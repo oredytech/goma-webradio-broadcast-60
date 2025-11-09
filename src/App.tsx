@@ -23,6 +23,8 @@ import { usePageSEO } from "./hooks/useSEO";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import PWAInstallPrompt from "./components/PWAInstallPrompt";
+import NotificationPermission from "./components/NotificationPermission";
+import { useArticleNotifications } from "./hooks/useArticleNotifications";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +40,9 @@ const AppLayout = () => {
     "La voix de Goma - Actualités, Podcasts et Émissions en direct",
     "/GOWERA__3_-removebg-preview.png"
   );
+
+  // Enable article notifications
+  useArticleNotifications();
 
   return (
     <>
@@ -177,6 +182,7 @@ const AppLayout = () => {
       </Routes>
       <Footer />
       <PWAInstallPrompt />
+      <NotificationPermission />
       <RadioPlayer
         isPlaying={isPlaying}
         setIsPlaying={setIsPlaying}

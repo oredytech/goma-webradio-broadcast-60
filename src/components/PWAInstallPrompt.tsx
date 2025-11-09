@@ -42,7 +42,7 @@ export default function PWAInstallPrompt() {
   if (!showPrompt) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 z-50 animate-in slide-in-from-bottom-4">
+    <div className="fixed top-20 left-1/2 -translate-x-1/2 w-[90%] max-w-md z-50 animate-in slide-in-from-top-4">
       <Card className="p-4 shadow-lg border-2">
         <button
           onClick={handleDismiss}
