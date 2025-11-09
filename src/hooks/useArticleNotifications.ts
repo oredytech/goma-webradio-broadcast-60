@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useWordpressArticles } from './useWordpressArticles';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 export const useArticleNotifications = () => {
   const { data: articles } = useWordpressArticles();

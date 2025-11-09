@@ -17,6 +17,9 @@ export default defineConfig(({ mode }) => ({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'GOWERA__3_-removebg-preview.png'],
+      devOptions: {
+        enabled: true
+      },
       manifest: {
         name: 'GOMA WEBRADIO',
         short_name: 'GOMA WEBRADIO',
@@ -24,6 +27,9 @@ export default defineConfig(({ mode }) => ({
         theme_color: '#1a1a1a',
         background_color: '#ffffff',
         display: 'standalone',
+        orientation: 'portrait-primary',
+        scope: '/',
+        start_url: '/',
         icons: [
           {
             src: '/pwa-192x192.png',

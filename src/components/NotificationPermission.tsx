@@ -25,7 +25,7 @@ export default function NotificationPermission() {
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
       new Notification('🔔 Notifications activées', {
-        body: 'Vous recevrez une notification pour chaque nouvel article',
+        body: 'Vous recevrez une notification pour chaque nouvel article et podcast',
         icon: '/pwa-192x192.png',
       });
     }
@@ -59,7 +59,7 @@ export default function NotificationPermission() {
               Activer les notifications
             </h3>
             <p className="text-xs text-muted-foreground">
-              Recevez une notification à chaque nouvel article publié
+              Recevez une notification pour chaque nouvel article et podcast
             </p>
           </div>
         </div>

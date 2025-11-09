@@ -25,7 +25,7 @@ import Footer from "./components/Footer";
 import PWAInstallPrompt from "./components/PWAInstallPrompt";
 import NotificationPermission from "./components/NotificationPermission";
 import ExternalRedirect from "./components/ExternalRedirect";
-import { useArticleNotifications } from "./hooks/useArticleNotifications";
+import { useContentNotifications } from "./hooks/useContentNotifications";
 
 const queryClient = new QueryClient();
 
@@ -42,8 +42,8 @@ const AppLayout = () => {
     "/GOWERA__3_-removebg-preview.png"
   );
 
-  // Enable article notifications
-  useArticleNotifications();
+  // Enable notifications for new articles and podcasts
+  useContentNotifications();
 
   return (
     <>
