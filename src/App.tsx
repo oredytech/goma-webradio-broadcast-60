@@ -24,6 +24,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import PWAInstallPrompt from "./components/PWAInstallPrompt";
 import NotificationPermission from "./components/NotificationPermission";
+import ExternalRedirect from "./components/ExternalRedirect";
 import { useArticleNotifications } from "./hooks/useArticleNotifications";
 
 const queryClient = new QueryClient();
@@ -59,6 +60,11 @@ const AppLayout = () => {
               setCurrentAudio={setCurrentAudio}
             />
           } 
+        />
+        {/* External redirect for WordPress admin */}
+        <Route 
+          path="/news/wp-admin" 
+          element={<ExternalRedirect to="https://gomawebradio.com/news/wp-admin" />} 
         />
         {/* News routes - must be before article routes */}
         <Route path="/actualites/*" element={<News />} />
