@@ -20,8 +20,8 @@ const PlayerContainer = ({
   
   return (
     <div 
-      className={`fixed left-0 right-0 bg-secondary/95 backdrop-blur-sm border-t border-border dark:border-primary/20 h-[64px] p-2 z-50 transition-transform duration-300 ${
-        isAtTop ? 'bottom-0 translate-y-0' : 'translate-y-full'
+      className={`fixed bottom-0 left-0 right-0 bg-secondary/95 backdrop-blur-sm border-t border-border dark:border-primary/20 h-[64px] p-2 z-50 transition-all duration-500 ease-in-out ${
+        isAtTop ? 'translate-y-0' : 'translate-y-full'
       }`}
     >
       <div className="max-w-7xl mx-auto h-full">

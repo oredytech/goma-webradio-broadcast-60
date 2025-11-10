@@ -36,8 +36,8 @@ const Header = () => {
   return (
     <>
       <header 
-        className={`fixed left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border dark:bg-accent/80 dark:border-primary/20 transition-transform duration-300 ${
-          isScrollingDown ? '-translate-y-full' : 'translate-y-0 top-0'
+        className={`fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border dark:bg-accent/80 dark:border-primary/20 transition-all duration-500 ease-in-out ${
+          isScrollingDown ? '-translate-y-full' : 'translate-y-0'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

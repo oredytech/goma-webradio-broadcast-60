@@ -15,7 +15,7 @@ export default function BreakingNews({ isScrollingDown }: BreakingNewsProps) {
 
   return (
     <div 
-      className={`h-[30px] bg-background border-t border-border overflow-hidden flex items-center fixed left-0 right-0 z-40 transition-all duration-300 ${
+      className={`h-[30px] bg-background border-t border-border overflow-hidden flex items-center fixed left-0 right-0 z-40 transition-all duration-500 ease-in-out ${
         isScrollingDown ? 'top-0' : 'top-[64px]'
       }`}
     >
