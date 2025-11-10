@@ -10,11 +10,13 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import SearchButton from "./header/SearchButton";
 import ThemeToggle from "./header/ThemeToggle";
 import BreakingNews from "./BreakingNews";
+import { useScrollDirection } from "@/hooks/useScrollDirection";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { isScrollingDown, isAtTop } = useScrollDirection();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -32,34 +34,40 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border dark:bg-accent/80 dark:border-primary/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <Logo />
-          
-          {!isMobile && <DesktopNavigation />}
+    <>
+      <header 
+        className={`fixed left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border dark:bg-accent/80 dark:border-primary/20 transition-transform duration-300 ${
+          isScrollingDown ? '-translate-y-full' : 'translate-y-0 top-0'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <Logo />
+            
+            {!isMobile && <DesktopNavigation />}
 
-          {!isMobile && (
-            <HeaderActions onSearchClick={handleSearchClick} />
-          )}
-          
-          {isMobile && (
-            <div className="flex items-center space-x-2">
-              <SearchButton onClick={handleSearchClick} />
-              <ThemeToggle />
-              <MobileMenuButton onClick={toggleMenu} />
-            </div>
-          )}
+            {!isMobile && (
+              <HeaderActions onSearchClick={handleSearchClick} />
+            )}
+            
+            {isMobile && (
+              <div className="flex items-center space-x-2">
+                <SearchButton onClick={handleSearchClick} />
+                <ThemeToggle />
+                <MobileMenuButton onClick={toggleMenu} />
+              </div>
+            )}
 
-          <MobileNavigation 
-            isOpen={isMenuOpen} 
-            onSearchClick={handleSearchClick}
-            onClose={closeMenu} 
-          />
+            <MobileNavigation 
+              isOpen={isMenuOpen} 
+              onSearchClick={handleSearchClick}
+              onClose={closeMenu} 
+            />
+          </div>
         </div>
-      </div>
-      <BreakingNews />
-    </header>
+        <BreakingNews isScrollingDown={isScrollingDown} />
+      </header>
+    </>
   );
 };
 

@@ -2,7 +2,11 @@ import { useWordpressArticles } from '@/hooks/useWordpressArticles';
 import { Link } from 'react-router-dom';
 import { getArticleSlug } from '@/utils/articleUtils';
 
-export default function BreakingNews() {
+interface BreakingNewsProps {
+  isScrollingDown: boolean;
+}
+
+export default function BreakingNews({ isScrollingDown }: BreakingNewsProps) {
   const { data: articles } = useWordpressArticles();
   
   const latestArticles = articles?.slice(0, 5) || [];
@@ -10,7 +14,11 @@ export default function BreakingNews() {
   if (latestArticles.length === 0) return null;
 
   return (
-    <div className="h-[30px] bg-background border-t border-border overflow-hidden flex items-center">
+    <div 
+      className={`h-[30px] bg-background border-t border-border overflow-hidden flex items-center fixed left-0 right-0 z-40 transition-all duration-300 ${
+        isScrollingDown ? 'top-0' : 'top-[64px]'
+      }`}
+    >
       <div className="flex-shrink-0 h-full bg-red-600 px-4 flex items-center justify-center clip-breaking-news">
         <span className="text-white font-bold text-sm tracking-wide uppercase whitespace-nowrap">
           Breaking News

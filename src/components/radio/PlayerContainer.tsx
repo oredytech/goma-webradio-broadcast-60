@@ -1,6 +1,7 @@
 
 import React from 'react';
 import ProgressBar from './ProgressBar';
+import { useScrollDirection } from '@/hooks/useScrollDirection';
 
 interface PlayerContainerProps {
   progress: number;
@@ -15,8 +16,14 @@ const PlayerContainer = ({
   handleSeek, 
   children 
 }: PlayerContainerProps) => {
+  const { isAtTop } = useScrollDirection();
+  
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-secondary/95 backdrop-blur-sm border-t border-border dark:border-primary/20 h-[80px] p-2 z-50">
+    <div 
+      className={`fixed left-0 right-0 bg-secondary/95 backdrop-blur-sm border-t border-border dark:border-primary/20 h-[64px] p-2 z-50 transition-transform duration-300 ${
+        isAtTop ? 'bottom-0 translate-y-0' : 'translate-y-full'
+      }`}
+    >
       <div className="max-w-7xl mx-auto h-full">
         <ProgressBar 
           progress={progress} 
