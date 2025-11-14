@@ -20,7 +20,8 @@ interface WordPressArticle {
 }
 
 const fetchArticles = async (): Promise<WordPressArticle[]> => {
-  const response = await fetch("https://gomawebradio.com/news/wp-json/wp/v2/posts?_embed&per_page=30", {
+  const response = await fetch("https://gomawebradio.com/news/wp-json/wp/v2/posts?_embed&per_page=30&orderby=date&order=desc", 
+   {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -34,7 +35,10 @@ export const useWordpressArticles = () => {
   return useQuery<WordPressArticle[]>({
     queryKey: ["wordpress-articles"],
     queryFn: fetchArticles,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,                    // Jamais considéré comme frais
+    refetchOnWindowFocus: true,      // Quand tu reviens sur l'onglet → reload
+    refetchOnMount: true,            // Quand le composant apparaît → reload
+    refetchOnReconnect: true,        // Si Internet revient → reload
   });
 };
 
