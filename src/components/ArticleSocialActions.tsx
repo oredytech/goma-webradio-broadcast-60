@@ -27,7 +27,7 @@ const ArticleSocialActions = ({ articleId, articleTitle, isTelegram = false }: A
       if (!article) return baseUrl;
       
       const slug = getArticleSlug(article);
-      return `${baseUrl}/${slug}`;
+      return `${baseUrl}/news/${slug}`;
     }
   };
 
@@ -39,14 +39,12 @@ const ArticleSocialActions = ({ articleId, articleTitle, isTelegram = false }: A
 
   const handleWhatsAppShare = () => {
     const shareUrl = getShareUrl();
-    const text = `Découvrez cet article sur GOMA WEBRADIO: ${shareUrl}`;
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const handleTwitterShare = () => {
     const shareUrl = getShareUrl();
-    const text = "Découvrez cet article sur GOMA WEBRADIO";
     const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(text)}`;
     window.open(twitterUrl, '_blank', 'width=600,height=400');
   };
