@@ -18,16 +18,30 @@ type AnyWordPressArticle = {
  * Generates a slug from a WordPress article title
  */
 export const getArticleSlug = (article: AnyWordPressArticle): string => {
-  const decodedTitle = new DOMParser().parseFromString(
-    article.title.rendered, 'text/html'
-  ).body.textContent || article.title.rendered;
-  
-  return decodedTitle
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .trim();
+  // Si WordPress fournit déjà un slug, on l'utilise (c'est la source de vérité)
+  if (article.slug) return article.slug;
+
+  // Sinon on génère proprement à partir du titre
+  const createSlugFromTitle = (title: string): string => {
+    const decodedTitle = new DOMParser().parseFromString(title, 'text/html').body.textContent || title;
+
+    // 1) Décomposer les caractères et enlever les diacritiques (ô -> o)
+    const withoutDiacritics = decodedTitle.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+    // 2) Garder lettres (unicode) et chiffres, remplacer espaces par tirets, nettoyer tirets doublés
+    const slug = withoutDiacritics
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}\s-]/gu, '') // nécessite le flag 'u' (modern browsers/Node)
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+
+    return slug;
+  };
+
+  return createSlugFromTitle(article.title.rendered || '');
 };
+
 
 /**
  * Generates a slug from a Telegram article title
