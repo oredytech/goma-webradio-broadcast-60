@@ -19,26 +19,40 @@ interface WordPressArticle {
   date: string;
 }
 
+// 🚫 Mode EXTRÊME : no cache, no store, no rien.
+// 👉 On ajoute un timestamp pour forcer une URL unique à chaque appel
 const fetchArticles = async (): Promise<WordPressArticle[]> => {
-  const response = await fetch("https://gomawebradio.com/news/wp-json/wp/v2/posts?_embed&per_page=30&orderby=date&order=desc", 
-   {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const timestamp = Date.now(); // clé anti-cache
+
+  const response = await fetch(
+    `https://gomawebradio.com/news/wp-json/wp/v2/posts?_embed&per_page=30&orderby=date&order=desc&_=${timestamp}`,
+    {
+      method: "GET",
+      cache: "no-store", // empêche le navigateur de cacher
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    }
+  );
+
   if (!response.ok) throw new Error("Failed to fetch articles");
   return response.json();
 };
 
+// ⚡ Mode extrême pour React Query : nouvelle clé à CHAQUE rendu
 export const useWordpressArticles = () => {
   return useQuery<WordPressArticle[]>({
-    queryKey: ["wordpress-articles"],
+    queryKey: ["wordpress-articles", Date.now()], // invalide le cache automatiquement
     queryFn: fetchArticles,
-    staleTime: 0,                    // Jamais considéré comme frais
-    refetchOnWindowFocus: true,      // Quand tu reviens sur l'onglet → reload
-    refetchOnMount: true,            // Quand le composant apparaît → reload
-    refetchOnReconnect: true,        // Si Internet revient → reload
+    cacheTime: 0, // React Query ne garde rien en mémoire
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: "always",
+    refetchOnReconnect: "always",
+    refetchInterval: 10000, // Optionnel : refetch toutes les 10 secondes
   });
 };
 
