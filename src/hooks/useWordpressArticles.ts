@@ -20,31 +20,25 @@ interface WordPressArticle {
 }
 
 const fetchArticles = async (): Promise<WordPressArticle[]> => {
-  const response = await fetch(
-    "https://gomawebradio.com/news/wp-json/wp/v2/posts?_embed&per_page=30&orderby=date&order=desc",
-    {
-      method: "GET",
-      cache: "no-cache",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-
+  const response = await fetch("https://gomawebradio.com/news/wp-json/wp/v2/posts?_embed&per_page=30&orderby=date&order=desc", 
+   {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
   if (!response.ok) throw new Error("Failed to fetch articles");
   return response.json();
 };
 
-// 💎 Mode idéal : rapide + rafraîchissement automatique
 export const useWordpressArticles = () => {
   return useQuery<WordPressArticle[]>({
     queryKey: ["wordpress-articles"],
     queryFn: fetchArticles,
-    staleTime: 1000 * 15,          // 15 sec : frais = affichage rapide
-    refetchInterval: 10000,        // refetch toutes les 10 sec → quasi instantané
-    refetchOnWindowFocus: true,    // revient sur l’onglet = refresh
-    refetchOnReconnect: true,
-    refetchOnMount: false,         // évite le double-fetch inutile
+    staleTime: 0,                    // Jamais considéré comme frais
+    refetchOnWindowFocus: true,      // Quand tu reviens sur l'onglet → reload
+    refetchOnMount: true,            // Quand le composant apparaît → reload
+    refetchOnReconnect: true,        // Si Internet revient → reload
   });
 };
 
