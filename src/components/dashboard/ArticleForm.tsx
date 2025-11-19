@@ -4,10 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FormProvider } from "react-hook-form";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Form } from "@/components/ui/form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Type, Image } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { publishArticleViaTelegram } from "@/services/telegramService";
+import { useToast } from "@/hooks/use-toast";
 import { articleSchema, ArticleFormValues } from "./ArticleFormTypes";
 import ArticleEditor from "./ArticleEditor";
 import ArticlePreview from "./ArticlePreview";
@@ -16,7 +14,6 @@ import ArticlePublishSidebar from "./ArticlePublishSidebar";
 const ArticleForm = () => {
   const [previewMode, setPreviewMode] = useState<"editor" | "preview">("editor");
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
   // Initialiser le formulaire avec les valeurs par défaut
   const form = useForm<ArticleFormValues>({
@@ -32,64 +29,12 @@ const ArticleForm = () => {
     }
   });
 
-  // Mutation pour publier/enregistrer l'article
-  const publishMutation = useMutation({
-    mutationFn: async (article: ArticleFormValues) => {
-      // Utiliser l'URL de l'image si aucune image n'a été téléversée
-      let imageUrl = article.featuredImage || undefined;
-      const uploadedImage = article.uploadedImage as File || undefined;
-      
-      // Si une image a été téléversée, nous allons l'utiliser en priorité
-      if (uploadedImage) {
-        console.log("Une image a été téléversée:", uploadedImage.name, "taille:", uploadedImage.size);
-      } else if (imageUrl) {
-        console.log("Une URL d'image a été fournie:", imageUrl);
-      } else {
-        console.log("Aucune image fournie pour l'article");
-      }
-      
-      // Publier sur Telegram en passant à la fois l'URL et l'image téléversée
-      // La fonction publishArticleViaTelegram décidera quelle approche utiliser
-      const telegramPublished = await publishArticleViaTelegram(
-        article.title,
-        article.content,
-        imageUrl,
-        uploadedImage
-      );
-      
-      if (!telegramPublished) {
-        throw new Error("Échec de la publication sur Telegram");
-      }
-      
-      console.log("Article publié sur Telegram:", article);
-      
-      return { id: Math.floor(Math.random() * 10000) };
-    },
-    onSuccess: () => {
-      toast({
-        title: "Article enregistré avec succès",
-        description: form.getValues("status") === "publish" 
-          ? "L'article a été publié sur Telegram" 
-          : "L'article a été enregistré comme brouillon sur Telegram",
-      });
-      form.reset();
-      // Invalidate telegram-articles query to refresh the articles list
-      queryClient.invalidateQueries({ queryKey: ["telegram-articles"] });
-      // Keep compatibility with existing code
-      queryClient.invalidateQueries({ queryKey: ["wordpress-articles"] });
-    },
-    onError: (error) => {
-      toast({
-        title: "Erreur",
-        description: `Une erreur est survenue: ${error.message}`,
-        variant: "destructive",
-      });
-    }
-  });
-
-  // Gérer la soumission du formulaire
   const onSubmit = (data: ArticleFormValues) => {
-    publishMutation.mutate(data);
+    toast({
+      title: "Fonctionnalité désactivée",
+      description: "La création d'articles est temporairement désactivée",
+      variant: "destructive",
+    });
   };
 
   return (
@@ -124,7 +69,7 @@ const ArticleForm = () => {
                 </Tabs>
               </div>
               
-              <ArticlePublishSidebar isSubmitting={publishMutation.isPending} />
+              <ArticlePublishSidebar isSubmitting={false} />
             </div>
           </form>
         </Form>
