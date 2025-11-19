@@ -42,9 +42,9 @@ const News = ({ filter }: NewsProps) => {
       return response.json();
     },
 
-    // Options pour avoir du *LIVE* : recharge immédiat
     staleTime: 0,
-    cacheTime: 0,
+    gcTime: 0,
+    refetchInterval: 120000,
     refetchOnWindowFocus: true,
     refetchOnMount: true,
     refetchOnReconnect: true,

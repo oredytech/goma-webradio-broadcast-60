@@ -6,6 +6,7 @@ type AnyWordPressArticle = {
   title: {
     rendered: string;
   };
+  slug?: string;
   _embedded?: {
     "wp:featuredmedia"?: Array<{
       source_url: string;

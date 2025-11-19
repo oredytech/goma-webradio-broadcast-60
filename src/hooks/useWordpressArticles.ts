@@ -6,6 +6,7 @@ interface WordPressArticle {
   excerpt: { rendered: string };
   content: { rendered: string };
   featured_media: number;
+  slug: string;
   _embedded?: {
     "wp:featuredmedia"?: Array<{ source_url: string }>;
     author?: Array<{
@@ -37,11 +38,9 @@ export const useWordpressArticles = () => {
   return useQuery<WordPressArticle[]>({
     queryKey: ["wordpress-articles"],
     queryFn: fetchArticles,
-
-    // ✔ immé­diat, réactif, sans polling
     staleTime: 0,
-    cacheTime: 0,
-
+    gcTime: 0,
+    refetchInterval: 120000, // Refresh every 2 minutes
     refetchOnWindowFocus: true,
     refetchOnMount: true,
     refetchOnReconnect: true,
